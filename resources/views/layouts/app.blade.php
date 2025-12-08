@@ -1,60 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>@yield('title', 'My App')</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  {{-- Bootstrap CSS --}}
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    body {
-      overflow-x: hidden;
-    }
-
-    .sidebar {
-      width: 240px;
-      height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-      background: #1f2937;
-      color: white;
-      padding-top: 20px;
-    }
-
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 12px 20px;
-      display: block;
-    }
-
-    .sidebar a:hover {
-      background: #374151;
-    }
-
-    .content {
-      margin-left: 240px;
-      padding: 25px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Business Management')</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        .sidebar {
+            min-width: 220px;
+            max-width: 220px;
+            background-color: #343a40;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+        .sidebar .submenu a {
+            padding-left: 30px;
+        }
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+    </style>
 </head>
-
 <body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-3">
+        <h4 class="text-center mb-4">BMS</h4>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <!-- Purchases Menu -->
+            <li>
+                <a class="nav-link text-white" data-bs-toggle="collapse" href="#purchasesMenu" role="button" aria-expanded="false" aria-controls="purchasesMenu">
+                    Purchases
+                </a>
+                <div class="collapse" id="purchasesMenu">
+                    <ul class="nav flex-column submenu">
+                        <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseRequestsMenu">Purchase Requests</a>
+                            <div class="collapse" id="purchaseRequestsMenu">
+                                <ul class="nav flex-column submenu">
+                                    <li><a class="nav-link text-white" href="{{ route('purchases.requests.list') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('purchases.requests.add') }}">Add</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseOrdersMenu">Purchase Orders</a>
+                            <div class="collapse" id="purchaseOrdersMenu">
+                                <ul class="nav flex-column submenu">
+                                    <li><a class="nav-link text-white" href="{{ route('purchases.orders.list') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('purchases.orders.add') }}">Add</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
-  {{-- Left Side Navbar --}}
-  @include('layouts.sidebar')
+            <!-- Sales Menu -->
+            <li>
+                <a class="nav-link text-white" data-bs-toggle="collapse" href="#salesMenu">Sales</a>
+                <div class="collapse" id="salesMenu">
+                    <ul class="nav flex-column submenu">
+                        <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#salesOrdersMenu">Orders</a>
+                            <div class="collapse" id="salesOrdersMenu">
+                                <ul class="nav flex-column submenu">
+                                    <li><a class="nav-link text-white" href="{{ route('sales.orders.list') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('sales.orders.add') }}">Add</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
-  {{-- Main Page Content --}}
-  <div class="content">
-    @yield('content')
-  </div>
+            <!-- Inventories Menu -->
+            <li>
+                <a class="nav-link text-white" data-bs-toggle="collapse" href="#inventoriesMenu">Inventories</a>
+                <div class="collapse" id="inventoriesMenu">
+                    <ul class="nav flex-column submenu">
+                        <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#productsMenu">Products</a>
+                            <div class="collapse" id="productsMenu">
+                                <ul class="nav flex-column submenu">
+                                    <li><a class="nav-link text-white" href="{{ route('inventories.products.list') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('inventories.products.add') }}">Add</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </nav>
 
-  {{-- Bootstrap JS --}}
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main content -->
+    <div class="content">
+        @yield('content')
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
