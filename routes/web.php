@@ -13,8 +13,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', fn() => view('dashboard'))->name('dashboard');
+
+// Purchases
+Route::prefix('purchases')->group(function () {
+    Route::get('requests', fn() => view('purchases.requests.list'))->name('purchases.requests.list');
+    Route::get('requests/add', fn() => view('purchases.requests.add'))->name('purchases.requests.add');
+
+    Route::get('orders', fn() => view('purchases.orders.list'))->name('purchases.orders.list');
+    Route::get('orders/add', fn() => view('purchases.orders.add'))->name('purchases.orders.add');
 });
-Route::view('/sales', 'sales.index');
-Route::view('/purchases', 'purchases.index');
+
+// Sales
+Route::prefix('sales')->group(function () {
+    Route::get('orders', fn() => view('sales.orders.list'))->name('sales.orders.list');
+    Route::get('orders/add', fn() => view('sales.orders.add'))->name('sales.orders.add');
+});
+
+// Inventories
+Route::prefix('inventories')->group(function () {
+    Route::get('products', fn() => view('inventories.products.list'))->name('inventories.products.list');
+    Route::get('products/add', fn() => view('inventories.products.add'))->name('inventories.products.add');
+});
