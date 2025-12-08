@@ -40,26 +40,41 @@ Route::prefix('inventories')->group(function () {
     Route::get('products/add', fn() => view('inventories.products.add'))->name('inventories.products.add');
 });
 
-//
-// SUPPLIERS (Blade pages)
-//
-Route::prefix('suppliers')->group(function () {
-    Route::get('/', fn() => view('suppliers.list'))->name('suppliers.list');
-    Route::get('/add', fn() => view('suppliers.add'))->name('suppliers.add');
-    Route::get('/edit/{id}', function($id) {
-        $supplier = \App\Models\Supplier::findOrFail($id);
-        return view('suppliers.edit', compact('supplier'));
-    })->name('suppliers.edit');
-});
+/*
+|--------------------------------------------------------------------------
+| Purchase Requests Add/Edit
+|--------------------------------------------------------------------------
+*/
+Route::get('/requests/create', function () {
+    return view('requests.create');
+})->name('requests.create');
 
-//
-// PURCHASE REQUESTS (Blade pages)
-//
-Route::prefix('purchases/requests')->group(function () {
-    Route::get('/', fn() => view('purchases.requests.list'))->name('purchases.requests.list');
-    Route::get('/add', fn() => view('purchases.requests.add'))->name('purchases.requests.add');
-    Route::get('/edit/{id}', function($id) {
-        $request = \App\Models\Purchases\PurchaseRequest::with('supplier')->findOrFail($id);
-        return view('purchases.requests.edit', compact('request'));
-    })->name('purchases.requests.edit');
-});
+Route::get('/requests/{id}/edit', function ($id) {
+    $request = PurchaseRequest::findOrFail($id);
+    return view('requests.edit', compact('request'));
+})->name('requests.edit');
+
+
+/*
+|--------------------------------------------------------------------------
+| Supplier Selection Page
+|--------------------------------------------------------------------------
+*/
+Route::get('/suppliers/select', function () {
+    $suppliers = Supplier::all();
+    $redirect = request('redirect');
+    $id = request('id');
+    return view('suppliers.select', compact('suppliers', 'redirect', 'id'));
+})->name('suppliers.select');
+
+
+/*
+|--------------------------------------------------------------------------
+| Supplier Add Page
+|--------------------------------------------------------------------------
+*/
+Route::get('/suppliers/create', function () {
+    $redirect = request('redirect');
+    $id = request('id');
+    return view('suppliers.create', compact('redirect', 'id'));
+})->name('suppliers.create');
