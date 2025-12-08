@@ -22,6 +22,10 @@ Route::prefix('purchases')->group(function () {
 
     Route::get('orders', fn() => view('purchases.orders.list'))->name('purchases.orders.list');
     Route::get('orders/add', fn() => view('purchases.orders.add'))->name('purchases.orders.add');
+    Route::get('purchases/orders/edit/{order}', function ($orderId) {
+        $order = \App\Models\Purchases\PurchaseOrder::findOrFail($orderId);
+        return view('purchases.orders.edit', compact('order'));
+    })->name('purchases.orders.edit');
 });
 
 // Sales
