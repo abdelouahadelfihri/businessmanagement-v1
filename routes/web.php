@@ -39,3 +39,27 @@ Route::prefix('inventories')->group(function () {
     Route::get('products', fn() => view('inventories.products.list'))->name('inventories.products.list');
     Route::get('products/add', fn() => view('inventories.products.add'))->name('inventories.products.add');
 });
+
+//
+// SUPPLIERS (Blade pages)
+//
+Route::prefix('suppliers')->group(function () {
+    Route::get('/', fn() => view('suppliers.list'))->name('suppliers.list');
+    Route::get('/add', fn() => view('suppliers.add'))->name('suppliers.add');
+    Route::get('/edit/{id}', function($id) {
+        $supplier = \App\Models\Supplier::findOrFail($id);
+        return view('suppliers.edit', compact('supplier'));
+    })->name('suppliers.edit');
+});
+
+//
+// PURCHASE REQUESTS (Blade pages)
+//
+Route::prefix('purchases/requests')->group(function () {
+    Route::get('/', fn() => view('purchases.requests.list'))->name('purchases.requests.list');
+    Route::get('/add', fn() => view('purchases.requests.add'))->name('purchases.requests.add');
+    Route::get('/edit/{id}', function($id) {
+        $request = \App\Models\Purchases\PurchaseRequest::with('supplier')->findOrFail($id);
+        return view('purchases.requests.edit', compact('request'));
+    })->name('purchases.requests.edit');
+});
