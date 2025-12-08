@@ -5,6 +5,10 @@
 @section('content')
 <h1>Add Supplier</h1>
 
+@php
+    $returnTo = request()->get('returnTo'); // where we return after saving
+@endphp
+
 <form id="supplierForm">
     @csrf
 
@@ -35,25 +39,29 @@
 document.querySelector('#supplierForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    let data = {
+    const body = {
         name: e.target.name.value,
         email: e.target.email.value,
         phone: e.target.phone.value,
         address: e.target.address.value,
     };
 
-    await fetch('/api/suppliers', {
+    const res = await fetch('/api/suppliers', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
     });
 
-    // Return back to previous form if set
-    const params = new URLSearchParams(window.location.search);
-    const returnTo = params.get("returnTo");
+    const created = await res.json();
 
-    if (returnTo) window.location.href = `/${returnTo}`;
-    else window.location.href = "{{ route('suppliers.list') }}";
+    const returnTo = "{{ $returnTo }}";
+
+    if (returnTo) {
+        // Return to the request add/edit page WITH supplier_id
+        window.location.href = "/" + returnTo + "?supplier_id=" + created.id;
+    } else {
+        window.location.href = "{{ route('suppliers.list') }}";
+    }
 });
 </script>
 @endsection
