@@ -4,93 +4,78 @@ namespace App\Http\Controllers;
 
 use App\Models\Supplier;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
 {
+    // List suppliers (support popup mode)
     public function index(Request $request)
     {
-        $q = $request->query('q');
-        $query = Supplier::query();
-
-        if ($q) {
-            $query->where(function ($q2) use ($q) {
-                $q2->where('name', 'like', "%{$q}%")
-                    ->orWhere('email', 'like', "%{$q}%")
-                    ->orWhere('phone', 'like', "%{$q}%");
-            });
-        }
-
-        $suppliers = $query->orderBy('name')->paginate(10)->withQueryString();
-
-        return view('suppliers.index', compact('suppliers', 'q'));
+        $suppliers = Supplier::orderBy('name')->get();
+        return view('suppliers.index', compact('suppliers'));
     }
 
+    // Show create form
     public function create()
     {
         return view('suppliers.create');
     }
 
+    // Store supplier (standard)
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string|max:1000',
+        $validated = $request->validate([
+            'name'=>'required|string|max:255',
+            'email'=>'nullable|email|max:255',
+            'phone'=>'nullable|string|max:50',
+            'address'=>'nullable|string|max:500',
         ]);
 
-        $supplier = Supplier::create($data);
-
-        return redirect()->route('suppliers.index')->with('success', 'Supplier added.');
+        Supplier::create($validated);
+        return redirect()->route('suppliers.index')->with('success','Supplier created successfully.');
     }
 
-    public function show(Supplier $supplier)
+    // Store supplier quickly (AJAX from modal)
+    public function storeQuick(Request $request)
     {
-        return view('suppliers.show', compact('supplier'));
+        $validated = $request->validate([
+            'name'=>'required|string|max:255',
+            'email'=>'nullable|email|max:255',
+            'phone'=>'nullable|string|max:50',
+            'address'=>'nullable|string|max:500',
+        ]);
+
+        $supplier = Supplier::create($validated);
+
+        return response()->json([
+            'success'=>true,
+            'supplier'=>$supplier
+        ]);
     }
 
+    // Show edit form
     public function edit(Supplier $supplier)
     {
         return view('suppliers.edit', compact('supplier'));
     }
 
+    // Update supplier
     public function update(Request $request, Supplier $supplier)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('suppliers')->ignore($supplier->id)],
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string|max:1000',
+        $validated = $request->validate([
+            'name'=>'required|string|max:255',
+            'email'=>'nullable|email|max:255',
+            'phone'=>'nullable|string|max:50',
+            'address'=>'nullable|string|max:500',
         ]);
 
-        $supplier->update($data);
-
-        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
+        $supplier->update($validated);
+        return redirect()->route('suppliers.index')->with('success','Supplier updated successfully.');
     }
 
+    // Delete supplier
     public function destroy(Supplier $supplier)
     {
         $supplier->delete();
-
-        return redirect()->route('suppliers.index')->with('success', 'Supplier deleted.');
+        return redirect()->route('suppliers.index')->with('success','Supplier deleted successfully.');
     }
-
-    public function storeQuick(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string|max:500',
-        ]);
-
-        $supplier = \App\Models\Supplier::create($validated);
-
-        return response()->json([
-            'success' => true,
-            'supplier' => $supplier
-        ]);
-    }
-
 }
