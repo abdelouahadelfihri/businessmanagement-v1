@@ -1,36 +1,23 @@
-@extends('layouts.app')
-
-@section('content')
-
 <h2>Add Supplier</h2>
 
-<form method="POST" action="/api/suppliers"> 
+<form action="{{ route('suppliers.store') }}" method="POST">
     @csrf
 
-    <input type="hidden" name="redirect" value="{{ $redirect }}">
-    <input type="hidden" name="id" value="{{ $id }}">
+    @if(isset($returnTo))
+        <input type="hidden" name="return_to" value="{{ $returnTo }}">
+    @endif
 
-    <div class="mb-3">
-        <label>Name</label>
-        <input name="name" class="form-control">
-    </div>
+    <label>Name</label>
+    <input type="text" name="name" required>
 
-    <div class="mb-3">
-        <label>Email</label>
-        <input name="email" class="form-control">
-    </div>
+    <label>Email</label>
+    <input type="email" name="email">
 
-    <div class="mb-3">
-        <label>Phone</label>
-        <input name="phone" class="form-control">
-    </div>
+    <label>Phone</label>
+    <input type="text" name="phone">
 
-    <div class="mb-3">
-        <label>Address</label>
-        <input name="address" class="form-control">
-    </div>
+    <label>Address</label>
+    <textarea name="address"></textarea>
 
-    <button class="btn btn-success">Save</button>
+    <button type="submit">Save</button>
 </form>
-
-@endsection
