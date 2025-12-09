@@ -1,18 +1,17 @@
 @extends('layouts.app')
 
-@section('title','Edit Purchase Request')
+@section('title','Create Purchase Request')
 
 @section('content')
 <div class="d-flex justify-content-between mb-3">
-  <h3>Edit Purchase Request</h3>
+  <h3>Create Purchase Request</h3>
   <div>
     <a href="{{ route('purchase-requests.index') }}" class="btn btn-outline-secondary">Back to list</a>
   </div>
 </div>
 
-<form method="POST" action="{{ route('purchase-requests.update', $purchaseRequest) }}">
+<form method="POST" action="{{ route('purchase-requests.store') }}">
   @csrf
-  @method('PUT')
 
   <div class="mb-3">
     <label class="form-label">Supplier</label>
@@ -20,7 +19,7 @@
       <select name="supplier_id" id="supplierSelect" class="form-select">
         <option value="">-- No supplier --</option>
         @forelse($suppliers as $s)
-          <option value="{{ $s->id }}" @selected(old('supplier_id', $purchaseRequest->supplier_id) == $s->id)>{{ $s->name }} @if($s->email) ({{ $s->email }}) @endif</option>
+          <option value="{{ $s->id }}" @selected(old('supplier_id') == $s->id)>{{ $s->name }} @if($s->email) ({{ $s->email }}) @endif</option>
         @empty
           <option disabled>No suppliers available</option>
         @endforelse
@@ -37,34 +36,30 @@
 
   <div class="mb-3">
     <label class="form-label">Description</label>
-    <textarea name="description" class="form-control" rows="4">{{ old('description', $purchaseRequest->description) }}</textarea>
+    <textarea name="description" class="form-control" rows="4">{{ old('description') }}</textarea>
     @error('description')<div class="text-danger small">{{ $message }}</div>@enderror
   </div>
 
   <div class="row g-3 mb-3">
     <div class="col-md-4">
       <label class="form-label">Date</label>
-      <input type="date" name="date" class="form-control" value="{{ old('date', $purchaseRequest->date->format('Y-m-d')) }}">
+      <input type="date" name="date" class="form-control" value="{{ old('date', now()->format('Y-m-d')) }}">
       @error('date')<div class="text-danger small">{{ $message }}</div>@enderror
     </div>
 
     <div class="col-md-4">
       <label class="form-label">Status</label>
       <select name="status" class="form-select">
-        <option value="draft" @selected(old('status', $purchaseRequest->status) == 'draft')>Draft</option>
-        <option value="submitted" @selected(old('status', $purchaseRequest->status) == 'submitted')>Submitted</option>
-        <option value="approved" @selected(old('status', $purchaseRequest->status) == 'approved')>Approved</option>
-        <option value="rejected" @selected(old('status', $purchaseRequest->status) == 'rejected')>Rejected</option>
+        <option value="draft" @selected(old('status') == 'draft')>Draft</option>
+        <option value="submitted" @selected(old('status') == 'submitted')>Submitted</option>
+        <option value="approved" @selected(old('status') == 'approved')>Approved</option>
+        <option value="rejected" @selected(old('status') == 'rejected')>Rejected</option>
       </select>
       @error('status')<div class="text-danger small">{{ $message }}</div>@enderror
     </div>
   </div>
 
-  <div class="d-flex gap-2">
-    <button class="btn btn-primary">Save changes</button>
-
-    <button type="button" class="btn btn-outline-danger" id="showDeleteBtn">Delete</button>
-  </div>
+  <button class="btn btn-primary">Create Purchase Request</button>
 </form>
 
 <!-- Add Supplier Modal (AJAX: POST to suppliers.storeQuick) -->
@@ -104,37 +99,15 @@
   </div>
 </div>
 
-<!-- Delete confirmation modal for purchase request -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-  <div class="modal-dialog">
-    <form id="deleteRequestForm" method="POST" action="{{ route('purchase-requests.destroy', $purchaseRequest) }}">
-      @csrf
-      @method('DELETE')
-      <div class="modal-content">
-        <div class="modal-body">
-          <h5>Confirm delete</h5>
-          <p>Are you sure you want to delete this purchase request? This cannot be undone.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-danger">Delete</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
 @push('scripts')
 <script>
-  // Open suppliers list in small popup so user can pick one (the suppliers.index has JS to postMessage or use window.opener).
+  // Open suppliers list popup to pick
   document.getElementById('openSuppliersList').addEventListener('click', function(e){
     e.preventDefault();
     const w = window.open("{{ route('suppliers.index') }}?popup=1", "suppliers_pick", "width=900,height=700");
-    // define a global receive function if the child uses window.opener
+
     window.receivePickedSupplier = function(supplier){
-      // supplier: {id, name}
       const sel = document.getElementById('supplierSelect');
-      // if supplier exists in select, select it; otherwise add it
       let option = sel.querySelector('option[value="'+supplier.id+'"]');
       if (!option) {
         option = document.createElement('option');
@@ -143,11 +116,9 @@
         sel.appendChild(option);
       }
       sel.value = supplier.id;
-      // optionally close the popup if still open
       if (w && !w.closed) w.close();
     };
 
-    // Also listen to postMessage from child
     window.addEventListener('message', function(ev){
       if (!ev.data) return;
       if (ev.data.type === 'supplier-picked') {
@@ -181,18 +152,14 @@
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          // insert new option into select and select it
           const sel = document.getElementById('supplierSelect');
           const opt = document.createElement('option');
           opt.value = data.supplier.id;
           opt.text = data.supplier.name;
           sel.appendChild(opt);
           sel.value = data.supplier.id;
-
-          // close modal
           bsModal.hide();
         } else {
-          // show errors
           let html = '<div class="alert alert-danger">';
           if (data.errors) {
             html += '<ul class="mb-0">';
@@ -215,12 +182,6 @@
       }
     });
   })();
-
-  // Delete purchase-request
-  document.getElementById('showDeleteBtn').addEventListener('click', function() {
-    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    modal.show();
-  });
 </script>
 @endpush
 @endsection
