@@ -36,3 +36,8 @@ Route::resource('purchase-requests', PurchaseRequestController::class);
 | AJAX endpoint to create supplier quickly from modal
 */
 Route::post('/suppliers-quick', [SupplierController::class, 'storeQuick'])->name('suppliers.storeQuick');
+
+
+
+
+Route::post('suppliers/quick-store', [SupplierController::class,'storeQuick'])->name('suppliers.storeQuick');
