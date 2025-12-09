@@ -2,65 +2,80 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchases\PurchaseRequest;
-use App\Models\Purchases\Supplier;
+use App\Models\PurchaseRequest;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class PurchaseRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $requests = PurchaseRequest::with('supplier')->paginate(10);
-        return view('purchase_requests.index', compact('requests'));
+        $q = $request->query('q');
+        $query = PurchaseRequest::with('supplier');
+
+        if ($q) {
+            $query->where('description', 'like', "%{$q}%")
+                  ->orWhereHas('supplier', function($q2) use ($q) {
+                      $q2->where('name','like',"%{$q}%");
+                  });
+        }
+
+        $requests = $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
+
+        return view('purchase_requests.index', compact('requests','q'));
     }
 
     public function create()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::orderBy('name')->get();
         return view('purchase_requests.create', compact('suppliers'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'description' => 'required',
+        $data = $request->validate([
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'description' => 'required|string',
             'date' => 'required|date',
-            'status' => 'required'
+            'status' => 'required|string',
         ]);
 
-        PurchaseRequest::create($validated);
+        PurchaseRequest::create($data);
 
-        return redirect()->route('purchase_requests.index')
-            ->with('success', 'Purchase request created successfully.');
+        return redirect()->route('purchase-requests.index')->with('success', 'Purchase request created.');
     }
 
-    public function edit(PurchaseRequest $purchase_request)
+    public function edit(PurchaseRequest $purchaseRequest)
     {
-        $suppliers = Supplier::all();
-        return view('purchase_requests.edit', compact('purchase_request', 'suppliers'));
+        $suppliers = Supplier::orderBy('name')->get();
+        return view('purchase_requests.edit', [
+            'purchaseRequest' => $purchaseRequest,
+            'suppliers' => $suppliers,
+        ]);
     }
 
-    public function update(Request $request, PurchaseRequest $purchase_request)
+    public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
-        $validated = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'description' => 'required',
+        $data = $request->validate([
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'description' => 'required|string',
             'date' => 'required|date',
-            'status' => 'required'
+            'status' => 'required|string',
         ]);
 
-        $purchase_request->update($validated);
+        $purchaseRequest->update($data);
 
-        return redirect()->route('purchase_requests.index')
-            ->with('success', 'Purchase request updated successfully.');
+        return redirect()->route('purchase-requests.index')->with('success', 'Purchase request updated.');
     }
 
-    public function destroy(PurchaseRequest $purchase_request)
+    public function show(PurchaseRequest $purchaseRequest)
     {
-        $purchase_request->delete();
+        return view('purchase_requests.show', compact('purchaseRequest'));
+    }
 
-        return redirect()->route('purchase_requests.index')
-            ->with('success', 'Purchase request deleted.');
+    public function destroy(PurchaseRequest $purchaseRequest)
+    {
+        $purchaseRequest->delete();
+        return redirect()->route('purchase-requests.index')->with('success', 'Deleted.');
     }
 }
