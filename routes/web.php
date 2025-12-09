@@ -15,11 +15,24 @@ use App\Http\Controllers\PurchaseRequestController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('purchase_requests.index');
+    return redirect()->route('dashboard');
 });
 
-// Supplier CRUD
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+/*
+| Suppliers
+*/
 Route::resource('suppliers', SupplierController::class);
 
-// Purchase Requests CRUD
-Route::resource('purchase_requests', PurchaseRequestController::class);
+/*
+| Purchase Requests
+*/
+Route::resource('purchase-requests', PurchaseRequestController::class);
+
+/*
+| AJAX endpoint to create supplier quickly from modal
+*/
+Route::post('/suppliers-quick', [SupplierController::class, 'storeQuick'])->name('suppliers.storeQuick');
