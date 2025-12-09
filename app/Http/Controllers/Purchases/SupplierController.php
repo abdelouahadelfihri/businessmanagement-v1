@@ -14,16 +14,16 @@ class SupplierController extends Controller
         $query = Supplier::query();
 
         if ($q) {
-            $query->where(function($q2) use ($q) {
+            $query->where(function ($q2) use ($q) {
                 $q2->where('name', 'like', "%{$q}%")
-                   ->orWhere('email', 'like', "%{$q}%")
-                   ->orWhere('phone', 'like', "%{$q}%");
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('phone', 'like', "%{$q}%");
             });
         }
 
         $suppliers = $query->orderBy('name')->paginate(10)->withQueryString();
 
-        return view('suppliers.index', compact('suppliers','q'));
+        return view('suppliers.index', compact('suppliers', 'q'));
     }
 
     public function create()
@@ -45,25 +45,6 @@ class SupplierController extends Controller
         return redirect()->route('suppliers.index')->with('success', 'Supplier added.');
     }
 
-    // Quick store used by AJAX modal
-    public function storeQuick(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string|max:1000',
-        ]);
-
-        $supplier = Supplier::create($data);
-
-        // return minimal JSON for the frontend
-        return response()->json([
-            'success' => true,
-            'supplier' => $supplier->only(['id','name','email','phone','address']),
-        ]);
-    }
-
     public function show(Supplier $supplier)
     {
         return view('suppliers.show', compact('supplier'));
@@ -77,7 +58,7 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier)
     {
         $data = $request->validate([
-            'name' => ['required','string','max:255', Rule::unique('suppliers')->ignore($supplier->id)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('suppliers')->ignore($supplier->id)],
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:1000',
@@ -94,4 +75,22 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.index')->with('success', 'Supplier deleted.');
     }
+
+    public function storeQuick(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:500',
+        ]);
+
+        $supplier = \App\Models\Supplier::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'supplier' => $supplier
+        ]);
+    }
+
 }
