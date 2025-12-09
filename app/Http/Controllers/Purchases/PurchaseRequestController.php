@@ -1,61 +1,66 @@
 <?php
 
-namespace App\Http\Controllers\Purchase;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Purchase\PurchaseRequest;
+use App\Models\Purchases\PurchaseRequest;
+use App\Models\Purchases\Supplier;
 use Illuminate\Http\Request;
 
 class PurchaseRequestController extends Controller
 {
-    // GET /purchase-requests
     public function index()
     {
-        return response()->json(PurchaseRequest::all());
+        $requests = PurchaseRequest::with('supplier')->paginate(10);
+        return view('purchase_requests.index', compact('requests'));
     }
 
-    // POST /purchase-requests
+    public function create()
+    {
+        $suppliers = Supplier::all();
+        return view('purchase_requests.create', compact('suppliers'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'description' => 'required|string',
-            'date'        => 'required|date',
-            'status'      => 'nullable|string'
+            'supplier_id' => 'required|exists:suppliers,id',
+            'description' => 'required',
+            'date' => 'required|date',
+            'status' => 'required'
         ]);
 
-        $purchaseRequest = PurchaseRequest::create($validated);
+        PurchaseRequest::create($validated);
 
-        return response()->json($purchaseRequest, 201);
+        return redirect()->route('purchase_requests.index')
+            ->with('success', 'Purchase request created successfully.');
     }
 
-    // GET /purchase-requests/{id}
-    public function show($id)
+    public function edit(PurchaseRequest $purchase_request)
     {
-        return response()->json(PurchaseRequest::findOrFail($id));
+        $suppliers = Supplier::all();
+        return view('purchase_requests.edit', compact('purchase_request', 'suppliers'));
     }
 
-    // PUT/PATCH /purchase-requests/{id}
-    public function update(Request $request, $id)
+    public function update(Request $request, PurchaseRequest $purchase_request)
     {
-        $purchaseRequest = PurchaseRequest::findOrFail($id);
-
         $validated = $request->validate([
-            'description' => 'sometimes|string',
-            'date'        => 'sometimes|date',
-            'status'      => 'sometimes|string'
+            'supplier_id' => 'required|exists:suppliers,id',
+            'description' => 'required',
+            'date' => 'required|date',
+            'status' => 'required'
         ]);
 
-        $purchaseRequest->update($validated);
+        $purchase_request->update($validated);
 
-        return response()->json($purchaseRequest);
+        return redirect()->route('purchase_requests.index')
+            ->with('success', 'Purchase request updated successfully.');
     }
 
-    // DELETE /purchase-requests/{id}
-    public function destroy($id)
+    public function destroy(PurchaseRequest $purchase_request)
     {
-        $purchaseRequest = PurchaseRequest::findOrFail($id);
-        $purchaseRequest->delete();
+        $purchase_request->delete();
 
-        return response()->json(['message' => 'Deleted successfully']);
+        return redirect()->route('purchase_requests.index')
+            ->with('success', 'Purchase request deleted.');
     }
 }
