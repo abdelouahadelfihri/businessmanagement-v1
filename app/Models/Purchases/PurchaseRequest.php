@@ -22,13 +22,7 @@ class PurchaseRequest extends Model
     // Relationship to Supplier
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id');
+        return $this->belongsTo(Supplier::class);
     }
 
-    // Optional: Relationship to purchase orders
-    public function purchaseOrders()
-    {
-        return $this->hasMany(PurchaseOrder::class, 'request_id');
-    }
-    
 }
