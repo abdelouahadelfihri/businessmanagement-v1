@@ -1,33 +1,38 @@
-@extends('layouts.app')
-
-@section('content')
-
 <h2>Create Purchase Request</h2>
 
-<form id="requestForm">
-    <input type="hidden" name="supplier_id" id="supplier_id" value="{{ request('supplier_id') }}">
+<form action="{{ route('purchase_requests.store') }}" method="POST">
+    @csrf
 
-    <div class="mb-3">
-        <label>Supplier:</label>
-        <div class="d-flex">
-            <input type="text"
-                   id="supplier_name"
-                   class="form-control"
-                   disabled
-                   value="{{ request('supplier_name') }}">
-            <a href="{{ route('suppliers.select', ['redirect' => 'requests.create']) }}"
-               class="btn btn-primary ms-2">
-                Select Supplier
-            </a>
-        </div>
-    </div>
+    <label>Supplier</label>
+    @if ($suppliers->count() > 0)
+        <select name="supplier_id" required>
+            <option value="">-- choose supplier --</option>
+            @foreach ($suppliers as $s)
+                <option value="{{ $s->id }}">{{ $s->name }}</option>
+            @endforeach
+        </select>
+    @else
+        <p>No suppliers found.</p>
+    @endif
 
-    <div class="mb-3">
-        <label>Description</label>
-        <input name="description" class="form-control">
-    </div>
+    <!-- Add supplier button -->
+    <a href="{{ route('suppliers.create', ['return_to' => url()->current()]) }}">
+        Add new supplier
+    </a>
 
-    <button class="btn btn-success">Save</button>
+    <br><br>
+
+    <label>Description</label>
+    <textarea name="description" required></textarea>
+
+    <label>Date</label>
+    <input type="date" name="date" required>
+
+    <label>Status</label>
+    <select name="status" required>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+    </select>
+
+    <button type="submit">Save</button>
 </form>
-
-@endsection
