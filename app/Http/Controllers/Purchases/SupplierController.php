@@ -2,43 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchases\Supplier;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::paginate(10);
-        return view('suppliers.index', compact('suppliers'));
+        $q = $request->query('q');
+        $query = Supplier::query();
+
+        if ($q) {
+            $query->where(function($q2) use ($q) {
+                $q2->where('name', 'like', "%{$q}%")
+                   ->orWhere('email', 'like', "%{$q}%")
+                   ->orWhere('phone', 'like', "%{$q}%");
+            });
+        }
+
+        $suppliers = $query->orderBy('name')->paginate(10)->withQueryString();
+
+        return view('suppliers.index', compact('suppliers','q'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
-        // to be able to return back to purchase request form
-        $returnTo = $request->return_to;
-        return view('suppliers.create', compact('returnTo'));
+        return view('suppliers.create');
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'nullable|email',
-            'phone' => 'nullable',
-            'address' => 'nullable',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:1000',
         ]);
 
-        $supplier = Supplier::create($validated);
+        $supplier = Supplier::create($data);
 
-        // If we came from a purchase request form → return back there
-        if ($request->return_to) {
-            return redirect()->to($request->return_to)
-                ->with('supplier_added', $supplier->id);
-        }
+        return redirect()->route('suppliers.index')->with('success', 'Supplier added.');
+    }
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier created successfully.');
+    // Quick store used by AJAX modal
+    public function storeQuick(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:1000',
+        ]);
+
+        $supplier = Supplier::create($data);
+
+        // return minimal JSON for the frontend
+        return response()->json([
+            'success' => true,
+            'supplier' => $supplier->only(['id','name','email','phone','address']),
+        ]);
+    }
+
+    public function show(Supplier $supplier)
+    {
+        return view('suppliers.show', compact('supplier'));
     }
 
     public function edit(Supplier $supplier)
@@ -48,24 +76,22 @@ class SupplierController extends Controller
 
     public function update(Request $request, Supplier $supplier)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'nullable|email',
-            'phone' => 'nullable',
-            'address' => 'nullable',
+        $data = $request->validate([
+            'name' => ['required','string','max:255', Rule::unique('suppliers')->ignore($supplier->id)],
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:1000',
         ]);
 
-        $supplier->update($validated);
+        $supplier->update($data);
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier updated successfully.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
     }
 
     public function destroy(Supplier $supplier)
     {
         $supplier->delete();
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier deleted.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier deleted.');
     }
 }
