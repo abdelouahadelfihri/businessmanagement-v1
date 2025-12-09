@@ -29,10 +29,7 @@
       <button type="button" class="btn btn-outline-secondary" id="openSuppliersList" title="Open suppliers list to pick">Pick</button>
       <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">Add Supplier</button>
     </div>
-
-    @error('supplier_id')
-      <div class="text-danger small">{{ $message }}</div>
-    @enderror
+    @error('supplier_id')<div class="text-danger small">{{ $message }}</div>@enderror
   </div>
 
   <div class="mb-3">
@@ -62,12 +59,11 @@
 
   <div class="d-flex gap-2">
     <button class="btn btn-primary">Save changes</button>
-
     <button type="button" class="btn btn-outline-danger" id="showDeleteBtn">Delete</button>
   </div>
 </form>
 
-<!-- Add Supplier Modal (AJAX: POST to suppliers.storeQuick) -->
+<!-- Add Supplier Modal -->
 <div class="modal fade" id="addSupplierModal" tabindex="-1">
   <div class="modal-dialog">
     <form id="addSupplierForm" class="modal-content">
@@ -104,7 +100,7 @@
   </div>
 </div>
 
-<!-- Delete confirmation modal for purchase request -->
+<!-- Delete confirmation modal -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
   <div class="modal-dialog">
     <form id="deleteRequestForm" method="POST" action="{{ route('purchase-requests.destroy', $purchaseRequest) }}">
@@ -126,38 +122,30 @@
 
 @push('scripts')
 <script>
-  // Open suppliers list in small popup so user can pick one (the suppliers.index has JS to postMessage or use window.opener).
+  // Open supplier list popup to pick
   document.getElementById('openSuppliersList').addEventListener('click', function(e){
     e.preventDefault();
     const w = window.open("{{ route('suppliers.index') }}?popup=1", "suppliers_pick", "width=900,height=700");
-    // define a global receive function if the child uses window.opener
     window.receivePickedSupplier = function(supplier){
-      // supplier: {id, name}
       const sel = document.getElementById('supplierSelect');
-      // if supplier exists in select, select it; otherwise add it
       let option = sel.querySelector('option[value="'+supplier.id+'"]');
-      if (!option) {
+      if(!option){
         option = document.createElement('option');
         option.value = supplier.id;
         option.text = supplier.name;
         sel.appendChild(option);
       }
       sel.value = supplier.id;
-      // optionally close the popup if still open
-      if (w && !w.closed) w.close();
+      if(w && !w.closed) w.close();
     };
-
-    // Also listen to postMessage from child
     window.addEventListener('message', function(ev){
-      if (!ev.data) return;
-      if (ev.data.type === 'supplier-picked') {
-        const s = ev.data.supplier;
-        window.receivePickedSupplier(s);
+      if(ev.data?.type==='supplier-picked'){
+        window.receivePickedSupplier(ev.data.supplier);
       }
-    }, {once: false});
+    });
   });
 
-  // AJAX: add supplier from modal
+  // AJAX Add supplier
   (function(){
     const addForm = document.getElementById('addSupplierForm');
     const modalEl = document.getElementById('addSupplierModal');
@@ -168,59 +156,36 @@
       const submitBtn = addForm.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       document.getElementById('addSupplierAlert').innerHTML = '';
-
       try {
-        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const res = await fetch("{{ route('suppliers.storeQuick') }}", {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': token,
-            'Accept': 'application/json'
-          },
+          method:'POST',
+          headers:{'X-CSRF-TOKEN':token,'Accept':'application/json'},
           body: formData
         });
         const data = await res.json();
-        if (res.ok && data.success) {
-          // insert new option into select and select it
+        if(res.ok && data.success){
           const sel = document.getElementById('supplierSelect');
           const opt = document.createElement('option');
           opt.value = data.supplier.id;
           opt.text = data.supplier.name;
           sel.appendChild(opt);
           sel.value = data.supplier.id;
-
-          // close modal
           bsModal.hide();
         } else {
-          // show errors
           let html = '<div class="alert alert-danger">';
-          if (data.errors) {
-            html += '<ul class="mb-0">';
-            Object.values(data.errors).forEach(arr=>{
-              arr.forEach(m => html += `<li>${m}</li>`);
-            });
-            html += '</ul>';
-          } else if (data.message) {
-            html += data.message;
-          } else {
-            html += 'Could not create supplier.';
-          }
-          html += '</div>';
+          if(data.errors){html+='<ul>';Object.values(data.errors).forEach(arr=>arr.forEach(m=>html+=`<li>${m}</li>`));html+='</ul>'}
+          else html += data.message||'Could not create supplier.';
+          html+='</div>';
           document.getElementById('addSupplierAlert').innerHTML = html;
         }
-      } catch (err) {
-        document.getElementById('addSupplierAlert').innerHTML = '<div class="alert alert-danger">Network error.</div>';
-      } finally {
-        submitBtn.disabled = false;
-      }
+      } catch(err){document.getElementById('addSupplierAlert').innerHTML='<div class="alert alert-danger">Network error.</div>';}
+      finally{submitBtn.disabled=false;}
     });
   })();
 
-  // Delete purchase-request
-  document.getElementById('showDeleteBtn').addEventListener('click', function() {
-    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    modal.show();
-  });
+  // Delete modal
+  document.getElementById('showDeleteBtn').addEventListener('click', ()=>bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteConfirmModal')).show());
 </script>
 @endpush
 @endsection
