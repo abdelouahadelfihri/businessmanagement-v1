@@ -15,14 +15,14 @@ class PurchaseRequestController extends Controller
 
         if ($q) {
             $query->where('description', 'like', "%{$q}%")
-                  ->orWhereHas('supplier', function($q2) use ($q) {
-                      $q2->where('name','like',"%{$q}%");
-                  });
+                ->orWhereHas('supplier', function ($q2) use ($q) {
+                    $q2->where('name', 'like', "%{$q}%");
+                });
         }
 
         $requests = $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
 
-        return view('purchase_requests.index', compact('requests','q'));
+        return view('purchase_requests.index', compact('requests', 'q'));
     }
 
     public function create()
@@ -48,10 +48,7 @@ class PurchaseRequestController extends Controller
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchase_requests.edit', [
-            'purchaseRequest' => $purchaseRequest,
-            'suppliers' => $suppliers,
-        ]);
+        return view('purchase_requests.edit', compact('purchaseRequest', 'suppliers'));
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
@@ -78,4 +75,5 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->delete();
         return redirect()->route('purchase-requests.index')->with('success', 'Deleted.');
     }
+
 }
