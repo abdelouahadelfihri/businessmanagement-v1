@@ -13,14 +13,14 @@ class PurchaseRequestController extends Controller
     public function index()
     {
         $purchaseRequests = PurchaseRequest::with('supplier')->orderBy('date','desc')->get();
-        return view('purchase_requests.index', compact('purchaseRequests'));
+        return view('pages.requests.index', compact('purchaseRequests'));
     }
 
     // Show create form
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchase_requests.create', compact('suppliers'));
+        return view('pages.requests.create', compact('suppliers'));
     }
 
     // Store new request
@@ -41,7 +41,7 @@ class PurchaseRequestController extends Controller
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchase_requests.edit', compact('purchaseRequest','suppliers'));
+        return view('pages.requests.edit', compact('purchaseRequest','suppliers'));
     }
 
     // Update request
