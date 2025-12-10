@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Purchases;
 
 use App\Models\Purchases\Supplier;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class SupplierController extends Controller
 {
