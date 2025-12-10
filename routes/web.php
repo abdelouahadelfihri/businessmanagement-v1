@@ -52,9 +52,9 @@ Route::prefix('sales')->name('sales.')->group(function () {
 // -------------------------------------------------------
 // 📦 INVENTORY MODULE
 // -------------------------------------------------------
-use App\Http\Controllers\Inventory\ProductController;
-use App\Http\Controllers\Inventory\CategoryController;
-use App\Http\Controllers\Inventory\StockMovementController;
+use App\Http\Controllers\MasterData\ProductController;
+use App\Http\Controllers\MasterData\CategoryController;
+use App\Http\Controllers\MasterData\StockMovementController;
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
 
