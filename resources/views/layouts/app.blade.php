@@ -50,8 +50,8 @@
                         <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseRequestsMenu">Purchase Requests</a>
                             <div class="collapse" id="purchaseRequestsMenu">
                                 <ul class="nav flex-column submenu">
-                                    <li><a class="nav-link text-white" href="{{ route('purchases.requests.list') }}">List</a></li>
-                                    <li><a class="nav-link text-white" href="{{ route('purchases.requests.add') }}">Add</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('pages.purchases.requests.index') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('pages.purchases.requests.create') }}">Add</a></li>
                                 </ul>
                             </div>
                         </li>
