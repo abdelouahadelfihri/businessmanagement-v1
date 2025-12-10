@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PurchaseRequest;
-use App\Models\Supplier;
+use App\Models\Purchases\PurchaseRequest;
+use App\Models\Purchases\Supplier;
 use Illuminate\Http\Request;
 
 class PurchaseRequestController extends Controller
