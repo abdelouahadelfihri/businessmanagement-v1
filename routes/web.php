@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\Purchases\SupplierController;
+use App\Http\Controllers\Purchases\PurchaseRequestController;
 
 /*
 |--------------------------------------------------------------------------
