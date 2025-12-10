@@ -13,13 +13,15 @@ class CreateStockMovementsTable extends Migration
 
             // Product concerned
             $table->foreignId('product_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+                  ->constrained('products')
+                  ->onDelete('cascade');
 
             // Warehouse where the movement happens
-            $table->foreignId('warehouse_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+            $table->unsignedInteger('warehouse_id');
+            $table->foreign('warehouse_id')
+                  ->references('id')
+                  ->on('warehouses')
+                  ->onDelete('cascade');
 
             // Movement type: in, out, transfer_in, transfer_out, adjustment
             $table->enum('type', [
