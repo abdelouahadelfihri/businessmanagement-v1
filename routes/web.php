@@ -39,13 +39,13 @@ Route::prefix('purchases')->name('purchases.')->group(function () {
 // -------------------------------------------------------
 use App\Http\Controllers\Sales\CustomerController;
 use App\Http\Controllers\Sales\SalesQuoteController;
-use App\Http\Controllers\Sales\InvoiceController;
+use App\Http\Controllers\Sales\SalesInvoiceController;
 
 Route::prefix('sales')->name('sales.')->group(function () {
 
     Route::resource('customers', CustomerController::class);
     Route::resource('quotations', SalesQuoteController::class);
-    Route::resource('invoices', InvoiceController::class);
+    Route::resource('invoices', SalesInvoiceController::class);
 });
 
 
