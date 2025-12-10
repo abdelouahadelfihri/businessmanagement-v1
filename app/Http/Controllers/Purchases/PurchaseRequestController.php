@@ -13,14 +13,14 @@ class PurchaseRequestController extends Controller
     public function index()
     {
         $purchaseRequests = PurchaseRequest::with('supplier')->orderBy('date','desc')->get();
-        return view('pages.requests.index', compact('purchaseRequests'));
+        return view('pages.purchases.requests.index', compact('purchaseRequests'));
     }
 
     // Show create form
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('pages.requests.create', compact('suppliers'));
+        return view('pages.purchases.requests.create', compact('suppliers'));
     }
 
     // Store new request
@@ -34,14 +34,14 @@ class PurchaseRequestController extends Controller
         ]);
 
         PurchaseRequest::create($validated);
-        return redirect()->route('purchase-requests.index')->with('success','Purchase request created successfully.');
+        return redirect()->route('pages.purchases.requests.index')->with('success','Purchase request created successfully.');
     }
 
     // Show edit form
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('pages.requests.edit', compact('purchaseRequest','suppliers'));
+        return view('pages.purchases.requests.edit', compact('purchaseRequest','suppliers'));
     }
 
     // Update request
@@ -55,13 +55,13 @@ class PurchaseRequestController extends Controller
         ]);
 
         $purchaseRequest->update($validated);
-        return redirect()->route('purchase-requests.index')->with('success','Purchase request updated successfully.');
+        return redirect()->route('pages.purchases.requests.index')->with('success','Purchase request updated successfully.');
     }
 
     // Delete request
     public function destroy(PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->delete();
-        return redirect()->route('purchase-requests.index')->with('success','Purchase request deleted successfully.');
+        return redirect()->route('pages.purchases.requests.index')->with('success','Purchase request deleted successfully.');
     }
 }
