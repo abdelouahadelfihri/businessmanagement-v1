@@ -69,9 +69,9 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
 // -------------------------------------------------------
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Settings\RoleController;
-
+/*
 Route::prefix('settings')->name('settings.')->group(function () {
 
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
-});
+});*/
