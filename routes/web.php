@@ -54,13 +54,13 @@ Route::prefix('sales')->name('sales.')->group(function () {
 // -------------------------------------------------------
 use App\Http\Controllers\MasterData\ProductController;
 use App\Http\Controllers\MasterData\CategoryController;
-use App\Http\Controllers\MasterData\StockMovementController;
+//use App\Http\Controllers\MasterData\StockMovementController;
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
 
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
-    Route::resource('stock-movements', StockMovementController::class);
+    //Route::resource('stock-movements', StockMovementController::class);
 });
 
 
