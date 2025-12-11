@@ -1,71 +1,78 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Purchase Order')
-
 @section('content')
-<h1>Edit Purchase Order</h1>
+<div class="container mt-4">
 
-<form id="editPurchaseOrderForm">
-    @csrf
-    <input type="hidden" id="order_id" value="{{ $order->id }}">
+    <h1 class="mb-4">Edit Purchase Order #{{ $purchaseOrder->id }}</h1>
 
-    <div class="mb-3">
-        <label for="supplier_id" class="form-label">Supplier ID</label>
-        <input type="number" class="form-control" id="supplier_id" name="supplier_id" value="{{ $order->supplier_id }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="request_id" class="form-label">Purchase Request ID (optional)</label>
-        <input type="number" class="form-control" id="request_id" name="request_id" value="{{ $order->request_id }}">
-    </div>
-    <div class="mb-3">
-        <label for="order_date" class="form-label">Order Date (timestamp)</label>
-        <input type="number" class="form-control" id="order_date" name="order_date" value="{{ $order->order_date }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="status" class="form-label">Status</label>
-        <input type="text" class="form-control" id="status" name="status" value="{{ $order->status }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="total_amount" class="form-label">Total Amount</label>
-        <input type="number" step="0.01" class="form-control" id="total_amount" name="total_amount" value="{{ $order->total_amount }}" required>
-    </div>
-    <button type="submit" class="btn btn-success">Update Purchase Order</button>
-</form>
+    <a class="btn btn-secondary mb-3"
+       href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
+       Pick Supplier
+    </a>
 
-<div id="message" class="mt-3"></div>
+    <a class="btn btn-secondary mb-3"
+       href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
+       Pick Purchase Request
+    </a>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-3">
+                    <label class="form-label">Supplier</label>
+                    <select name="supplier_id" id="supplier_id" class="form-select" required>
+                        @foreach($suppliers as $s)
+                            <option value="{{ $s->id }}" 
+                                {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
+                                {{ $s->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Purchase Request</label>
+                    <select name="purchase_request_id" id="request_id" class="form-select" required>
+                        @foreach($requests as $r)
+                            <option value="{{ $r->id }}" 
+                                {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
+                                {{ $r->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Order Date</label>
+                    <input type="date" name="order_date" 
+                           class="form-control"
+                           value="{{ $purchaseOrder->order_date }}" required>
+                </div>
+
+                <button class="btn btn-primary">Update</button>
+                <a class="btn btn-secondary ms-2" href="{{ route('purchase-orders.index') }}">Back</a>
+
+            </form>
+        </div>
+    </div>
+
+</div>
 
 <script>
-document.getElementById('editPurchaseOrderForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function() {
+    const params = new URLSearchParams(window.location.search);
 
-    const orderId = document.getElementById('order_id').value;
-
-    const formData = {
-        supplier_id: document.getElementById('supplier_id').value,
-        request_id: document.getElementById('request_id').value,
-        order_date: document.getElementById('order_date').value,
-        status: document.getElementById('status').value,
-        total_amount: document.getElementById('total_amount').value,
-    };
-
-    try {
-        const response = await fetch(`/api/purchase-orders/${orderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify(formData)
-        });
-
-        const data = await response.json();
-        document.getElementById('message').innerText = 'Purchase Order updated successfully!';
-        console.log(data);
-    } catch (error) {
-        document.getElementById('message').innerText = 'Error updating Purchase Order.';
-        console.error(error);
+    if (params.get("selected_supplier_id")) {
+        document.getElementById("supplier_id").value = params.get("selected_supplier_id");
+    }
+    if (params.get("selected_request_id")) {
+        document.getElementById("request_id").value = params.get("selected_request_id");
     }
 });
 </script>
+
 @endsection
