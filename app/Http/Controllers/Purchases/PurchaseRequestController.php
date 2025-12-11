@@ -1,67 +1,50 @@
 <?php
-
-namespace App\Http\Controllers\Purchases;
+namespace App\Http\Controllers;
 
 use App\Models\Purchases\PurchaseRequest;
-use App\Models\Purchases\Supplier;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PurchaseRequestController extends Controller
 {
-    // List all requests
-    public function index()
+    public function index(Request $request)
     {
-        $purchaseRequests = PurchaseRequest::with('supplier')->orderBy('date','desc')->get();
-        return view('pages.purchases.requests.index', compact('purchaseRequests'));
+        $requests = PurchaseRequest::paginate(12);
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('purchase_requests.index', compact('requests','selectFor','returnUrl'));
     }
 
-    // Show create form
-    public function create()
+    public function create(Request $request)
     {
-        $suppliers = Supplier::orderBy('name')->get();
-        return view('pages.purchases.requests.create', compact('suppliers'));
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('purchase_requests.create', compact('selectFor','returnUrl'));
     }
 
-    // Store new request
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'supplier_id'=>'nullable|exists:suppliers,id',
-            'description'=>'required|string|max:1000',
-            'date'=>'required|date',
-            'status'=>'required|in:draft,submitted,approved,rejected',
-        ]);
+        $data = $request->validate(['title'=>'required|string|max:255']);
+        $req = PurchaseRequest::create($data);
 
-        PurchaseRequest::create($validated);
-        return redirect()->route('pages.purchases.requests.index')->with('success','Purchase request created successfully.');
+        if ($request->filled('select_for') && $request->filled('return_url')) {
+            $return = $request->input('return_url') . '?selected_request_id=' . $req->id;
+            return redirect($return);
+        }
+
+        return redirect()->route('purchase-requests.index')->with('success','Request created.');
     }
 
-    // Show edit form
     public function edit(PurchaseRequest $purchaseRequest)
     {
-        $suppliers = Supplier::orderBy('name')->get();
-        return view('pages.purchases.requests.edit', compact('purchaseRequest','suppliers'));
+        return view('purchase_requests.edit', ['request' => $purchaseRequest]);
     }
 
-    // Update request
     public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
-        $validated = $request->validate([
-            'supplier_id'=>'nullable|exists:suppliers,id',
-            'description'=>'required|string|max:1000',
-            'date'=>'required|date',
-            'status'=>'required|in:draft,submitted,approved,rejected',
-        ]);
-
-        $purchaseRequest->update($validated);
-        return redirect()->route('pages.purchases.requests.index')->with('success','Purchase request updated successfully.');
-    }
-
-    // Delete request
-    public function destroy(PurchaseRequest $purchaseRequest)
-    {
-        $purchaseRequest->delete();
-        return redirect()->route('pages.purchases.requests.index')->with('success','Purchase request deleted successfully.');
+        $data = $request->validate(['title'=>'required|string|max:255']);
+        $purchaseRequest->update($data);
+        return redirect()->route('purchase-requests.index')->with('success','Request updated.');
     }
 }
