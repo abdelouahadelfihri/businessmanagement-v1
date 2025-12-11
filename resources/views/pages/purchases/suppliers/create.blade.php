@@ -3,17 +3,12 @@
 @section('content')
 <div class="container mt-4">
 
-    <h2>Add Supplier</h2>
+    <h1 class="mb-4">Create Supplier</h1>
 
-    <div class="card mt-3">
+    <div class="card shadow-sm">
         <div class="card-body">
-
             <form action="{{ route('suppliers.store') }}" method="POST">
                 @csrf
-
-                @if(isset($returnTo))
-                    <input type="hidden" name="return_to" value="{{ $returnTo }}">
-                @endif
 
                 <div class="mb-3">
                     <label class="form-label">Name</label>
@@ -21,23 +16,20 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Email</label>
+                    <label class="form-label">Email (optional)</label>
                     <input type="email" name="email" class="form-control">
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Phone</label>
-                    <input type="text" name="phone" class="form-control">
-                </div>
+                <input type="hidden" name="select_for" value="{{ request('select_for') }}">
+                <input type="hidden" name="return_url" value="{{ request('return_url') }}">
 
-                <div class="mb-3">
-                    <label class="form-label">Address</label>
-                    <textarea name="address" class="form-control"></textarea>
-                </div>
+                <button class="btn btn-primary">Save</button>
 
-                <button class="btn btn-success">Save</button>
+                @if(request('return_url'))
+                    <a href="{{ request('return_url') }}" class="btn btn-secondary ms-2">Cancel & Return</a>
+                @endif
+
             </form>
-
         </div>
     </div>
 
