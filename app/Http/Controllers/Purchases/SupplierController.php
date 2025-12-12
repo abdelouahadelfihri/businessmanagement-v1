@@ -1,82 +1,64 @@
 <?php
-
-namespace App\Http\Controllers\Purchases;
+namespace App\Http\Controllers;
 
 use App\Models\Purchases\Supplier;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class SupplierController extends Controller
 {
-    // List suppliers (support popup mode)
     public function index(Request $request)
     {
-        $suppliers = Supplier::orderBy('name')->get();
-        return view('suppliers.index', compact('suppliers'));
+        $suppliers = Supplier::paginate(12); // paginate for big lists
+
+        // selection mode params (if opened from PO)
+        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
+        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
+
+        return view('suppliers.index', compact('suppliers','selectFor','returnUrl'));
     }
 
-    // Show create form
-    public function create()
+    public function create(Request $request)
     {
-        return view('suppliers.create');
+        // pass along selection params so create view can return to PO after saving
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('suppliers.create', compact('selectFor','returnUrl'));
     }
 
-    // Store supplier (standard)
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name'=>'required|string|max:255',
-            'email'=>'nullable|email|max:255',
-            'phone'=>'nullable|string|max:50',
-            'address'=>'nullable|string|max:500',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        Supplier::create($validated);
-        return redirect()->route('suppliers.index')->with('success','Supplier created successfully.');
+        $supplier = Supplier::create($data);
+
+        // If created from a selection flow, redirect back to caller with new id
+        if ($request->filled('select_for') && $request->filled('return_url')) {
+            // append query param and redirect to return_url
+            $return = $request->input('return_url') . '?selected_supplier_id=' . $supplier->id;
+            return redirect($return);
+        }
+
+        return redirect()->route('suppliers.index')->with('success','Supplier created.');
     }
 
-    // Store supplier quickly (AJAX from modal)
-    public function storeQuick(Request $request)
-    {
-        $validated = $request->validate([
-            'name'=>'required|string|max:255',
-            'email'=>'nullable|email|max:255',
-            'phone'=>'nullable|string|max:50',
-            'address'=>'nullable|string|max:500',
-        ]);
-
-        $supplier = Supplier::create($validated);
-
-        return response()->json([
-            'success'=>true,
-            'supplier'=>$supplier
-        ]);
-    }
-
-    // Show edit form
     public function edit(Supplier $supplier)
     {
         return view('suppliers.edit', compact('supplier'));
     }
 
-    // Update supplier
     public function update(Request $request, Supplier $supplier)
     {
-        $validated = $request->validate([
-            'name'=>'required|string|max:255',
-            'email'=>'nullable|email|max:255',
-            'phone'=>'nullable|string|max:50',
-            'address'=>'nullable|string|max:500',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $supplier->update($validated);
-        return redirect()->route('suppliers.index')->with('success','Supplier updated successfully.');
-    }
+        $supplier->update($data);
 
-    // Delete supplier
-    public function destroy(Supplier $supplier)
-    {
-        $supplier->delete();
-        return redirect()->route('suppliers.index')->with('success','Supplier deleted successfully.');
+        return redirect()->route('suppliers.index')->with('success','Supplier updated.');
     }
 }
