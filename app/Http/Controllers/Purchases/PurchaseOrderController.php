@@ -1,10 +1,11 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Purchases;
 
 use App\Models\Purchases\PurchaseOrder;
 use App\Models\Purchases\Supplier;
 use App\Models\Purchases\PurchaseRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PurchaseOrderController extends Controller
 {

@@ -1,8 +1,9 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Purchases;
 
 use App\Models\Purchases\PurchaseRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PurchaseRequestController extends Controller
 {
@@ -12,7 +13,7 @@ class PurchaseRequestController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('purchase_requests.index', compact('requests','selectFor','returnUrl'));
+        return view('index', compact('requests','selectFor','returnUrl'));
     }
 
     public function create(Request $request)
