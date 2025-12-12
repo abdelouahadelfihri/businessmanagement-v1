@@ -21,7 +21,7 @@ class PurchaseRequestController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('purchase_requests.create', compact('selectFor','returnUrl'));
+        return view('purchasesrequests.create', compact('selectFor','returnUrl'));
     }
 
     public function store(Request $request)
@@ -39,7 +39,7 @@ class PurchaseRequestController extends Controller
 
     public function edit(PurchaseRequest $purchaseRequest)
     {
-        return view('purchase_requests.edit', ['request' => $purchaseRequest]);
+        return view('purchasesrequests.edit', ['request' => $purchaseRequest]);
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
