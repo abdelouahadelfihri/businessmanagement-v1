@@ -12,7 +12,7 @@ class PurchaseOrderController extends Controller
     public function index()
     {
         $orders = PurchaseOrder::with(['supplier','purchaseRequest'])->paginate(12);
-        return view('purchase_orders.index', compact('orders'));
+        return view('purchasesorders.index', compact('orders'));
     }
 
     public function create(Request $request)
@@ -24,7 +24,7 @@ class PurchaseOrderController extends Controller
         $selectedSupplierId = $request->query('selected_supplier_id') ?? null;
         $selectedRequestId  = $request->query('selected_request_id') ?? null;
 
-        return view('purchase_orders.create', compact(
+        return view('purchasesorders.create', compact(
             'suppliers','requests','selectedSupplierId','selectedRequestId'
         ));
     }
@@ -52,7 +52,7 @@ class PurchaseOrderController extends Controller
         $selectedSupplierId = $request->query('selected_supplier_id') ?? $purchaseOrder->supplier_id;
         $selectedRequestId  = $request->query('selected_request_id') ?? $purchaseOrder->purchase_request_id;
 
-        return view('purchase_orders.edit', compact(
+        return view('purchasesorders.edit', compact(
             'purchaseOrder','suppliers','requests','selectedSupplierId','selectedRequestId'
         ));
     }
