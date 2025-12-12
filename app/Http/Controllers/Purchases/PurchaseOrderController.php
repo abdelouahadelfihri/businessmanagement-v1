@@ -1,63 +1,71 @@
 <?php
+namespace App\Http\Controllers;
 
-namespace App\Http\Controllers\Purchases;
-
-use App\Http\Controllers\Controller;
 use App\Models\Purchases\PurchaseOrder;
+use App\Models\Purchases\Supplier;
+use App\Models\Purchases\PurchaseRequest;
 use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
 {
-    // GET /api/purchase-orders
     public function index()
     {
-        return PurchaseOrder::with(['supplier', 'request'])->get();
+        $orders = PurchaseOrder::with(['supplier','purchaseRequest'])->paginate(12);
+        return view('purchase_orders.index', compact('orders'));
     }
 
-    // POST /api/purchase-orders
+    public function create(Request $request)
+    {
+        $suppliers = Supplier::all();
+        $requests  = PurchaseRequest::all();
+
+        // Optional preselected ids passed by supplier/request index create/select
+        $selectedSupplierId = $request->query('selected_supplier_id') ?? null;
+        $selectedRequestId  = $request->query('selected_request_id') ?? null;
+
+        return view('purchase_orders.create', compact(
+            'suppliers','requests','selectedSupplierId','selectedRequestId'
+        ));
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-            'request_id' => 'nullable|exists:purchase_requests,id',
-            'order_date' => 'required|integer',
-            'status' => 'required|string',
-            'total_amount' => 'required|numeric',
+            'purchase_request_id' => 'required|exists:purchase_requests,id',
+            'order_date' => 'required|date',
+            // add more rules as needed
         ]);
 
-        return PurchaseOrder::create($data);
+        PurchaseOrder::create($data);
+
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase order created.');
     }
 
-    // GET /api/purchase-orders/{id}
-    public function show($id)
+    public function edit(PurchaseOrder $purchaseOrder, Request $request)
     {
-        return PurchaseOrder::with(['supplier', 'request'])->findOrFail($id);
+        $suppliers = Supplier::all();
+        $requests  = PurchaseRequest::all();
+
+        // If selection redirects back from index, read selected id from query
+        $selectedSupplierId = $request->query('selected_supplier_id') ?? $purchaseOrder->supplier_id;
+        $selectedRequestId  = $request->query('selected_request_id') ?? $purchaseOrder->purchase_request_id;
+
+        return view('purchase_orders.edit', compact(
+            'purchaseOrder','suppliers','requests','selectedSupplierId','selectedRequestId'
+        ));
     }
 
-    // PUT /api/purchase-orders/{id}
-    public function update(Request $request, $id)
+    public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
-        $order = PurchaseOrder::findOrFail($id);
-
         $data = $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-            'request_id' => 'nullable|exists:purchase_requests,id',
-            'order_date' => 'required|integer',
-            'status' => 'required|string',
-            'total_amount' => 'required|numeric',
+            'purchase_request_id' => 'required|exists:purchase_requests,id',
+            'order_date' => 'required|date',
         ]);
 
-        $order->update($data);
+        $purchaseOrder->update($data);
 
-        return $order;
-    }
-
-    // DELETE /api/purchase-orders/{id}
-    public function destroy($id)
-    {
-        $order = PurchaseOrder::findOrFail($id);
-        $order->delete();
-
-        return response()->json(['message' => 'Purchase order deleted']);
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase order updated.');
     }
 }
