@@ -8,6 +8,6 @@ use App\Http\Controllers\Purchases\PurchaseOrderController;
 Route::resource('suppliers', SupplierController::class);
 Route::resource('purchase-requests', PurchaseRequestController::class);
 Route::resource('purchase-orders', PurchaseOrderController::class);
-Route::get('dashboard', function () {
-    return view('dashboard');
-});
+Route::get('/', function () {
+    return view('dashboard'); // or the correct dashboard view file
+})->name('dashboard');
