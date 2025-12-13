@@ -75,8 +75,8 @@
                         <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#salesOrdersMenu">Orders</a>
                             <div class="collapse" id="salesOrdersMenu">
                                 <ul class="nav flex-column submenu">
-                                    <li><a class="nav-link text-white" href="{{ route('sales.orders.list') }}">List</a></li>
-                                    <li><a class="nav-link text-white" href="{{ route('sales.orders.add') }}">Add</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('salesorders.list') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('salesorders.add') }}">Add</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -92,8 +92,8 @@
                         <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#productsMenu">Products</a>
                             <div class="collapse" id="productsMenu">
                                 <ul class="nav flex-column submenu">
-                                    <li><a class="nav-link text-white" href="{{ route('inventories.products.list') }}">List</a></li>
-                                    <li><a class="nav-link text-white" href="{{ route('inventories.products.add') }}">Add</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('products.index') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('products.create') }}">Add</a></li>
                                 </ul>
                             </div>
                         </li>
