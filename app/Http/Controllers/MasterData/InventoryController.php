@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MasterData;
 
 use App\Models\Models\MasterData\Inventory;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class InventoryController extends Controller
 {
