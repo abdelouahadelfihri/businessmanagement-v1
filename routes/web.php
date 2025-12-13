@@ -20,7 +20,11 @@ Route::resource('purchasesorders', PurchaseOrderController::class);
 Route::resource('purchasesreceipts', PurchaseReceiptController::class);
 Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
 
+Route::resource('customers', CustomerController::class);
+Route::resource('salesquotes', SalesQuoteController::class);
 Route::resource('salesorders', SalesOrderController::class);
+Route::resource('salesdeliveries', DeliveryController::class);
+Route::resource('salesinvoices', SalesInvoiceController::class);
 
 Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);
