@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Sales\SalesReturn;
 use Illuminate\Http\Request;
 
-class SalesReturnController extends Controller
+class SaleReturnController extends Controller
 {
     public function index()
     {
