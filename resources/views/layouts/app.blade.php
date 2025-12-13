@@ -56,7 +56,7 @@
         .toggle-btn {
             background: rgba(255, 255, 255, 0.25);
             border: none;
-            color: #fff;
+            color: #000;
             border-radius: 8px;
             width: 38px;
             height: 38px;
@@ -109,6 +109,14 @@
         .content {
             padding: 20px;
             flex-grow: 1;
+        }
+
+        /* Third-level (most inner) menu indentation */
+        .submenu .submenu .nav-link {
+            padding-left: 52px;
+            /* more indentation */
+            font-size: 0.85rem;
+            /* slightly smaller */
         }
     </style>
 </head>
