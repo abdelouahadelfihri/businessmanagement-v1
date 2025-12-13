@@ -5,49 +5,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Business Management')</title>
+
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         body {
             min-height: 100vh;
             overflow-x: hidden;
         }
 
+        /* Sidebar */
         .sidebar {
             height: 100vh;
-            width: 220px;
-            background-color: #343a40;
+            width: 230px;
+            background: linear-gradient(180deg, #0d6efd, #0a58ca);
             color: #fff;
             transition: width 0.3s;
         }
 
         .sidebar.collapsed {
-            width: 70px;
+            width: 72px;
         }
 
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
+        /* App header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .app-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
             white-space: nowrap;
         }
 
-        .sidebar a:hover {
-            background-color: #495057;
+        .sidebar.collapsed .app-brand span {
+            display: none;
+        }
+
+        /* Toggle button */
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Links */
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
         }
 
         .sidebar .nav-link {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 10px 12px;
+            white-space: nowrap;
         }
 
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Hide text when collapsed */
         .sidebar.collapsed .nav-link span {
             display: none;
         }
 
-        .sidebar .submenu .nav-link {
-            padding-left: 30px;
+        /* Submenus */
+        .submenu .nav-link {
+            padding-left: 36px;
             font-size: 0.9rem;
         }
 
@@ -55,26 +105,28 @@
             display: none;
         }
 
+        /* Content */
         .content {
             padding: 20px;
             flex-grow: 1;
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
         }
     </style>
 </head>
 
 <body>
+
     <div class="d-flex">
-        <!-- Sidebar -->
+
+        <!-- SIDEBAR -->
         <nav class="sidebar d-flex flex-column p-3" id="sidebar">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="text-center m-0">BMS</h4>
+
+            <!-- App header -->
+            <div class="app-header">
+                <div class="app-brand">
+                    <i class="bi bi-building"></i>
+                    <span>Business MS</span>
+                </div>
+
                 <button class="toggle-btn" onclick="toggleSidebar()">
                     <i class="bi bi-list"></i>
                 </button>
@@ -84,7 +136,7 @@
 
                 <!-- Purchases -->
                 <li>
-                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#purchasesMenu">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#purchasesMenu">
                         <i class="bi bi-cart"></i>
                         <span>Purchases</span>
                     </a>
@@ -92,9 +144,8 @@
                     <div class="collapse" id="purchasesMenu">
                         <ul class="nav flex-column submenu">
 
-                            <!-- Purchase Requests -->
                             <li>
-                                <a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseRequestsMenu">
+                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseRequestsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
                                     <span>Purchase Requests</span>
                                 </a>
@@ -102,15 +153,13 @@
                                 <div class="collapse" id="purchaseRequestsMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
-                                            <a class="nav-link text-white"
-                                                href="{{ route('purchasesrequests.index') }}">
+                                            <a class="nav-link" href="{{ route('purchasesrequests.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-link text-white"
-                                                href="{{ route('purchasesrequests.create') }}">
+                                            <a class="nav-link" href="{{ route('purchasesrequests.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
@@ -119,9 +168,8 @@
                                 </div>
                             </li>
 
-                            <!-- Purchase Orders -->
                             <li>
-                                <a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseOrdersMenu">
+                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseOrdersMenu">
                                     <i class="bi bi-bag-check"></i>
                                     <span>Purchase Orders</span>
                                 </a>
@@ -129,13 +177,13 @@
                                 <div class="collapse" id="purchaseOrdersMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
-                                            <a class="nav-link text-white" href="{{ route('purchasesorders.index') }}">
+                                            <a class="nav-link" href="{{ route('purchasesorders.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-link text-white" href="{{ route('purchasesorders.create') }}">
+                                            <a class="nav-link" href="{{ route('purchasesorders.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
@@ -150,7 +198,7 @@
 
                 <!-- Sales -->
                 <li>
-                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#salesMenu">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#salesMenu">
                         <i class="bi bi-cash-stack"></i>
                         <span>Sales</span>
                     </a>
@@ -158,7 +206,7 @@
                     <div class="collapse" id="salesMenu">
                         <ul class="nav flex-column submenu">
                             <li>
-                                <a class="nav-link text-white" href="{{ route('salesorders.index') }}">
+                                <a class="nav-link" href="{{ route('salesorders.index') }}">
                                     <i class="bi bi-receipt"></i>
                                     <span>Orders</span>
                                 </a>
@@ -169,7 +217,7 @@
 
                 <!-- Inventories -->
                 <li>
-                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#inventoriesMenu">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#inventoriesMenu">
                         <i class="bi bi-box-seam"></i>
                         <span>Inventories</span>
                     </a>
@@ -177,7 +225,7 @@
                     <div class="collapse" id="inventoriesMenu">
                         <ul class="nav flex-column submenu">
                             <li>
-                                <a class="nav-link text-white" href="{{ route('products.index') }}">
+                                <a class="nav-link" href="{{ route('products.index') }}">
                                     <i class="bi bi-box"></i>
                                     <span>Products</span>
                                 </a>
@@ -189,20 +237,22 @@
             </ul>
         </nav>
 
-
-        <!-- Main content -->
+        <!-- CONTENT -->
         <div class="content">
             @yield('content')
         </div>
+
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('collapsed');
         }
     </script>
+
 </body>
 
 </html>
