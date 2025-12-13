@@ -71,9 +71,9 @@
                                 <div class="collapse" id="purchaseOrdersMenu">
                                     <ul class="nav flex-column submenu">
                                         <li><a class="nav-link text-white"
-                                                href="{{ route('purchasesorders.list') }}">List</a></li>
+                                                href="{{ route('purchasesorders.index') }}">List</a></li>
                                         <li><a class="nav-link text-white"
-                                                href="{{ route('purchasesorders.add') }}">Add</a></li>
+                                                href="{{ route('purchasesorders.create') }}">Add</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -90,9 +90,13 @@
                                     href="#salesOrdersMenu">Orders</a>
                                 <div class="collapse" id="salesOrdersMenu">
                                     <ul class="nav flex-column submenu">
-                                        <li><a class="nav-link text-white"
-                                                href="{{ route('salesorders.list') }}">List</a></li>
-                                        <li><a class="nav-link text-white" href="{{ route('salesorders.add') }}">Add</a>
+                                        <li>
+                                            <a class="nav-link text-white"
+                                                href="{{ route('salesorders.index') }}">List</a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link text-white"
+                                                href="{{ route('salesorders.create') }}">Add</a>
                                         </li>
                                     </ul>
                                 </div>
