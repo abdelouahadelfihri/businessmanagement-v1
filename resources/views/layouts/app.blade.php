@@ -13,9 +13,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        html,
         body {
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        /* Layout wrapper */
+        .layout {
+            display: flex;
+            height: 100vh;
         }
 
         /* Sidebar */
@@ -25,10 +36,26 @@
             background: #B0C4DE;
             color: #000;
             transition: width 0.3s;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .sidebar.collapsed {
             width: 72px;
+        }
+
+        /* Sidebar scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         /* App header */
@@ -54,7 +81,7 @@
 
         /* Toggle button */
         .toggle-btn {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.4);
             border: none;
             color: #000;
             border-radius: 8px;
@@ -67,7 +94,7 @@
         }
 
         .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.6);
         }
 
         /* Links */
@@ -87,7 +114,7 @@
         }
 
         .sidebar a:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.4);
         }
 
         /* Hide text when collapsed */
@@ -101,29 +128,28 @@
             font-size: 0.9rem;
         }
 
+        /* Third level indentation */
+        .submenu .submenu .nav-link {
+            padding-left: 52px;
+            font-size: 0.85rem;
+        }
+
         .sidebar.collapsed .submenu {
             display: none;
         }
 
         /* Content */
         .content {
-            padding: 20px;
             flex-grow: 1;
-        }
-
-        /* Third-level (most inner) menu indentation */
-        .submenu .submenu .nav-link {
-            padding-left: 52px;
-            /* more indentation */
-            font-size: 0.85rem;
-            /* slightly smaller */
+            padding: 20px;
+            overflow-y: auto;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="d-flex">
+    <div class="layout">
 
         <!-- SIDEBAR -->
         <nav class="sidebar d-flex flex-column p-3" id="sidebar">
