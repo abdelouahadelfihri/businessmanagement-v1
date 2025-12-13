@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Purchase;
+namespace App\Http\Controllers\Purchases;
 
 use App\Http\Controllers\Controller;
-use App\Models\Purchase\PurchaseReceipt;
+use App\Models\Purchases\PurchaseReceipt;
 use Illuminate\Http\Request;
 
 class PurchaseReceiptController extends Controller
