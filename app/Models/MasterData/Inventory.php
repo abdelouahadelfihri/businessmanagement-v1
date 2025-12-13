@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inventory extends Model
 {
-    use HasFactory;
-
     protected $primaryKey = 'inventory_id';
 
     protected $fillable = [
@@ -21,13 +19,11 @@ class Inventory extends Model
         'warehouse_id',
     ];
 
-    // Relationship: Inventory → Product
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    // Relationship: Inventory → Warehouse
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
