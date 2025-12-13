@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Purchase;
+namespace App\Http\Controllers\Purchases;
 
 use App\Http\Controllers\Controller;
 use App\Models\Purchase\PurchaseInvoice;
