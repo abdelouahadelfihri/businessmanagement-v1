@@ -50,16 +50,16 @@
                         <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseRequestsMenu">Purchase Requests</a>
                             <div class="collapse" id="purchaseRequestsMenu">
                                 <ul class="nav flex-column submenu">
-                                    <li><a class="nav-link text-white" href="{{ route('pages.purchases.requests.index') }}">List</a></li>
-                                    <li><a class="nav-link text-white" href="{{ route('pages.purchases.requests.create') }}">Add</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('purchasesrequests.index') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('purchasesrequests.create') }}">Add</a></li>
                                 </ul>
                             </div>
                         </li>
                         <li><a class="nav-link text-white" data-bs-toggle="collapse" href="#purchaseOrdersMenu">Purchase Orders</a>
                             <div class="collapse" id="purchaseOrdersMenu">
                                 <ul class="nav flex-column submenu">
-                                    <li><a class="nav-link text-white" href="{{ route('purchases.orders.list') }}">List</a></li>
-                                    <li><a class="nav-link text-white" href="{{ route('purchases.orders.add') }}">Add</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('purchasesorders.list') }}">List</a></li>
+                                    <li><a class="nav-link text-white" href="{{ route('purchasesorders.add') }}">Add</a></li>
                                 </ul>
                             </div>
                         </li>
