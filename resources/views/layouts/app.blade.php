@@ -512,20 +512,20 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseOrdersMenu">
+                                <a class="nav-link" data-bs-toggle="collapse" href="#productsMenu">
                                     <i class="bi bi-bag-check"></i>
-                                    <span>Purchase Orders</span>
+                                    <span>Products</span>
                                 </a>
-                                <div class="collapse" id="purchaseOrdersMenu">
+                                <div class="collapse" id="productsMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
-                                            <a class="nav-link" href="{{ route('purchasesorders.index') }}">
+                                            <a class="nav-link" href="{{ route('products.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-link" href="{{ route('purchasesorders.create') }}">
+                                            <a class="nav-link" href="{{ route('products.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
@@ -534,20 +534,20 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseRequestsMenu">
+                                <a class="nav-link" data-bs-toggle="collapse" href="#unitsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
-                                    <span>Purchase Requests</span>
+                                    <span>Units</span>
                                 </a>
-                                <div class="collapse" id="purchaseRequestsMenu">
+                                <div class="collapse" id="unitsMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
-                                            <a class="nav-link" href="{{ route('purchasesrequests.index') }}">
+                                            <a class="nav-link" href="{{ route('units.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-link" href="{{ route('purchasesrequests.create') }}">
+                                            <a class="nav-link" href="{{ route('units.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
@@ -556,11 +556,11 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseOrdersMenu">
+                                <a class="nav-link" data-bs-toggle="collapse" href="#warehousesMenu">
                                     <i class="bi bi-bag-check"></i>
-                                    <span>Purchase Orders</span>
+                                    <span>Warehouses</span>
                                 </a>
-                                <div class="collapse" id="purchaseOrdersMenu">
+                                <div class="collapse" id="warehousesMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
                                             <a class="nav-link" href="{{ route('purchasesorders.index') }}">
