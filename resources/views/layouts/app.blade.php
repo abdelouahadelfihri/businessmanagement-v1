@@ -22,7 +22,7 @@
         .sidebar {
             height: 100vh;
             width: 230px;
-            background: linear-gradient(180deg, #0d6efd, #0a58ca);
+            background: #B0C4DE;
             color: #fff;
             transition: width 0.3s;
         }
