@@ -23,7 +23,7 @@
             height: 100vh;
             width: 230px;
             background: #B0C4DE;
-            color: #fff;
+            color: #000;
             transition: width 0.3s;
         }
 
@@ -72,7 +72,7 @@
 
         /* Links */
         .sidebar a {
-            color: #fff;
+            color: #000;
             text-decoration: none;
             border-radius: 8px;
             margin-bottom: 4px;
