@@ -18,7 +18,7 @@ Route::resource('suppliers', SupplierController::class);
 Route::resource('purchasesrequests', PurchaseRequestController::class);
 Route::resource('purchasesorders', PurchaseOrderController::class);
 Route::resource('purchasesreceipts', PurchaseReceiptController::class);
-Route::resource('purchasesinvoices', PurchaseInvoicesController::class);
+Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
 
 Route::resource('salesorders', SalesOrderController::class);
 
