@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\MasterData;
 
-use App\Models\Models\MasterData\Inventory;
+use App\Models\MasterData\Inventory;
+use App\Models\MasterData\Product;
+use App\Models\MasterData\Warehouse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
