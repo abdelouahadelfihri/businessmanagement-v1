@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Purchase;
+namespace App\Models\Purchases;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Purchases\PurchaseOrder;
 class PurchaseInvoice extends Model
 {
     use HasFactory;
@@ -27,6 +27,6 @@ class PurchaseInvoice extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(\App\Models\MasterData\Supplier::class, 'supplier_id');
+        return $this->belongsTo(\App\Models\Purchases\Supplier::class, 'supplier_id');
     }
 }
