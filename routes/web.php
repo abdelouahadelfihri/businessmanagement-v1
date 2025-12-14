@@ -6,12 +6,15 @@ use App\Http\Controllers\Purchases\PurchaseRequestController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
 use App\Http\Controllers\Purchases\PurchaseInvoiceController;
-use App\Http\Controllers\Sales\SalesOrderController;
+
+use App\Http\Controllers\Sales\SaleOrderController;
+
 use App\Http\Controllers\MasterData\InventoryController;
 use App\Http\Controllers\MasterData\ProductController;
 use App\Http\Controllers\MasterData\CategoryController;
 use App\Http\Controllers\MasterData\UnitController;
 use App\Http\Controllers\MasterData\WarehouseController;
+use App\Http\Controllers\MasterData\LocationController;
 
 
 Route::resource('suppliers', SupplierController::class);
@@ -21,16 +24,17 @@ Route::resource('purchasesreceipts', PurchaseReceiptController::class);
 Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
 
 Route::resource('customers', CustomerController::class);
-Route::resource('salesquotes', SalesQuoteController::class);
-Route::resource('salesorders', SalesOrderController::class);
+Route::resource('salesquotes', SaleQuoteController::class);
+Route::resource('salesorders', SaleOrderController::class);
 Route::resource('salesdeliveries', DeliveryController::class);
-Route::resource('salesinvoices', SalesInvoiceController::class);
+Route::resource('salesinvoices', SaleInvoiceController::class);
 
 Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);
 Route::resource('products', ProductController::class);
 Route::resource('units', UnitController::class);
 Route::resource('warehouses', WarehouseController::class);
+Route::ressource('locations', LocationController::class);
 
 Route::get('/', function () {
     return view('dashboard'); // or the correct dashboard view file
