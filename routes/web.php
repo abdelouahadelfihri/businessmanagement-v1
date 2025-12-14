@@ -1,13 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Purchases\SupplierController;
 use App\Http\Controllers\Purchases\PurchaseRequestController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
 use App\Http\Controllers\Purchases\PurchaseInvoiceController;
 
+use App\Http\Controllers\Sales\CustomerController;
+use App\Http\Controllers\Sales\SaleQuoteController;
 use App\Http\Controllers\Sales\SaleOrderController;
+use App\Http\Controllers\Sales\DeliveryController;
+use App\Http\Controllers\Sales\SaleInvoiceController;
+
 
 use App\Http\Controllers\MasterData\InventoryController;
 use App\Http\Controllers\MasterData\ProductController;
