@@ -27,6 +27,6 @@ class PurchaseInvoice extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(\App\Models\Purchases\Supplier::class, 'supplier_id');
+        return $this->belongsTo(\App\Models\MasterData\Supplier::class, 'supplier_id');
     }
 }
