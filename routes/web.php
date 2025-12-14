@@ -40,7 +40,7 @@ Route::resource('inventories', InventoryController::class);
 Route::resource('products', ProductController::class);
 Route::resource('units', UnitController::class);
 Route::resource('warehouses', WarehouseController::class);
-Route::ressource('locations', LocationController::class);
+Route::resource('locations', LocationController::class);
 
 Route::get('/', function () {
     return view('dashboard'); // or the correct dashboard view file
