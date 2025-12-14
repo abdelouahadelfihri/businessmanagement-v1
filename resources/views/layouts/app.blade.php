@@ -341,13 +341,13 @@
                                 <div class="collapse" id="quotationsMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
-                                            <a class="nav-link" href="{{ route('purchasesorder.index') }}">
+                                            <a class="nav-link" href="{{ route('salesquotations.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-link" href="{{ route('purchasesorders.create') }}">
+                                            <a class="nav-link" href="{{ route('salesquotations.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
