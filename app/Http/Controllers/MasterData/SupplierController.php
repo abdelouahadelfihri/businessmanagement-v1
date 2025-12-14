@@ -1,7 +1,7 @@
 <?php
-namespace App\Http\Controllers\Purchases;
+namespace App\Http\Controllers\MasterData;
 
-use App\Models\Purchases\Supplier;
+use App\Models\MasterData\Supplier;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

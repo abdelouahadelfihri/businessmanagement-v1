@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers\MasterData;
 
-use App\Models\Models\Sales\Customer;
+use App\Models\Models\MasterData\Customer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
