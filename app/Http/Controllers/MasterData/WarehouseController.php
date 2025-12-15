@@ -1,57 +1,65 @@
 <?php
-
 namespace App\Http\Controllers\MasterData;
 
-use App\Http\Controllers\Controller;
 use App\Models\MasterData\Warehouse;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class WarehouseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Warehouse::with(['location', 'originTransfers', 'destinationTransfers'])->get();
+        $warehouses = Warehouse::paginate(12); // paginate for big lists
+
+        // selection mode params (if opened from PO)
+        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
+        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
+
+        return view('warehouses.index', compact('warehouses','selectFor','returnUrl'));
+    }
+
+    public function create(Request $request)
+    {
+        // pass along selection params so create view can return to PO after saving
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('warehouses.create', compact('selectFor','returnUrl'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
-            'is_refrigerated' => 'boolean',
-            'location_owner_id' => 'required|exists:locations,location_id',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $warehouse = Warehouse::create($validated);
+        $category = Warehouse::create($data);
 
-        return response()->json($warehouse, 201);
+        // If created from a selection flow, redirect back to caller with new id
+        if ($request->filled('select_for') && $request->filled('return_url')) {
+            // append query param and redirect to return_url
+            $return = $request->input('return_url') . '?selected_product_id=' . $category->id;
+            return redirect($return);
+        }
+
+        return redirect()->route('warehouses.index')->with('success','Warehouse created.');
     }
 
-    public function show($id)
+    public function edit(Warehouse $supplier)
     {
-        $warehouse = Warehouse::with(['location', 'originTransfers', 'destinationTransfers'])->findOrFail($id);
-        return response()->json($warehouse);
+        return view('warehouses.edit', compact('unit'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Warehouse $supplier)
     {
-        $warehouse = Warehouse::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'is_refrigerated' => 'boolean',
-            'location_owner_id' => 'sometimes|required|exists:locations,location_id',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $warehouse->update($validated);
+        $supplier->update($data);
 
-        return response()->json($warehouse);
-    }
-
-    public function destroy($id)
-    {
-        $warehouse = Warehouse::findOrFail($id);
-        $warehouse->delete();
-
-        return response()->json(['message' => 'Warehouse deleted successfully']);
+        return redirect()->route('warehouses.index')->with('success','Warehouse updated.');
     }
 }
