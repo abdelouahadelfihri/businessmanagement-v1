@@ -1,81 +1,65 @@
 <?php
-
 namespace App\Http\Controllers\MasterData;
 
-use App\Http\Controllers\Controller;
 use App\Models\MasterData\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(
-            Product::with(['categoryRelation', 'unitRelation'])->get()
-        );
+        $products = Product::paginate(12); // paginate for big lists
+
+        // selection mode params (if opened from PO)
+        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
+        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
+
+        return view('products.index', compact('products','selectFor','returnUrl'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function create(Request $request)
+    {
+        // pass along selection params so create view can return to PO after saving
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('products.create', compact('selectFor','returnUrl'));
+    }
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'code'         => 'required|string|max:255',
-            'bar_code'     => 'required|string|max:255',
-            'category'     => 'required|exists:categories,id',
-            'unit'         => 'required|exists:measurement_units,unit_id',
-            'reorder_level'=> 'nullable|integer|min:0',
-            'is_active'    => 'boolean',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $product = Product::create($validated);
+        $category = Product::create($data);
 
-        return response()->json($product, 201);
+        // If created from a selection flow, redirect back to caller with new id
+        if ($request->filled('select_for') && $request->filled('return_url')) {
+            // append query param and redirect to return_url
+            $return = $request->input('return_url') . '?selected_product_id=' . $category->id;
+            return redirect($return);
+        }
+
+        return redirect()->route('products.index')->with('success','Product created.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function edit(Product $supplier)
     {
-        $product = Product::with(['categoryRelation', 'unitRelation'])->findOrFail($id);
-        return response()->json($product);
+        return view('products.edit', compact('unit'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $supplier)
     {
-        $product = Product::findOrFail($id);
-
-        $validated = $request->validate([
-            'name'         => 'sometimes|required|string|max:255',
-            'code'         => 'sometimes|required|string|max:255',
-            'bar_code'     => 'sometimes|required|string|max:255',
-            'category'     => 'sometimes|required|exists:categories,id',
-            'unit'         => 'sometimes|required|exists:measurement_units,unit_id',
-            'reorder_level'=> 'nullable|integer|min:0',
-            'is_active'    => 'boolean',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $product->update($validated);
+        $supplier->update($data);
 
-        return response()->json($product);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        Product::findOrFail($id)->delete();
-
-        return response()->json(['message' => 'Product deleted successfully']);
+        return redirect()->route('products.index')->with('success','Product updated.');
     }
 }
