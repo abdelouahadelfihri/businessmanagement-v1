@@ -1,9 +1,8 @@
 <?php
 namespace App\Http\Controllers\MasterData;
-
-use App\Models\MasterData\Customer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\MasterData\Customer;
 
 class CustomerController extends Controller
 {
