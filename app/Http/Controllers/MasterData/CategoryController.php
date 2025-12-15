@@ -1,54 +1,65 @@
 <?php
-
 namespace App\Http\Controllers\MasterData;
 
-use App\Http\Controllers\Controller;
 use App\Models\MasterData\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Category::all();
+        $categories = Category::paginate(12); // paginate for big lists
+
+        // selection mode params (if opened from PO)
+        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
+        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
+
+        return view('categories.index', compact('categories','selectFor','returnUrl'));
+    }
+
+    public function create(Request $request)
+    {
+        // pass along selection params so create view can return to PO after saving
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('categories.create', compact('selectFor','returnUrl'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|unique:categories,name',
-            'description' => 'nullable|string',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $category = Category::create($validated);
+        $category = Category::create($data);
 
-        return response()->json($category, 201);
+        // If created from a selection flow, redirect back to caller with new id
+        if ($request->filled('select_for') && $request->filled('return_url')) {
+            // append query param and redirect to return_url
+            $return = $request->input('return_url') . '?selected_category_id=' . $category->id;
+            return redirect($return);
+        }
+
+        return redirect()->route('categories.index')->with('success','Category created.');
     }
 
-    public function show($id)
+    public function edit(Category $supplier)
     {
-        return Category::findOrFail($id);
+        return view('categories.edit', compact('unit'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $supplier)
     {
-        $category = Category::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'sometimes|string|unique:categories,name,' . $id,
-            'description' => 'sometimes|string',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $category->update($validated);
+        $supplier->update($data);
 
-        return response()->json($category);
-    }
-
-    public function destroy($id)
-    {
-        $category = Category::findOrFail($id);
-        $category->delete();
-
-        return response()->json(['message' => 'Deleted successfully']);
+        return redirect()->route('categories.index')->with('success','Category updated.');
     }
 }
