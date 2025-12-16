@@ -21,6 +21,6 @@ class SalesQuote extends Model
 
     public function customer()
     {
-        return $this->belongsTo(\App\Models\Purchase\Customer::class, 'customer_id');
+        return $this->belongsTo(\App\Models\MasterData\Customer::class, 'customer_id');
     }
 }
