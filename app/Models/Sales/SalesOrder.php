@@ -21,6 +21,6 @@ class SalesOrder extends Model
 
     public function customer()
     {
-        return $this->belongsTo(\App\Models\Purchase\Customer::class, 'customer_id', 'customerId');
+        return $this->belongsTo(\App\Models\MasterData\Customer::class, 'customer_id', 'customerId');
     }
 }
