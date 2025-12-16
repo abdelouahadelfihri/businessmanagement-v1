@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Purchases;
 
 use App\Models\Purchases\PurchaseOrder;
-use App\Models\Purchases\Supplier;
+use App\Models\MasterData\Supplier;
 use App\Models\Purchases\PurchaseRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -40,7 +40,7 @@ class PurchaseOrderController extends Controller
 
         PurchaseOrder::create($data);
 
-        return redirect()->route('purchase-orders.index')->with('success', 'Purchase order created.');
+        return redirect()->route('purchasesorders.index')->with('success', 'Purchase order created.');
     }
 
     public function edit(PurchaseOrder $purchaseOrder, Request $request)
@@ -67,6 +67,6 @@ class PurchaseOrderController extends Controller
 
         $purchaseOrder->update($data);
 
-        return redirect()->route('purchase-orders.index')->with('success', 'Purchase order updated.');
+        return redirect()->route('purchasesorders.index')->with('success', 'Purchase order updated.');
     }
 }
