@@ -8,7 +8,7 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $suppliers = Customer::paginate(12); // paginate for big lists
+        $customers = Customer::paginate(12); // paginate for big lists
 
         // selection mode params (if opened from PO)
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
