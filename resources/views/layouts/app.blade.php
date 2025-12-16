@@ -188,33 +188,11 @@
                     <div class="collapse" id="purchasesMenu">
                         <ul class="nav flex-column submenu">
                             <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#suppliersMenu">
+                                <a class="nav-link" data-bs-toggle="collapse" href="#purchasesRequestsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
-                                    <span>Suppliers</span>
+                                    <span>Purchases Requests</span>
                                 </a>
-                                <div class="collapse" id="suppliersMenu">
-                                    <ul class="nav flex-column submenu">
-                                        <li>
-                                            <a class="nav-link" href="{{ route('suppliers.index') }}">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>List</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-link" href="{{ route('suppliers.create') }}">
-                                                <i class="bi bi-plus-circle"></i>
-                                                <span>Add</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseRequestsMenu">
-                                    <i class="bi bi-file-earmark-text"></i>
-                                    <span>Purchase Requests</span>
-                                </a>
-                                <div class="collapse" id="purchaseRequestsMenu">
+                                <div class="collapse" id="purchasesRequestsMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
                                             <a class="nav-link" href="{{ route('purchasesrequests.index') }}">
@@ -232,11 +210,11 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseOrdersMenu">
-                                    <i class="bi bi-bag-check"></i>
-                                    <span>Purchase Orders</span>
+                                <a class="nav-link" data-bs-toggle="collapse" href="#purchasesOrdersMenu">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    <span>Purchase Requests</span>
                                 </a>
-                                <div class="collapse" id="purchaseOrdersMenu">
+                                <div class="collapse" id="purchasesOrdersMenu">
                                     <ul class="nav flex-column submenu">
                                         <li>
                                             <a class="nav-link" href="{{ route('purchasesorders.index') }}">
@@ -246,6 +224,28 @@
                                         </li>
                                         <li>
                                             <a class="nav-link" href="{{ route('purchasesorders.create') }}">
+                                                <i class="bi bi-plus-circle"></i>
+                                                <span>Add</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a class="nav-link" data-bs-toggle="collapse" href="#purchasesReceiptsMenu">
+                                    <i class="bi bi-bag-check"></i>
+                                    <span>Purchases Receipts</span>
+                                </a>
+                                <div class="collapse" id="purchasesReceiptsMenu">
+                                    <ul class="nav flex-column submenu">
+                                        <li>
+                                            <a class="nav-link" href="{{ route('purchasesreceipts.index') }}">
+                                                <i class="bi bi-list-ul"></i>
+                                                <span>List</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link" href="{{ route('purchasesreceipts.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
