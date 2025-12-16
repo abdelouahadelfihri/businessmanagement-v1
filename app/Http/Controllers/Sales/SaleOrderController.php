@@ -14,7 +14,7 @@ class SaleOrderController extends Controller
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
         $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
 
-        return view('customers.index', compact('customers','selectFor','returnUrl'));
+        return view('salesordersindex', compact('salesOrders','selectFor','returnUrl'));
     }
 
     public function create(Request $request)
@@ -23,7 +23,7 @@ class SaleOrderController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('customers.create', compact('selectFor','returnUrl'));
+        return view('salesorderscreate', compact('selectFor','returnUrl'));
     }
 
     public function store(Request $request)
@@ -33,24 +33,24 @@ class SaleOrderController extends Controller
             'email' => 'nullable|email|max:255',
         ]);
 
-        $supplier = Customer::create($data);
+        $saleOrder = SaleOrder::create($data);
 
         // If created from a selection flow, redirect back to caller with new id
         if ($request->filled('select_for') && $request->filled('return_url')) {
             // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_customer_id=' . $supplier->id;
+            $return = $request->input('return_url') . '?selected_customer_id=' . $saleOrder->id;
             return redirect($return);
         }
 
-        return redirect()->route('customers.index')->with('success','Customer created.');
+        return redirect()->route('salesordersindex')->with('success','SaleOrder created.');
     }
 
-    public function edit(Customer $customer)
+    public function edit(SaleOrder $customer)
     {
-        return view('customers.edit', compact('customer'));
+        return view('salesordersedit', compact('customer'));
     }
 
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, SaleOrder $customer)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -59,6 +59,6 @@ class SaleOrderController extends Controller
 
         $customer->update($data);
 
-        return redirect()->route('customers.index')->with('success','Customer updated.');
+        return redirect()->route('salesordersindex')->with('success','SaleOrder updated.');
     }
 }
