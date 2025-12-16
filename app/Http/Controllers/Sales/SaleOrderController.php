@@ -45,20 +45,20 @@ class SaleOrderController extends Controller
         return redirect()->route('salesordersindex')->with('success','SaleOrder created.');
     }
 
-    public function edit(SaleOrder $customer)
+    public function edit(SaleOrder $saleOrder)
     {
-        return view('salesordersedit', compact('customer'));
+        return view('salesorders.edit', compact('saleOrder'));
     }
 
-    public function update(Request $request, SaleOrder $customer)
+    public function update(Request $request, SaleOrder $saleOrder)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
         ]);
 
-        $customer->update($data);
+        $saleOrder->update($data);
 
-        return redirect()->route('salesordersindex')->with('success','SaleOrder updated.');
+        return redirect()->route('salesorders.index')->with('success','SaleOrder updated.');
     }
 }
