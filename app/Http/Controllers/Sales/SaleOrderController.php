@@ -38,7 +38,7 @@ class SaleOrderController extends Controller
         // If created from a selection flow, redirect back to caller with new id
         if ($request->filled('select_for') && $request->filled('return_url')) {
             // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_customer_id=' . $saleOrder->id;
+            $return = $request->input('return_url') . '?selected_sale_order_id=' . $saleOrder->id;
             return redirect($return);
         }
 
