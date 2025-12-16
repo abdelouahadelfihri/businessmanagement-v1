@@ -1,14 +1,14 @@
 <?php
-namespace App\Http\Controllers\MasterData;
+namespace App\Http\Controllers\Sales;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\MasterData\Customer;
+use App\Models\Sales\SaleOrder;
 
 class SaleOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $suppliers = Customer::paginate(12); // paginate for big lists
+        $salesOrders = SaleOrder::paginate(12); // paginate for big lists
 
         // selection mode params (if opened from PO)
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
