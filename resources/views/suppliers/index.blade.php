@@ -75,7 +75,7 @@
 
 <script>
 $(document).ready(function () {
-    $('#usersTable').DataTable({
+    $('#suppliersTable').DataTable({
         paging: true,
         searching: true,
         ordering: true,
