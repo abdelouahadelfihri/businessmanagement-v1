@@ -19,33 +19,33 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-0">
-                    <table id="suppliersTable" class="table table-bordered table-hover"></table>
-                    <thead class="table-light">
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th width="150">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($suppliers as $s)
+                    <table id="suppliersTable" class="table table-bordered table-hover">
+                        <thead class="table-light">
                             <tr>
-                                <td>{{ $s->name }}</td>
-                                <td>{{ $s->email }}</td>
-                                <td>
-                                    @if($selectFor && $returnUrl)
-                                        <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?selected_supplier_id={{ $s->id }}">
-                                            Select
-                                        </a>
-                                    @else
-                                        <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s->id) }}">
-                                            Edit
-                                        </a>
-                                    @endif
-                                </td>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th width="150">Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
+                        </thead>
+                        <tbody>
+                            @foreach($suppliers as $s)
+                                <tr>
+                                    <td>{{ $s->name }}</td>
+                                    <td>{{ $s->email }}</td>
+                                    <td>
+                                        @if($selectFor && $returnUrl)
+                                            <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?selected_supplier_id={{ $s->id }}">
+                                                Select
+                                            </a>
+                                        @else
+                                            <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s->id) }}">
+                                                Edit
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>
