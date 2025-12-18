@@ -19,7 +19,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
+            <table id="suppliersTable" class="table table-bordered table-hover"></table>
                 <thead class="table-light">
                     <tr>
                         <th>Name</th>
@@ -63,3 +63,24 @@
     @endif
 </div>
 @endsection
+
+@push('styles')
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+@endpush
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    $('#usersTable').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true
+    });
+});
+</script>
+@endpush
