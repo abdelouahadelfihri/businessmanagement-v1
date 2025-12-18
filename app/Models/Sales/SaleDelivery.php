@@ -21,6 +21,6 @@ class SaleDelivery extends Model
 
     public function salesOrder()
     {
-        return $this->belongsTo(SalesOrder::class, 'sales_order_id');
+        return $this->belongsTo(SaleOrder::class, 'sales_order_id');
     }
 }
