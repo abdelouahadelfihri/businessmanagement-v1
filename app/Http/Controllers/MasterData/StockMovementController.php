@@ -15,7 +15,7 @@ class StockMovementController extends Controller
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
         $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
 
-        return view('categories.index', compact('categories', 'selectFor', 'returnUrl'));
+        return view('stockmovements.index', compact('categories', 'selectFor', 'returnUrl'));
     }
 
     public function create(Request $request)
@@ -24,7 +24,7 @@ class StockMovementController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('categories.create', compact('selectFor', 'returnUrl'));
+        return view('stockmovements.create', compact('selectFor', 'returnUrl'));
     }
 
     public function store(Request $request)
@@ -34,21 +34,21 @@ class StockMovementController extends Controller
             'email' => 'nullable|email|max:255',
         ]);
 
-        $category = StockMovement::create($data);
+        $stockMovement = StockMovement::create($data);
 
         // If created from a selection flow, redirect back to caller with new id
         if ($request->filled('select_for') && $request->filled('return_url')) {
             // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_category_id=' . $category->id;
+            $return = $request->input('return_url') . '?selected_category_id=' . $stockMovement->id;
             return redirect($return);
         }
 
-        return redirect()->route('categories.index')->with('success', 'Category created.');
+        return redirect()->route('stockmovements.index')->with('success', 'Category created.');
     }
 
     public function edit(StockMovement $supplier)
     {
-        return view('categories.edit', compact('unit'));
+        return view('stockmovements.edit', compact('unit'));
     }
 
     public function update(Request $request, StockMovement $supplier)
@@ -60,15 +60,15 @@ class StockMovementController extends Controller
 
         $supplier->update($data);
 
-        return redirect()->route('categories.index')->with('success', 'Category updated.');
+        return redirect()->route('stockmovements.index')->with('success', 'Category updated.');
     }
 
-    public function destroy(StockMovement $category)
+    public function destroy(StockMovement $stockMovement)
     {
-        $category->delete();
+        $stockMovement->delete();
 
         return redirect()
-            ->route('categories.index')
+            ->route('stockmovements.index')
             ->with('success', 'Category deleted.');
     }
 
