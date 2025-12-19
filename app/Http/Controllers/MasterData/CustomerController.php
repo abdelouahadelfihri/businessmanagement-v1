@@ -14,7 +14,7 @@ class CustomerController extends Controller
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
         $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
 
-        return view('customers.index', compact('customers','selectFor','returnUrl'));
+        return view('customers.index', compact('customers', 'selectFor', 'returnUrl'));
     }
 
     public function create(Request $request)
@@ -23,7 +23,7 @@ class CustomerController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('customers.create', compact('selectFor','returnUrl'));
+        return view('customers.create', compact('selectFor', 'returnUrl'));
     }
 
     public function store(Request $request)
@@ -42,7 +42,7 @@ class CustomerController extends Controller
             return redirect($return);
         }
 
-        return redirect()->route('customers.index')->with('success','Customer created.');
+        return redirect()->route('customers.index')->with('success', 'Customer created.');
     }
 
     public function edit(Customer $customer)
@@ -59,6 +59,14 @@ class CustomerController extends Controller
 
         $customer->update($data);
 
-        return redirect()->route('customers.index')->with('success','Customer updated.');
+        return redirect()->route('customers.index')->with('success', 'Customer updated.');
+    }
+    public function destroy(Customer $customer)
+    {
+        $customer->delete();
+
+        return redirect()
+            ->route('customers.index')
+            ->with('success', 'Customer deleted.');
     }
 }
