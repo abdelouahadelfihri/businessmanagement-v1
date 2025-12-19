@@ -65,10 +65,6 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        if ($category->products()->exists()) {
-            return back()->with('error', 'Category is used and cannot be deleted.');
-        }
-
         $category->delete();
 
         return redirect()
