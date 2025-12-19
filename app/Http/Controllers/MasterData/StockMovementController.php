@@ -9,7 +9,7 @@ class StockMovementController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::paginate(12); // paginate for big lists
+        $categories = StockMovement::paginate(12); // paginate for big lists
 
         // selection mode params (if opened from PO)
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
@@ -34,7 +34,7 @@ class StockMovementController extends Controller
             'email' => 'nullable|email|max:255',
         ]);
 
-        $category = Category::create($data);
+        $category = StockMovement::create($data);
 
         // If created from a selection flow, redirect back to caller with new id
         if ($request->filled('select_for') && $request->filled('return_url')) {
@@ -46,12 +46,12 @@ class StockMovementController extends Controller
         return redirect()->route('categories.index')->with('success', 'Category created.');
     }
 
-    public function edit(Category $supplier)
+    public function edit(StockMovement $supplier)
     {
         return view('categories.edit', compact('unit'));
     }
 
-    public function update(Request $request, Category $supplier)
+    public function update(Request $request, StockMovement $supplier)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -63,7 +63,7 @@ class StockMovementController extends Controller
         return redirect()->route('categories.index')->with('success', 'Category updated.');
     }
 
-    public function destroy(Category $category)
+    public function destroy(StockMovement $category)
     {
         $category->delete();
 
