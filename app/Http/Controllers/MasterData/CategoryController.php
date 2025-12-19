@@ -15,7 +15,7 @@ class CategoryController extends Controller
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
         $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
 
-        return view('categories.index', compact('categories','selectFor','returnUrl'));
+        return view('categories.index', compact('categories', 'selectFor', 'returnUrl'));
     }
 
     public function create(Request $request)
@@ -24,7 +24,7 @@ class CategoryController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('categories.create', compact('selectFor','returnUrl'));
+        return view('categories.create', compact('selectFor', 'returnUrl'));
     }
 
     public function store(Request $request)
@@ -43,7 +43,7 @@ class CategoryController extends Controller
             return redirect($return);
         }
 
-        return redirect()->route('categories.index')->with('success','Category created.');
+        return redirect()->route('categories.index')->with('success', 'Category created.');
     }
 
     public function edit(Category $supplier)
@@ -60,6 +60,20 @@ class CategoryController extends Controller
 
         $supplier->update($data);
 
-        return redirect()->route('categories.index')->with('success','Category updated.');
+        return redirect()->route('categories.index')->with('success', 'Category updated.');
     }
+
+    public function destroy(Category $category)
+    {
+        if ($category->products()->exists()) {
+            return back()->with('error', 'Category is used and cannot be deleted.');
+        }
+
+        $category->delete();
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Category deleted.');
+    }
+
 }
