@@ -15,7 +15,7 @@ class StockMovementController extends Controller
         $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
         $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
 
-        return view('stockmovements.index', compact('categories', 'selectFor', 'returnUrl'));
+        return view('stocksmovements.index', compact('categories', 'selectFor', 'returnUrl'));
     }
 
     public function create(Request $request)
@@ -24,7 +24,7 @@ class StockMovementController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('stockmovements.create', compact('selectFor', 'returnUrl'));
+        return view('stocksmovements.create', compact('selectFor', 'returnUrl'));
     }
 
     public function store(Request $request)
@@ -43,12 +43,12 @@ class StockMovementController extends Controller
             return redirect($return);
         }
 
-        return redirect()->route('stockmovements.index')->with('success', 'Category created.');
+        return redirect()->route('stocksmovements.index')->with('success', 'Category created.');
     }
 
     public function edit(StockMovement $supplier)
     {
-        return view('stockmovements.edit', compact('unit'));
+        return view('stocksmovements.edit', compact('unit'));
     }
 
     public function update(Request $request, StockMovement $supplier)
@@ -60,7 +60,7 @@ class StockMovementController extends Controller
 
         $supplier->update($data);
 
-        return redirect()->route('stockmovements.index')->with('success', 'Category updated.');
+        return redirect()->route('stocksmovements.index')->with('success', 'Category updated.');
     }
 
     public function destroy(StockMovement $stockMovement)
@@ -68,7 +68,7 @@ class StockMovementController extends Controller
         $stockMovement->delete();
 
         return redirect()
-            ->route('stockmovements.index')
+            ->route('stocksmovements.index')
             ->with('success', 'Category deleted.');
     }
 
