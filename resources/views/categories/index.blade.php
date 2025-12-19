@@ -15,21 +15,22 @@
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
-                            <th>Supplier</th>
-                            <th>Request</th>
-                            <th>Order Date</th>
+                            <th>Name</th>
+                            <th>Desctiption</th>
                             <th width="150">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach($orders as $o)
+                        @foreach($categories as $ca)
                             <tr>
-                                <td>{{ $o->id }}</td>
-                                <td>{{ $o->supplier->name }}</td>
-                                <td>{{ $o->purchaseRequest->title }}</td>
-                                <td>{{ $o->order_date }}</td>
+                                <td>{{ $ca->id }}</td>
+                                <td>{{ $ca->name }}</td>
+                                <td>{{ $categories->description }}</td>
                                 <td>
+                                    <a class="btn btn-warning btn-sm" href="{{ route('categories.edit', $o) }}">
+                                        Edit
+                                    </a>
                                     <a class="btn btn-warning btn-sm" href="{{ route('purchase-orders.edit', $o) }}">
                                         Edit
                                     </a>
