@@ -38,7 +38,10 @@ class PurchaseRequestController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate(['title' => 'required|string|max:255']);
+        $data = $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'request_date' => 'required|date',
+        ]);
         $req = PurchaseRequest::create($data);
 
         if ($request->filled('select_for') && $request->filled('return_url')) {
