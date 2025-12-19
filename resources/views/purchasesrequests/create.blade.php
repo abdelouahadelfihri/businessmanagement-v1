@@ -6,12 +6,12 @@
         <h1 class="mb-4">Create Purchase Order</h1>
 
         <a class="btn btn-secondary mb-3"
-            href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
+            href="{{ route('purchasesrequests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
             Pick Supplier
         </a>
 
         <a class="btn btn-secondary mb-3"
-            href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
+            href="{{ route('purchasesrequests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
             Pick Purchase Request
         </a>
 
