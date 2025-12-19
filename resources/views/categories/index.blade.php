@@ -26,15 +26,26 @@
                             <tr>
                                 <td>{{ $ca->id }}</td>
                                 <td>{{ $ca->name }}</td>
-                                <td>{{ $categories->description }}</td>
+                                <td>{{ $ca->description }}</td>
                                 <td>
-                                    <a class="btn btn-warning btn-sm" href="{{ route('categories.edit', $o) }}">
+                                    <a class="btn btn-warning btn-sm" href="{{ route('categories.edit', $ca->id) }}">
                                         Edit
                                     </a>
-                                    <a class="btn btn-warning btn-sm" href="{{ route('purchase-orders.edit', $o) }}">
-                                        Edit
+
+                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault();
+                                                            if(confirm('Delete this category?')){
+                                                                document.getElementById('delete-category-{{ $ca->id }}').submit();
+                                                            }">
+                                        Delete
                                     </a>
+
+                                    <form id="delete-category-{{ $ca->id }}" action="{{ route('categories.destroy', $ca->id) }}"
+                                        method="POST" style="display:none;">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>
