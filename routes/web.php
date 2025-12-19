@@ -22,6 +22,7 @@ use App\Http\Controllers\MasterData\CategoryController;
 use App\Http\Controllers\MasterData\UnitController;
 use App\Http\Controllers\MasterData\WarehouseController;
 use App\Http\Controllers\MasterData\LocationController;
+use App\Http\Controllers\MasterData\StockMovementController;
 
 Route::resource('suppliers', SupplierController::class);
 Route::resource('purchasesrequests', PurchaseRequestController::class);
@@ -42,6 +43,7 @@ Route::resource('products', ProductController::class);
 Route::resource('units', UnitController::class);
 Route::resource('warehouses', WarehouseController::class);
 Route::resource('locations', LocationController::class);
+Route::resource('stocksmovements', StockMovementController::class);
 
 Route::get('/', function () {
     return view('dashboard'); // or the correct dashboard view file
