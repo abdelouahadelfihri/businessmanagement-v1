@@ -11,6 +11,7 @@ use App\Http\Controllers\Sales\SaleQuoteController;
 use App\Http\Controllers\Sales\SaleOrderController;
 use App\Http\Controllers\Sales\DeliveryController;
 use App\Http\Controllers\Sales\SaleInvoiceController;
+use App\Http\Controllers\Sales\SaleReturnController;
 
 
 use App\Http\Controllers\MasterData\CustomerController;
@@ -33,6 +34,7 @@ Route::resource('salesquotations', SaleQuoteController::class);
 Route::resource('salesorders', SaleOrderController::class);
 Route::resource('salesdeliveries', DeliveryController::class);
 Route::resource('salesinvoices', SaleInvoiceController::class);
+Route::resource('salesreturns', SaleReturnController::class);
 
 Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);
