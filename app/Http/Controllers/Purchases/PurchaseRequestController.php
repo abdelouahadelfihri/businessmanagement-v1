@@ -26,12 +26,13 @@ class PurchaseRequestController extends Controller
 
         if ($request->filled('selected_supplier_id')) {
             $selectedSupplier = Supplier::find($request->query('selected_supplier_id'));
+            $selectedSupplierId = $selectedSupplier->id;
         }
 
         return view('purchasesrequests.create', compact(
             'selectFor',
             'returnUrl',
-            'selectedSupplier'
+            'selectedSupplierId'
         ));
     }
 
