@@ -9,13 +9,13 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
-        $suppliers = Supplier::paginate(12); // paginate for big lists
+        $suppliers = Supplier::paginate(10);
 
-        // selection mode params (if opened from PO)
-        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
-        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
-
-        return view('suppliers.index', compact('suppliers','selectFor','returnUrl'));
+        return view('suppliers.index', [
+            'suppliers' => $suppliers,
+            'selectFor' => $request->query('select_for'),
+            'returnUrl' => $request->query('return_url'),
+        ]);
     }
 
     public function create(Request $request)
@@ -24,7 +24,7 @@ class SupplierController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('suppliers.create', compact('selectFor','returnUrl'));
+        return view('suppliers.create', compact('selectFor', 'returnUrl'));
     }
 
     public function store(Request $request)
@@ -43,7 +43,7 @@ class SupplierController extends Controller
             return redirect($return);
         }
 
-        return redirect()->route('suppliers.index')->with('success','Supplier created.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier created.');
     }
 
     public function edit(Supplier $supplier)
@@ -60,6 +60,6 @@ class SupplierController extends Controller
 
         $supplier->update($data);
 
-        return redirect()->route('suppliers.index')->with('success','Supplier updated.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
     }
 }
