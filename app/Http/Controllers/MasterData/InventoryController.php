@@ -37,12 +37,12 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id'            => 'required|exists:products,id',
-            'warehouse_id'          => 'required|exists:warehouses,id',
-            'quantity_available'    => 'required|integer|min:0',
-            'minimum_stock_level'   => 'nullable|integer|min:0',
-            'maximum_stock_level'   => 'nullable|integer|min:0',
-            'reorder_point'         => 'nullable|integer|min:0',
+            'product_id' => 'required|exists:products,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
+            'quantity_available' => 'required|integer|min:0',
+            'minimum_stock_level' => 'nullable|integer|min:0',
+            'maximum_stock_level' => 'nullable|integer|min:0',
+            'reorder_point' => 'nullable|integer|min:0',
         ]);
 
         Inventory::create($request->all());
@@ -72,12 +72,12 @@ class InventoryController extends Controller
         $inventory = Inventory::findOrFail($inventory_id);
 
         $request->validate([
-            'product_id'            => 'required|exists:products,id',
-            'warehouse_id'          => 'required|exists:warehouses,id',
-            'quantity_available'    => 'required|integer|min:0',
-            'minimum_stock_level'   => 'nullable|integer|min:0',
-            'maximum_stock_level'   => 'nullable|integer|min:0',
-            'reorder_point'         => 'nullable|integer|min:0',
+            'product_id' => 'required|exists:products,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
+            'quantity_available' => 'required|integer|min:0',
+            'minimum_stock_level' => 'nullable|integer|min:0',
+            'maximum_stock_level' => 'nullable|integer|min:0',
+            'reorder_point' => 'nullable|integer|min:0',
         ]);
 
         $inventory->update($request->all());
@@ -90,13 +90,12 @@ class InventoryController extends Controller
     /**
      * Remove the specified inventory from storage.
      */
-    public function destroy($inventory_id)
+    public function destroy(Inventory $inventory)
     {
-        $inventory = Inventory::findOrFail($inventory_id);
         $inventory->delete();
 
         return redirect()
             ->route('inventories.index')
-            ->with('success', 'Inventory deleted successfully.');
+            ->with('success', 'Inventory deleted.');
     }
 }
