@@ -22,7 +22,7 @@ class PurchaseRequest extends Model
     // Relationship to Supplier
     public function supplier()
     {
-        return $this->belongsTo(\App\Models\Purchases\Supplier::class);
+        return $this->belongsTo(\App\Models\MasterData\Supplier::class);
     }
 
 }
