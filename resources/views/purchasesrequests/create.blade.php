@@ -3,17 +3,7 @@
 @section('content')
     <div class="container mt-4">
 
-        <h1 class="mb-4">Create Purchase Order</h1>
-
-        <a class="btn btn-secondary mb-3"
-            href="{{ route('purchasesrequests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-            Pick Supplier
-        </a>
-
-        <a class="btn btn-secondary mb-3"
-            href="{{ route('purchasesrequests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-            Pick Purchase Request
-        </a>
+        <h1 class="mb-4">Create Purchase Request</h1>
 
         <div class="card shadow-sm">
             <div class="card-body">
@@ -21,33 +11,29 @@
                 <form action="{{ route('purchasesrequests.store') }}" method="POST">
                     @csrf
 
+                    {{-- Supplier picker --}}
                     <div class="mb-3">
                         <label class="form-label">Supplier</label>
-                        <select name="supplier_id" id="supplier_id" class="form-select" required>
-                            <option value="">-- choose supplier --</option>
-                            @foreach($suppliers as $s)
-                                <option value="{{ $s->id }}" {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                    {{ $s->name }}
-                                </option>
-                            @endforeach
-                        </select>
+
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
+
+                            <a class="btn btn-secondary" href="{{ route('suppliers.index', [
+        'select_for' => 'purchase-request',
+        'return_url' => url()->current()
+    ]) }}">
+                                Pick Supplier
+                            </a>
+                        </div>
+
+                        <input type="hidden" name="supplier_id" id="supplier_id" value="{{ $selectedSupplier?->id }}"
+                            required>
                     </div>
 
+                    {{-- Request date --}}
                     <div class="mb-3">
-                        <label class="form-label">Purchase Request</label>
-                        <select name="purchase_request_id" id="request_id" class="form-select" required>
-                            <option value="">-- choose request --</option>
-                            @foreach($requests as $r)
-                                <option value="{{ $r->id }}" {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                    {{ $r->title }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Order Date</label>
-                        <input type="date" name="order_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                        <label class="form-label">Request Date</label>
+                        <input type="date" name="request_date" class="form-control" value="{{ date('Y-m-d') }}" required>
                     </div>
 
                     <button class="btn btn-primary">Save</button>
@@ -57,18 +43,4 @@
         </div>
 
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const params = new URLSearchParams(window.location.search);
-
-            if (params.get("selected_supplier_id")) {
-                document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-            }
-            if (params.get("selected_request_id")) {
-                document.getElementById("request_id").value = params.get("selected_request_id");
-            }
-        });
-    </script>
-
 @endsection
