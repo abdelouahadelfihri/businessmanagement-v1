@@ -16,11 +16,12 @@
                         <label class="form-label">Supplier</label>
 
                         <div class="d-flex gap-2">
-                            <input type="text" class="form-control" value="{{ $selectedSupplier?-> }}" readonly>
+                            <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
 
                             <a class="btn btn-secondary" href="{{ route('suppliers.index', [
-                            'select_for' => 'purchase-request',
-                            'return_url' => url()->current()]) }}">
+        'select_for' => 'purchase-request',
+        'return_url' => url()->current()
+    ]) }}">
                                 Pick Supplier
                             </a>
                         </div>
