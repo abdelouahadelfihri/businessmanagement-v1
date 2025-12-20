@@ -20,7 +20,7 @@
 
                             <a class="btn btn-secondary" href="{{ route('suppliers.index', [
         'select_for' => 'purchase-request',
-        'return_url' => url()->current()
+        'return_url' => request()->fullUrl()
     ]) }}">
                                 Pick Supplier
                             </a>
@@ -33,7 +33,8 @@
                     {{-- Request date --}}
                     <div class="mb-3">
                         <label class="form-label">Request Date</label>
-                        <input type="date" name="request_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                        <input type="date" name="request_date" class="form-control"
+                            value="{{ old('request_date', request('request_date', date('Y-m-d'))) }}" required>
                     </div>
 
                     <button class="btn btn-primary">Save</button>
