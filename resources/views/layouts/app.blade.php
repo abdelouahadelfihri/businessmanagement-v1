@@ -212,7 +212,7 @@
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#purchasesOrdersMenu">
                                     <i class="bi bi-file-earmark-text"></i>
-                                    <span>Purchase Requests</span>
+                                    <span>Purchases Orders</span>
                                 </a>
                                 <div class="collapse" id="purchasesOrdersMenu">
                                     <ul class="nav flex-column submenu">
@@ -268,28 +268,6 @@
                                         </li>
                                         <li>
                                             <a class="nav-link" href="{{ route('purchasesinvoices.create') }}">
-                                                <i class="bi bi-plus-circle"></i>
-                                                <span>Add</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <a class="nav-link" data-bs-toggle="collapse" href="#purchaseOrdersMenu">
-                                    <i class="bi bi-bag-check"></i>
-                                    <span>Purchase Orders</span>
-                                </a>
-                                <div class="collapse" id="purchaseOrdersMenu">
-                                    <ul class="nav flex-column submenu">
-                                        <li>
-                                            <a class="nav-link" href="{{ route('purchasesorders.index') }}">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>List</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-link" href="{{ route('purchasesorders.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
