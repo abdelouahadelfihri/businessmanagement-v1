@@ -20,7 +20,7 @@
 
                             <a class="btn btn-secondary" href="{{ route('suppliers.index', [
         'select_for' => 'purchase-request',
-        'return_url' => url()->current()
+        'return_url' => request()->fullUrl()
     ]) }}">
                                 Pick Supplier
                             </a>
