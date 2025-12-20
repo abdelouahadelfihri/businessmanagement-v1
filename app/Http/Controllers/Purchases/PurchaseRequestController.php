@@ -25,7 +25,12 @@ class PurchaseRequestController extends Controller
             $selectedSupplier = Supplier::find($request->selected_supplier_id);
         }
 
-        return view('purchasesrequests.create', compact('selectedSupplier'));
+        $formData = session('purchase_request_form', []);
+
+        return view('purchasesrequests.create', [
+            'selectedSupplier' => $selectedSupplier,
+            'formData' => $formData
+        ]);
     }
 
     public function store(Request $request)
