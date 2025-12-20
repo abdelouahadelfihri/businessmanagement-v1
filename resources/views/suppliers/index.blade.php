@@ -34,7 +34,8 @@
                                         @if($selectFor && $returnUrl)
                                             <a class="btn btn-success btn-sm"
                                                 href="{{ $returnUrl }}{{ str_contains($returnUrl, '?') ? '&' : '?' }}selected_supplier_id={{ $s->id }}">
-                                                Select</a>
+                                                Select
+                                            </a>
                                         @else
                                             <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s->id) }}">
                                                 Edit</a>
