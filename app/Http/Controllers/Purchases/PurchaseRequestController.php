@@ -31,7 +31,7 @@ class PurchaseRequestController extends Controller
         return view('purchasesrequests.create', compact(
             'selectFor',
             'returnUrl',
-            'selectedSupplierId'
+            'selectedSupplier'
         ));
     }
 
