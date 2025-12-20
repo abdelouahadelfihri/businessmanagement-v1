@@ -30,21 +30,21 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
-        $supplier = Supplier::create($request->only('name', 'email'));
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+        ]);
 
-        // Picker flow
-        if ($request->filled('return_url')) {
-            $returnUrl = $request->input('return_url');
+        $supplier = Supplier::create($data);
 
-            return redirect(
-                $returnUrl .
-                (str_contains($returnUrl, '?') ? '&' : '?') .
-                'selected_supplier_id=' . $supplier->id
-            );
+        // If created from a selection flow, redirect back to caller with new id
+        if ($request->filled('select_for') && $request->filled('return_url')) {
+            // append query param and redirect to return_url
+            $return = $request->input('return_url') . '?selected_supplier_id=' . $supplier->id;
+            return redirect($return);
         }
 
-        // Normal flow
-        return redirect()->route('suppliers.index');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier created.');
     }
 
     public function edit(Supplier $supplier)
