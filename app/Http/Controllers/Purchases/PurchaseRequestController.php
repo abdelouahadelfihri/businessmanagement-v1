@@ -23,11 +23,9 @@ class PurchaseRequestController extends Controller
         $returnUrl = $request->query('return_url');
 
         $selectedSupplier = null;
-        $selectedSupplierId = null;
 
         if ($request->filled('selected_supplier_id')) {
             $selectedSupplier = Supplier::find($request->query('selected_supplier_id'));
-            $selectedSupplierId = $selectedSupplier->id;
         }
 
         return view('purchasesrequests.create', compact(
