@@ -24,6 +24,7 @@
     ]) }}">
                                 Pick Supplier
                             </a>
+
                         </div>
 
                         <input type="hidden" name="supplier_id" id="supplier_id" value="{{ $selectedSupplier?->id }}"
