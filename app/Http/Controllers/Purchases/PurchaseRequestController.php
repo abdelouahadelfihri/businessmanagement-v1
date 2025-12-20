@@ -49,7 +49,7 @@ class PurchaseRequestController extends Controller
             return redirect($return);
         }
 
-        return redirect()->route('purchase-requests.index')->with('success', 'Request created.');
+        return redirect()->route('purchasesrequests.index')->with('success', 'Request created.');
     }
 
     public function edit(PurchaseRequest $purchaseRequest)
