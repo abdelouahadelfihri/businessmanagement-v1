@@ -19,20 +19,13 @@ class PurchaseRequestController extends Controller
 
     public function create(Request $request)
     {
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-
         $selectedSupplier = null;
 
         if ($request->filled('selected_supplier_id')) {
-            $selectedSupplier = Supplier::find($request->query('selected_supplier_id'));
+            $selectedSupplier = Supplier::find($request->selected_supplier_id);
         }
 
-        return view('purchasesrequests.create', compact(
-            'selectFor',
-            'returnUrl',
-            'selectedSupplier'
-        ));
+        return view('purchasesrequests.create', compact('selectedSupplier'));
     }
 
     public function store(Request $request)
