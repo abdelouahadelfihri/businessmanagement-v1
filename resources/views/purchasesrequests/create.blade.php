@@ -18,12 +18,9 @@
                         <div class="d-flex gap-2">
                             <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
 
-                            <a class="btn btn-secondary" href="{{ route('suppliers.index', [
-        'select_for' => 'purchase-request',
-        'return_url' => request()->fullUrl()
-    ]) }}">
+                            <button type="button" class="btn btn-secondary" onclick="pickSupplier()">
                                 Pick Supplier
-                            </a>
+                            </button>
                         </div>
 
                         <input type="hidden" name="supplier_id" id="supplier_id" value="{{ $selectedSupplier?->id }}"
@@ -46,3 +43,22 @@
 
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        function pickSupplier() {
+            const params = new URLSearchParams();
+
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.name && el.value) {
+                    params.append(el.name, el.value);
+                }
+            });
+
+            window.location.href =
+                "{{ route('suppliers.index') }}" +
+                "?select_for=purchase-request&return_url={{ route('purchasesrequests.create') }}&" +
+                params.toString();
+        }
+    </script>
+@endpush
