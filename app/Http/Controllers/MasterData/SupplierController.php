@@ -10,7 +10,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $suppliers = Supplier::paginate(10);
-
+        session(['purchase_request_form' => $request->except(['page'])]);
         return view('suppliers.index', [
             'suppliers' => $suppliers,
             'selectFor' => $request->query('select_for'),
