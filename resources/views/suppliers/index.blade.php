@@ -12,11 +12,9 @@
                     href="{{ route('suppliers.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
                     Add Supplier and Return
                 </a>
-            @else
-                <a class="btn btn-primary" href="{{ route('suppliers.create') }}">Add Supplier</a>
             @endif
         @else
-
+            <a class="btn btn-primary" href="{{ route('suppliers.create') }}">Add Supplier</a>
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <table id="suppliersTable" class="table table-bordered table-hover">
