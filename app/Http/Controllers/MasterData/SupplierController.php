@@ -16,9 +16,9 @@ class SupplierController extends Controller
         if ($selectFor === 'purchase-request') {
             session([
                 'purchase_request_form' => $request->except([
-                    'page',          // pagination
+                    'page',
                     'select_for',
-                    'return_url',
+                    'return_url'
                 ])
             ]);
         }
