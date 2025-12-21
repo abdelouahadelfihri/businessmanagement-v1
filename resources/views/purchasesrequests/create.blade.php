@@ -21,10 +21,16 @@
                                 <form method="GET" action="{{ route('suppliers.index') }}">
                                     <input type="hidden" name="select_for" value="purchase-request">
                                     <input type="hidden" name="return_url" value="{{ route('purchasesrequests.create') }}">
+
+                                    {{-- preserve fields --}}
                                     <input type="hidden" name="request_date"
                                         value="{{ old('request_date', request('request_date')) }}">
-                                    <button class="btn btn-secondary">Pick Supplier</button>
+
+                                    <button type="submit" class="btn btn-secondary">
+                                        Pick Supplier
+                                    </button>
                                 </form>
+
                             </div>
                         </div>
 
