@@ -39,25 +39,22 @@ class SupplierController extends Controller
 
         return view('suppliers.create', compact('selectFor', 'returnUrl'));
     }
-
-
     public function store(Request $request)
     {
-        $supplier = Supplier::create($request->only('name', 'email'));
+        $supplier = Supplier::create(
+            $request->only('name', 'email')
+        );
 
         if ($request->filled('return_url')) {
-            $returnUrl = $request->input('return_url');
-
-            return redirect(
-                $returnUrl .
-                (str_contains($returnUrl, '?') ? '&' : '?') .
+            return redirect()->to(
+                $request->return_url .
+                (str_contains($request->return_url, '?') ? '&' : '?') .
                 'selected_supplier_id=' . $supplier->id
             );
         }
 
         return redirect()->route('suppliers.index');
     }
-
 
     /*public function store(Request $request)
     {
