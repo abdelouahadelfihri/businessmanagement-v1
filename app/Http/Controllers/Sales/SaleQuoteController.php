@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sales\SalesQuote;
+use App\Models\Sales\SaleQuote;
 use Illuminate\Http\Request;
 
 class SaleQuoteController extends Controller
@@ -12,7 +12,7 @@ class SaleQuoteController extends Controller
     public function index()
     {
         return response()->json(
-            SalesQuote::with('customer')->get()
+            SaleQuote::with('customer')->get()
         );
     }
 
@@ -27,7 +27,7 @@ class SaleQuoteController extends Controller
             'status'       => 'nullable|string'
         ]);
 
-        $quote = SalesQuote::create($validated);
+        $quote = SaleQuote::create($validated);
 
         return response()->json($quote, 201);
     }
@@ -36,14 +36,14 @@ class SaleQuoteController extends Controller
     public function show($id)
     {
         return response()->json(
-            SalesQuote::with('customer')->findOrFail($id)
+            SaleQuote::with('customer')->findOrFail($id)
         );
     }
 
     // PUT/PATCH /sales-quotes/{id}
     public function update(Request $request, $id)
     {
-        $quote = SalesQuote::findOrFail($id);
+        $quote = SaleQuote::findOrFail($id);
 
         $validated = $request->validate([
             'customer_id'  => 'sometimes|exists:customers,customerId',
@@ -61,7 +61,7 @@ class SaleQuoteController extends Controller
     // DELETE /sales-quotes/{id}
     public function destroy($id)
     {
-        $quote = SalesQuote::findOrFail($id);
+        $quote = SaleQuote::findOrFail($id);
         $quote->delete();
 
         return response()->json(['message' => 'Deleted successfully']);
