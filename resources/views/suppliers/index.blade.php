@@ -4,7 +4,7 @@
     <div class="container mt-4">
         <h1 class="mb-4">Suppliers</h1>
 
-        {{-- Add button --}}
+        {{-- Add Supplier button --}}
         <div class="mb-3">
             <a class="btn btn-primary" href="{{ route('suppliers.create', [
         'select_for' => $selectFor,
@@ -35,11 +35,13 @@
                                     <td>
                                         @if($selectFor && $returnUrl)
                                             @php
+                                                // Get current form state from session
                                                 $form = session('purchase_request_form', []);
-                                                // Build query parameters safely
+
+                                                // Build query safely: selected supplier + previous form values
                                                 $query = array_merge(
                                                     ['selected_supplier_id' => $s->id],
-                                                    $form // will include request_date if exists
+                                                    $form // includes request_date
                                                 );
                                             @endphp
                                             <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?{{ http_build_query($query) }}">
