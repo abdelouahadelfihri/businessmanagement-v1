@@ -18,13 +18,7 @@ class PurchaseRequestController extends Controller
     }
     public function create(Request $request)
     {
-        // Get form state from session
-        $form = session('purchase_request_form', []);
-
-        // Merge any incoming query parameters (like request_date from supplier selection)
-        $form = array_merge($form, $request->only('request_date'));
-
-        // Save back to session
+        $form = array_merge(session('purchase_request_form', []), $request->only('request_date'));
         session(['purchase_request_form' => $form]);
 
         $selectedSupplier = null;
