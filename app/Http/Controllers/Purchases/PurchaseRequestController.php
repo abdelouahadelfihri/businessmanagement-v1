@@ -16,6 +16,19 @@ class PurchaseRequestController extends Controller
 
     public function create(Request $request)
     {
+        // If this is a fresh create (no picker return, no form data)
+        if (
+            !$request->hasAny([
+                'request_date',
+                'description',
+                'status',
+                'selected_supplier_id'
+            ])
+        ) {
+            session()->forget('purchase_request_form');
+        }
+
+        // Merge session + incoming values
         $form = array_merge(
             session('purchase_request_form', []),
             $request->only([
@@ -35,6 +48,7 @@ class PurchaseRequestController extends Controller
 
         return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
     }
+
     public function store(Request $request)
     {
         $data = $request->validate([
