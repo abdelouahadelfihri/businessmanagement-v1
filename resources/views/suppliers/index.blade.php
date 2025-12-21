@@ -35,18 +35,14 @@
                                     <td>
                                         @if($selectFor && $returnUrl)
                                             @php
-                                            $form = session('purchase_request_form', []);
+                                                $form = session('purchase_request_form', []);
                                             @endphp
-                                            <a class="btn btn-success btn-sm"
-   href="{{ $returnUrl }}
-        {{ str_contains($returnUrl, '?') ? '&' : '?' }}
-        selected_supplier_id={{ $s->id }}
-        @if(!empty($form['request_date']))
-            &request_date={{ $form['request_date'] }}
-        @endif">
-   Select
-</a>
-
+                                            <a class="btn btn-success btn-sm" href="{{ $returnUrl }}
+                                            {{ str_contains($returnUrl, '?') ? '&' : '?' }} selected_supplier_id={{ $s->id }}
+                                            @if(!empty($form['request_date']))
+                                            &request_date={{ $form['request_date'] }} @endif">
+                                                Select
+                                            </a>
                                         @else
                                             <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s) }}">
                                                 Edit
