@@ -19,18 +19,17 @@ class PurchaseRequestController extends Controller
 
     public function create(Request $request)
     {
-        $selectedSupplier = null;
+        $form = session('purchase_request_form', []);
 
+        $selectedSupplier = null;
         if ($request->filled('selected_supplier_id')) {
             $selectedSupplier = Supplier::find($request->selected_supplier_id);
         }
 
-        $formData = session('purchase_request_form', []);
-
-        return view('purchasesrequests.create', [
-            'selectedSupplier' => $selectedSupplier,
-            'formData' => $formData
-        ]);
+        return view('purchasesrequests.create', compact(
+            'selectedSupplier',
+            'form'
+        ));
     }
 
     public function store(Request $request)
