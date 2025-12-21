@@ -4,7 +4,6 @@
     <div class="container mt-4">
         <h1 class="mb-4">Suppliers</h1>
 
-        {{-- Add Supplier button --}}
         <div class="mb-3">
             <a class="btn btn-primary" href="{{ route('suppliers.create', [
         'select_for' => $selectFor,
@@ -35,7 +34,9 @@
                                     <td>
                                         @if($selectFor && $returnUrl)
                                             @php
+                                                // Get current form state from session
                                                 $form = session('purchase_request_form', []);
+                                                // Build query with selected supplier + previous form values
                                                 $query = array_merge(['selected_supplier_id' => $s->id], $form);
                                             @endphp
                                             <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?{{ http_build_query($query) }}">
@@ -68,7 +69,6 @@
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-
     <script>
         $(document).ready(function () {
             $('#suppliersTable').DataTable({
