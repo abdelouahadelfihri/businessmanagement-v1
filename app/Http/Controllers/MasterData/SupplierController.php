@@ -12,27 +12,16 @@ class SupplierController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
+        // Save current form values in session if coming from a purchase request
         if ($selectFor === 'purchase-request') {
-            // Merge instead of overwrite
             $existing = session('purchase_request_form', []);
-
-            session([
-                'purchase_request_form' => array_merge(
-                    $existing,
-                    $request->except(['page', 'select_for', 'return_url'])
-                )
-            ]);
+            session(['purchase_request_form' => array_merge($existing, $request->except(['page', 'select_for', 'return_url']))]);
         }
 
         $suppliers = Supplier::paginate(10);
 
-        return view('suppliers.index', compact(
-            'suppliers',
-            'selectFor',
-            'returnUrl'
-        ));
+        return view('suppliers.index', compact('suppliers', 'selectFor', 'returnUrl'));
     }
-
     public function create(Request $request)
     {
         // pass along selection params so create view can return to PO after saving
