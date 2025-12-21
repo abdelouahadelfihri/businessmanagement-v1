@@ -8,26 +8,26 @@ use App\Http\Controllers\Controller;
 
 class PurchaseRequestController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $requests = PurchaseRequest::paginate(12);
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-
-        return view('index', compact('requests', 'selectFor', 'returnUrl'));
+        return view('purchasesrequests.index', compact('requests'));
     }
+
     public function create(Request $request)
     {
-        $form = array_merge(session('purchase_request_form', []), $request->only('request_date'));
+        // Merge existing session form with incoming query (like request_date or selected_supplier_id)
+        $form = array_merge(session('purchase_request_form', []), $request->only('request_date', 'selected_supplier_id'));
         session(['purchase_request_form' => $form]);
 
         $selectedSupplier = null;
-        if ($request->filled('selected_supplier_id')) {
-            $selectedSupplier = Supplier::find($request->selected_supplier_id);
+        if (!empty($form['selected_supplier_id'])) {
+            $selectedSupplier = Supplier::find($form['selected_supplier_id']);
         }
 
         return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
     }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -37,20 +37,10 @@ class PurchaseRequestController extends Controller
 
         PurchaseRequest::create($data);
 
+        // Clear session form after saving
         session()->forget('purchase_request_form');
 
         return redirect()->route('purchasesrequests.index')
-            ->with('success', 'Request created.');
-    }
-    public function edit(PurchaseRequest $purchaseRequest)
-    {
-        return view('purchasesrequests.edit', ['request' => $purchaseRequest]);
-    }
-
-    public function update(Request $request, PurchaseRequest $purchaseRequest)
-    {
-        $data = $request->validate(['title' => 'required|string|max:255']);
-        $purchaseRequest->update($data);
-        return redirect()->route('purchase-requests.index')->with('success', 'Request updated.');
+            ->with('success', 'Purchase request created successfully.');
     }
 }
