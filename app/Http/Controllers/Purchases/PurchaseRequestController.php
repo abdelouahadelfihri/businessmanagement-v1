@@ -16,30 +16,22 @@ class PurchaseRequestController extends Controller
 
         return view('index', compact('requests', 'selectFor', 'returnUrl'));
     }
-
     public function create(Request $request)
     {
-        // Restore saved form state
+        // Merge session + incoming query values
         $form = array_merge(
             session('purchase_request_form', []),
-            $request->only('request_date')
+            $request->only('request_date') // add more fields if needed
         );
-        session(['purchase_request_form' => $form]);
 
-        // If coming back from supplier selection, KEEP form state
-        if ($request->has('selected_supplier_id')) {
-            session(['purchase_request_form' => $form]);
-        }
+        session(['purchase_request_form' => $form]);
 
         $selectedSupplier = null;
         if ($request->filled('selected_supplier_id')) {
             $selectedSupplier = Supplier::find($request->selected_supplier_id);
         }
 
-        return view('purchasesrequests.create', compact(
-            'selectedSupplier',
-            'form'
-        ));
+        return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
     }
 
     public function store(Request $request)
