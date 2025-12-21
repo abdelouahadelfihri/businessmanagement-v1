@@ -23,7 +23,7 @@
                             <a class="btn btn-secondary" href="{{ route('suppliers.index', array_merge([
         'select_for' => 'purchase-request',
         'return_url' => route('purchasesrequests.create')
-    ], $form)) }}">
+    ], $form ?? [])) }}">
                                 Pick Supplier
                             </a>
                         </div>
@@ -39,7 +39,6 @@
                     {{-- ================= Request Date ================= --}}
                     <div class="mb-3">
                         <label class="form-label">Request Date</label>
-
                         <input type="date" name="request_date" class="form-control"
                             value="{{ old('request_date', $form['request_date'] ?? '') }}" required>
 
