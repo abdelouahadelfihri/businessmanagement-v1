@@ -8,45 +8,59 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
+                {{-- Main form --}}
                 <form action="{{ route('purchasesrequests.store') }}" method="POST">
                     @csrf
 
-                    {{-- Supplier picker --}}
+                    {{-- ================= Supplier Picker ================= --}}
                     <div class="mb-3">
                         <label class="form-label">Supplier</label>
 
-                        <div class="d-flex gap-2">
-                            <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
-                            <div class="d-flex gap-2">
-                                <form method="GET" action="{{ route('suppliers.index') }}">
-                                    <input type="hidden" name="select_for" value="purchase-request">
-                                    <input type="hidden" name="return_url" value="{{ route('purchasesrequests.create') }}">
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}"
+                                placeholder="No supplier selected" readonly>
 
-                                    {{-- preserve fields --}}
-                                    <input type="hidden" name="request_date"
-                                        value="{{ old('request_date', request('request_date')) }}">
-
-                                    <button type="submit" class="btn btn-secondary">
-                                        Pick Supplier
-                                    </button>
-                                </form>
-
-                            </div>
+                            <a class="btn btn-secondary" href="{{ route('suppliers.index', [
+        'select_for' => 'purchase-request',
+        'return_url' => route('purchasesrequests.create'),
+        // preserve current form values
+        'request_date' => old('request_date', $form['request_date'] ?? '')
+    ]) }}">
+                                Pick Supplier
+                            </a>
                         </div>
 
-                        <input type="hidden" name="supplier_id" id="supplier_id" value="{{ $selectedSupplier?->id }}"
-                            required>
+                        {{-- supplier id actually submitted --}}
+                        <input type="hidden" name="supplier_id" value="{{ $selectedSupplier?->id }}">
+
+                        @error('supplier_id')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    {{-- Request date --}}
+                    {{-- ================= Request Date ================= --}}
                     <div class="mb-3">
                         <label class="form-label">Request Date</label>
 
                         <input type="date" name="request_date" class="form-control"
                             value="{{ old('request_date', $form['request_date'] ?? '') }}" required>
+
+                        @error('request_date')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <button class="btn btn-primary">Save</button>
+                    {{-- ================= Actions ================= --}}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            Save
+                        </button>
+
+                        <a href="{{ route('purchasesrequests.index') }}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
                 </form>
 
             </div>
