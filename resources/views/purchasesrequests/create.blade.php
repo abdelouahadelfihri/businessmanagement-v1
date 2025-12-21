@@ -19,8 +19,6 @@
                             <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
 
                             <div class="d-flex gap-2">
-                                <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
-
                                 <form method="GET" action="{{ route('suppliers.index') }}">
                                     <input type="hidden" name="select_for" value="purchase-request">
                                     <input type="hidden" name="return_url" value="{{ route('purchasesrequests.create') }}">
@@ -40,8 +38,6 @@
                         <label class="form-label">Request Date</label>
                         <input type="date" name="request_date"
                             value="{{ old('request_date', $formData['request_date'] ?? date('Y-m-d')) }}">
-
-
                     </div>
 
                     <button class="btn btn-primary">Save</button>
