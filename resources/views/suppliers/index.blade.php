@@ -19,7 +19,7 @@
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="suppliersTable">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -36,11 +36,13 @@
                                         @if($selectFor && $returnUrl)
                                             @php
                                                 $form = session('purchase_request_form', []);
+                                                // Build query parameters safely
+                                                $query = array_merge(
+                                                    ['selected_supplier_id' => $s->id],
+                                                    $form // will include request_date if exists
+                                                );
                                             @endphp
-                                            <a class="btn btn-success btn-sm" href="{{ $returnUrl }}
-                                            {{ str_contains($returnUrl, '?') ? '&' : '?' }} selected_supplier_id={{ $s->id }}
-                                            @if(!empty($form['request_date']))
-                                            &request_date={{ $form['request_date'] }} @endif">
+                                            <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?{{ http_build_query($query) }}">
                                                 Select
                                             </a>
                                         @else
@@ -62,7 +64,6 @@
         @endif
     </div>
 @endsection
-
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
