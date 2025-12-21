@@ -16,7 +16,8 @@
                     <input type="hidden" name="return_url" value="{{ route('purchasesrequests.create') }}">
 
                     {{-- keep request date --}}
-                    <input type="hidden" name="request_date" value="{{ old('request_date', $form['request_date'] ?? '') }}">
+                    <input type="hidden" id="request_date_hidden" name="request_date"
+                        value="{{ old('request_date', $form['request_date'] ?? '') }}">
 
                     {{-- keep selected supplier if any --}}
                     @if(!empty($selectedSupplier))
@@ -52,7 +53,7 @@
                     <div class="mb-3">
                         <label class="form-label">Request Date</label>
 
-                        <input type="date" name="request_date" class="form-control"
+                        <input type="date" id="request_date_input" name="request_date" class="form-control"
                             value="{{ old('request_date', $form['request_date'] ?? '') }}" required>
 
                         @error('request_date')
@@ -77,3 +78,18 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pickerForm = document.querySelector('form[action="{{ route('suppliers.index') }}"]');
+
+            pickerForm.addEventListener('submit', function () {
+                const dateInput = document.getElementById('request_date_input');
+                const hiddenDate = document.getElementById('request_date_hidden');
+
+                hiddenDate.value = dateInput.value;
+            });
+        });
+    </script>
+@endpush
