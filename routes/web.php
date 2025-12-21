@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Controllers
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Purchases\PurchaseRequestController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
@@ -23,14 +29,33 @@ use App\Http\Controllers\MasterData\WarehouseController;
 use App\Http\Controllers\MasterData\LocationController;
 use App\Http\Controllers\MasterData\StockMovementController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes (SESSION ENABLED)
+|--------------------------------------------------------------------------
+|
+| IMPORTANT:
+| Everything is wrapped in the "web" middleware.
+| This ENABLES:
+| - sessions
+| - csrf
+| - cookies
+| - old()
+|
+*/
+
 Route::middleware(['web'])->group(function () {
 
-    // Dashboard
+    /*
+    | Dashboard
+    */
     Route::get('/', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Master Data
+    /*
+    | Master Data
+    */
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('categories', CategoryController::class);
@@ -41,13 +66,17 @@ Route::middleware(['web'])->group(function () {
     Route::resource('locations', LocationController::class);
     Route::resource('stocksmovements', StockMovementController::class);
 
-    // Purchases
+    /*
+    | Purchases
+    */
     Route::resource('purchasesrequests', PurchaseRequestController::class);
     Route::resource('purchasesorders', PurchaseOrderController::class);
     Route::resource('purchasesreceipts', PurchaseReceiptController::class);
     Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
 
-    // Sales
+    /*
+    | Sales
+    */
     Route::resource('salesquotations', SaleQuoteController::class);
     Route::resource('salesorders', SaleOrderController::class);
     Route::resource('salesdeliveries', DeliveryController::class);
