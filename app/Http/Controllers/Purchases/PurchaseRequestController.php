@@ -18,12 +18,13 @@ class PurchaseRequestController extends Controller
     }
     public function create(Request $request)
     {
-        // Merge session + incoming query values
-        $form = array_merge(
-            session('purchase_request_form', []),
-            $request->only('request_date') // add more fields if needed
-        );
+        // Get form state from session
+        $form = session('purchase_request_form', []);
 
+        // Merge any incoming query parameters (like request_date from supplier selection)
+        $form = array_merge($form, $request->only('request_date'));
+
+        // Save back to session
         session(['purchase_request_form' => $form]);
 
         $selectedSupplier = null;
@@ -33,7 +34,6 @@ class PurchaseRequestController extends Controller
 
         return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
     }
-
     public function store(Request $request)
     {
         $data = $request->validate([
