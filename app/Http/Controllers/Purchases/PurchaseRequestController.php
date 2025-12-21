@@ -45,16 +45,13 @@ class PurchaseRequestController extends Controller
             'request_date' => 'required|date',
         ]);
 
-        $req = PurchaseRequest::create($data);
+        PurchaseRequest::create($data);
 
-        if ($request->filled('select_for') && $request->filled('return_url')) {
-            $return = $request->input('return_url') . '?selected_request_id=' . $req->id;
-            return redirect($return);
-        }
+        session()->forget('purchase_request_form');
 
-        return redirect()->route('purchasesrequests.index')->with('success', 'Request created.');
+        return redirect()->route('purchasesrequests.index')
+            ->with('success', 'Request created.');
     }
-
     public function edit(PurchaseRequest $purchaseRequest)
     {
         return view('purchasesrequests.edit', ['request' => $purchaseRequest]);
