@@ -35,21 +35,22 @@ class PurchaseRequestController extends Controller
 
         return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
     }
-
-
     public function store(Request $request)
     {
         $data = $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'request_date' => 'required|date',
+            'description' => 'nullable|string',
+            'status' => 'required|in:draft,pending,approved',
         ]);
 
         PurchaseRequest::create($data);
 
-        // Clear session form after saving
         session()->forget('purchase_request_form');
 
-        return redirect()->route('purchasesrequests.index')
+        return redirect()
+            ->route('purchasesrequests.index')
             ->with('success', 'Purchase request created successfully.');
     }
+
 }
