@@ -19,7 +19,13 @@ class PurchaseRequestController extends Controller
 
     public function create(Request $request)
     {
+        // Restore saved form state
         $form = session('purchase_request_form', []);
+
+        // If coming back from supplier selection, KEEP form state
+        if ($request->has('selected_supplier_id')) {
+            session(['purchase_request_form' => $form]);
+        }
 
         $selectedSupplier = null;
         if ($request->filled('selected_supplier_id')) {
