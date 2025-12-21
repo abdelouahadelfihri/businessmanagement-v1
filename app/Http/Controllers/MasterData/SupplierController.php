@@ -12,7 +12,6 @@ class SupplierController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        // ✅ Store form state ONLY when picking supplier
         if ($selectFor === 'purchase-request') {
             session([
                 'purchase_request_form' => $request->except([
