@@ -17,10 +17,24 @@
                             <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}"
                                 placeholder="No supplier selected" readonly>
 
-                            <a class="btn btn-secondary"
-                                href="{{ route('suppliers.index', array_merge(['select_for' => 'purchase-request', 'return_url' => route('purchasesrequests.create')], $form ?? [])) }}">
-                                Pick Supplier
-                            </a>
+                            <form method="GET" action="{{ route('suppliers.index') }}" class="d-inline">
+                                <input type="hidden" name="select_for" value="purchase-request">
+                                <input type="hidden" name="return_url" value="{{ route('purchasesrequests.create') }}">
+
+                                {{-- IMPORTANT: send the date --}}
+                                <input type="hidden" name="request_date"
+                                    value="{{ old('request_date', $form['request_date'] ?? '') }}">
+
+                                {{-- keep selected supplier if any --}}
+                                @if(!empty($selectedSupplier))
+                                    <input type="hidden" name="selected_supplier_id" value="{{ $selectedSupplier->id }}">
+                                @endif
+
+                                <button type="submit" class="btn btn-secondary">
+                                    Pick Supplier
+                                </button>
+                            </form>
+
                         </div>
                         <input type="hidden" name="supplier_id" value="{{ $selectedSupplier?->id }}" required>
                         @error('supplier_id')
