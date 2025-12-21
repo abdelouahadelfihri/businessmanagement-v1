@@ -159,6 +159,7 @@
             left: 72px;
         }
     </style>
+    @stack('styles')
 </head>
 
 <body>
@@ -637,7 +638,7 @@
             document.getElementById('sidebar').classList.toggle('collapsed');
         }
     </script>
-
+    @stack('scripts')
 </body>
 
 </html>
