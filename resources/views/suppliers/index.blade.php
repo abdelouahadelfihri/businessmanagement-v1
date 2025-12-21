@@ -5,10 +5,8 @@
         <h1 class="mb-4">Suppliers</h1>
 
         <div class="mb-3">
-            <a class="btn btn-primary" href="{{ route('suppliers.create', [
-        'select_for' => $selectFor,
-        'return_url' => $returnUrl
-    ]) }}">
+            <a class="btn btn-primary"
+                href="{{ route('suppliers.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
                 Add Supplier
             </a>
         </div>
@@ -34,18 +32,14 @@
                                     <td>
                                         @if($selectFor && $returnUrl)
                                             @php
-                                                // Get current form state from session
                                                 $form = session('purchase_request_form', []);
-                                                // Build query with selected supplier + previous form values
                                                 $query = array_merge(['selected_supplier_id' => $s->id], $form);
                                             @endphp
                                             <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?{{ http_build_query($query) }}">
                                                 Select
                                             </a>
                                         @else
-                                            <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s) }}">
-                                                Edit
-                                            </a>
+                                            <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s) }}">Edit</a>
                                         @endif
                                     </td>
                                 </tr>
