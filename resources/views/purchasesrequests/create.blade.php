@@ -41,8 +41,9 @@
                     {{-- Request date --}}
                     <div class="mb-3">
                         <label class="form-label">Request Date</label>
-                        <input type="date" name="request_date"
-                            value="{{ old('request_date', $formData['request_date'] ?? date('Y-m-d')) }}">
+
+                        <input type="date" name="request_date" class="form-control"
+                            value="{{ old('request_date', $form['request_date'] ?? '') }}" required>
                     </div>
 
                     <button class="btn btn-primary">Save</button>
