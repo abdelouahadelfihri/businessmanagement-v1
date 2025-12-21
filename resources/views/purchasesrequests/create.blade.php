@@ -17,7 +17,6 @@
 
                         <div class="d-flex gap-2">
                             <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}" readonly>
-
                             <div class="d-flex gap-2">
                                 <form method="GET" action="{{ route('suppliers.index') }}">
                                     <input type="hidden" name="select_for" value="purchase-request">
