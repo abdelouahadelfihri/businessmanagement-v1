@@ -13,12 +13,14 @@ class SupplierController extends Controller
         $returnUrl = $request->query('return_url');
 
         if ($selectFor === 'purchase-request') {
+            // Merge instead of overwrite
+            $existing = session('purchase_request_form', []);
+
             session([
-                'purchase_request_form' => $request->except([
-                    'page',
-                    'select_for',
-                    'return_url'
-                ])
+                'purchase_request_form' => array_merge(
+                    $existing,
+                    $request->except(['page', 'select_for', 'return_url'])
+                )
             ]);
         }
 
