@@ -24,7 +24,6 @@ class PurchaseRequestController extends Controller
             session('purchase_request_form', []),
             $request->only('request_date')
         );
-
         session(['purchase_request_form' => $form]);
 
         // If coming back from supplier selection, KEEP form state
