@@ -35,14 +35,8 @@
                                     <td>
                                         @if($selectFor && $returnUrl)
                                             @php
-                                                // Get current form state from session
                                                 $form = session('purchase_request_form', []);
-
-                                                // Build query safely: selected supplier + previous form values
-                                                $query = array_merge(
-                                                    ['selected_supplier_id' => $s->id],
-                                                    $form // includes request_date
-                                                );
+                                                $query = array_merge(['selected_supplier_id' => $s->id], $form);
                                             @endphp
                                             <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?{{ http_build_query($query) }}">
                                                 Select
