@@ -4,25 +4,27 @@
     <div class="container mt-4">
         <h1 class="mb-4">Suppliers</h1>
 
+        {{-- Add button --}}
+        <div class="mb-3">
+            <a class="btn btn-primary" href="{{ route('suppliers.create', [
+        'select_for' => $selectFor,
+        'return_url' => $returnUrl
+    ]) }}">
+                Add Supplier
+            </a>
+        </div>
+
         @if($suppliers->isEmpty())
             <div class="alert alert-info">No suppliers found.</div>
-
-            @if($selectFor && $returnUrl)
-                <a class="btn btn-primary"
-                    href="{{ route('suppliers.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
-                    Add Supplier and Return
-                </a>
-            @endif
         @else
-            <a class="btn btn-primary" href="{{ route('suppliers.create') }}">Add Supplier</a>
             <div class="card shadow-sm">
                 <div class="card-body p-0">
-                    <table id="suppliersTable" class="table table-bordered table-hover">
-                        <thead class="table-light">
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th width="150">Actions</th>
+                                <th width="150">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,8 +39,9 @@
                                                 Select
                                             </a>
                                         @else
-                                            <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s->id) }}">
-                                                Edit</a>
+                                            <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s) }}">
+                                                Edit
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -51,14 +54,10 @@
             <div class="mt-3">
                 {{ $suppliers->withQueryString()->links() }}
             </div>
-
-        @endif
-
-        @if(!$selectFor)
-            <a class="btn btn-primary mt-3" href="{{ route('suppliers.create') }}">Add Supplier</a>
         @endif
     </div>
 @endsection
+
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
