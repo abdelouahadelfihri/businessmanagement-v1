@@ -9,15 +9,28 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
-        $suppliers = Supplier::paginate(10);
-        session(['purchase_request_form' => $request->except(['page'])]);
-        return view('suppliers.index', [
-            'suppliers' => $suppliers,
-            'selectFor' => $request->query('select_for'),
-            'returnUrl' => $request->query('return_url'),
-        ]);
-    }
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
 
+        // ✅ Store form state ONLY when picking supplier
+        if ($selectFor === 'purchase-request') {
+            session([
+                'purchase_request_form' => $request->except([
+                    'page',          // pagination
+                    'select_for',
+                    'return_url',
+                ])
+            ]);
+        }
+
+        $suppliers = Supplier::paginate(10);
+
+        return view('suppliers.index', compact(
+            'suppliers',
+            'selectFor',
+            'returnUrl'
+        ));
+    }
 
     public function create(Request $request)
     {
