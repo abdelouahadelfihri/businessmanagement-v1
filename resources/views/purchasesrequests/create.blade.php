@@ -8,7 +8,7 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
-                {{-- Main form --}}
+                {{-- ================= Main Form ================= --}}
                 <form action="{{ route('purchasesrequests.store') }}" method="POST">
                     @csrf
 
@@ -30,8 +30,8 @@
                             </a>
                         </div>
 
-                        {{-- supplier id actually submitted --}}
-                        <input type="hidden" name="supplier_id" value="{{ $selectedSupplier?->id }}">
+                        {{-- actual value submitted --}}
+                        <input type="hidden" name="supplier_id" value="{{ $selectedSupplier?->id }}" required>
 
                         @error('supplier_id')
                             <div class="text-danger small mt-1">{{ $message }}</div>
