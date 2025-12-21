@@ -20,12 +20,10 @@
                             <input type="text" class="form-control" value="{{ $selectedSupplier?->name }}"
                                 placeholder="No supplier selected" readonly>
 
-                            <a class="btn btn-secondary" href="{{ route('suppliers.index', [
+                            <a class="btn btn-secondary" href="{{ route('suppliers.index', array_merge([
         'select_for' => 'purchase-request',
-        'return_url' => route('purchasesrequests.create'),
-        // preserve current form values
-        'request_date' => old('request_date', $form['request_date'] ?? '')
-    ]) }}">
+        'return_url' => route('purchasesrequests.create')
+    ], $form)) }}">
                                 Pick Supplier
                             </a>
                         </div>
