@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Sales\SaleQuote;
 use Illuminate\Http\Request;
 
-class SaleQuoteController extends Controller
+class SaleQuotationController extends Controller
 {
     // GET /sales-quotes
     public function index()
