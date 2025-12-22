@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\MasterData;
 
-use App\Models\MasterData\Supplier;
+use App\Models\MasterData\Customer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -18,9 +18,9 @@ class CustomerController extends Controller
             session(['sale_quotation_form' => array_merge($existing, $request->except(['page', 'select_for', 'return_url']))]);
         }
 
-        $suppliers = Supplier::paginate(10);
+        $customers = Customer::paginate(10);
 
-        return view('suppliers.index', compact('suppliers', 'selectFor', 'returnUrl'));
+        return view('customers.index', compact('suppliers', 'selectFor', 'returnUrl'));
     }
     public function create(Request $request)
     {
@@ -28,11 +28,11 @@ class CustomerController extends Controller
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
 
-        return view('suppliers.create', compact('selectFor', 'returnUrl'));
+        return view('customers.create', compact('selectFor', 'returnUrl'));
     }
     public function store(Request $request)
     {
-        $supplier = Supplier::create(
+        $customer = Customer::create(
             $request->only('name', 'email')
         );
 
@@ -40,26 +40,26 @@ class CustomerController extends Controller
             return redirect()->to(
                 $request->return_url .
                 (str_contains($request->return_url, '?') ? '&' : '?') .
-                'selected_supplier_id=' . $supplier->id
+                'selected_customer_id=' . $customer->id
             );
         }
 
-        return redirect()->route('suppliers.index');
+        return redirect()->route('customers.index');
     }
-    public function edit(Supplier $supplier)
+    public function edit(Customer $customer)
     {
-        return view('suppliers.edit', compact('supplier'));
+        return view('customers.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, Customer $customer)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
         ]);
 
-        $supplier->update($data);
+        $customer->update($data);
 
-        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
+        return redirect()->route('customers.index')->with('success', 'Customer updated.');
     }
 }
