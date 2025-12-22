@@ -1,69 +1,70 @@
 <?php
+namespace App\Http\Controllers\Purchases;
 
-namespace App\Http\Controllers\Sales;
-
-use App\Http\Controllers\Controller;
-use App\Models\Sales\SaleQuote;
+use App\Models\Sales\SaleQuotation;
+use App\Models\MasterData\Customer;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class SaleQuotationController extends Controller
 {
-    // GET /sales-quotes
     public function index()
     {
-        return response()->json(
-            SaleQuote::with('customer')->get()
-        );
+        $requests = SaleQuotation::paginate(12);
+        return view('salesquotations.index', compact('requests'));
     }
 
-    // POST /sales-quotes
+    public function create(Request $request)
+    {
+        // If this is a fresh create (no picker return, no form data)
+        if (
+            !$request->hasAny([
+                'quotation_date',
+                'description',
+                'status',
+                'selected_customer_id'
+            ])
+        ) {
+            session()->forget('purchase_request_form');
+        }
+
+        // Merge session + incoming values
+        $form = array_merge(
+            session('purchase_request_form', []),
+            $request->only([
+                'quotation_date',
+                'description',
+                'status',
+                'selected_customer_id'
+            ])
+        );
+
+        session(['purchase_request_form' => $form]);
+
+        $selectedCustomer = null;
+        if (!empty($form['selected_customer_id'])) {
+            $selectedCustomer = Customer::find($form['selected_customer_id']);
+        }
+
+        return view('salesquotations.create', compact('selectedCustomer', 'form'));
+    }
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'customer_id'  => 'required|exists:customers,customerId',
-            'quote_number' => 'required|string|unique:sales_quotes',
-            'date'         => 'required|date',
-            'total'        => 'required|numeric',
-            'status'       => 'nullable|string'
+        $data = $request->validate([
+            'customer_id' => 'required|exists:suppliers,id',
+            'quotation_date' => 'required|date',
+            'description' => 'nullable|string',
+            'status' => 'required|in:draft,pending,approved',
         ]);
 
-        $quote = SaleQuote::create($validated);
+        SaleQuotation::create($data);
 
-        return response()->json($quote, 201);
+        session()->forget('purchase_request_form');
+
+        return redirect()
+            ->route('salesquotations.index')
+            ->with('success', 'Purchase request created successfully.');
     }
 
-    // GET /sales-quotes/{id}
-    public function show($id)
-    {
-        return response()->json(
-            SaleQuote::with('customer')->findOrFail($id)
-        );
-    }
-
-    // PUT/PATCH /sales-quotes/{id}
-    public function update(Request $request, $id)
-    {
-        $quote = SaleQuote::findOrFail($id);
-
-        $validated = $request->validate([
-            'customer_id'  => 'sometimes|exists:customers,customerId',
-            'quote_number' => 'sometimes|string|unique:sales_quotes,quote_number,' . $id,
-            'date'         => 'sometimes|date',
-            'total'        => 'sometimes|numeric',
-            'status'       => 'sometimes|string'
-        ]);
-
-        $quote->update($validated);
-
-        return response()->json($quote);
-    }
-
-    // DELETE /sales-quotes/{id}
-    public function destroy($id)
-    {
-        $quote = SaleQuote::findOrFail($id);
-        $quote->delete();
-
-        return response()->json(['message' => 'Deleted successfully']);
-    }
 }
