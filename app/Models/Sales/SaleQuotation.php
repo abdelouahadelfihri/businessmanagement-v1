@@ -5,7 +5,7 @@ namespace App\Models\Sales;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SaleQuote extends Model
+class SaleQuotation extends Model
 {
     use HasFactory;
 
