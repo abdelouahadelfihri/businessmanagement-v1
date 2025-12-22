@@ -64,7 +64,7 @@ class SaleQuotationController extends Controller
 
         return redirect()
             ->route('salesquotations.index')
-            ->with('success', 'Purchase request created successfully.');
+            ->with('success', 'Sale quotation created successfully.');
     }
 
 }
