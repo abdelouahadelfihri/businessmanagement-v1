@@ -16,7 +16,7 @@ class PurchaseRequestController extends Controller
 
         $selectedSupplier = null;
         if ($selectedSupplierId) {
-            $selectedSupplier = \App\Models\MasterData\Supplier::find($selectedSupplierId);
+            $selectedSupplier = Supplier::find($selectedSupplierId);
         }
 
         $requestsQuery = PurchaseRequest::query();
