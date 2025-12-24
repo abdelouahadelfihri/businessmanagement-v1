@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1 class="mb-4">Suppliers</h1>
+        <h1 class="mb-4">Liste of Purchases Requests</h1>
 
         <div class="mb-3">
-            <a class="btn btn-primary"
+            <a class="btn btn-primary btn-lg rounded-pill shadow-sm d-flex align-items-center gap-2"
                 href="{{ route('purchasesrequests.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
-                Add Supplier
+                <i class="bi bi-plus-lg"></i> Add a New Purchase Request
             </a>
         </div>
 
@@ -37,10 +37,10 @@
                                         <td>
                                             <span
                                                 class="badge 
-                                                                                                            @if($req->status === 'draft') bg-secondary
-                                                                                                            @elseif($req->status === 'pending') bg-warning text-dark
-                                                                                                            @elseif($req->status === 'approved') bg-success
-                                                                                                            @else bg-light text-dark @endif">
+                                                                                                                                                            @if($req->status === 'draft') bg-secondary
+                                                                                                                                                            @elseif($req->status === 'pending') bg-warning text-dark
+                                                                                                                                                            @elseif($req->status === 'approved') bg-success
+                                                                                                                                                            @else bg-light text-dark @endif">
                                                 {{ ucfirst($req->status) }}
                                             </span>
                                         </td>
