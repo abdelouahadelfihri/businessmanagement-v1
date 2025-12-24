@@ -30,7 +30,7 @@
                             @foreach($requests as $req)
                                 <tr>
                                     <td>{{ $req->id }}</td>
-                                    <td>{{ $selectedSupplier->name }}</td>
+                                    <td>{{ $req->supplier->name ?? '—' }}</td>
                                     <td>{{ $req->date }}</td>
                                     <td>{{ $req->status }}</td>
                                     <td>
