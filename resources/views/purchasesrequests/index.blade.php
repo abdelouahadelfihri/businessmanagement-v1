@@ -37,13 +37,14 @@
                                         @if($selectFor && $returnUrl)
                                             @php
                                                 $form = session('purchase_request_form', []);
-                                                $query = array_merge(['selected_supplier_id' => $s->id], $form);
+                                                $query = array_merge(['selected_supplier_id' => $req->id], $form);
                                             @endphp
                                             <a class="btn btn-success btn-sm" href="{{ $returnUrl }}?{{ http_build_query($query) }}">
                                                 Select
                                             </a>
                                         @else
-                                            <a class="btn btn-warning btn-sm" href="{{ route('purchasesrequests.edit', $s) }}">Edit</a>
+                                            <a class="btn btn-warning btn-sm"
+                                                href="{{ route('purchasesrequests.edit', $req) }}">Edit</a>
                                         @endif
                                     </td>
                                 </tr>
@@ -54,7 +55,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $suppliers->withQueryString()->links() }}
+                {{ $requests->withQueryString()->links() }}
             </div>
         @endif
     </div>
