@@ -8,12 +8,15 @@ use App\Http\Controllers\Controller;
 
 class PurchaseRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $requests = PurchaseRequest::paginate(12);
-        return view('purchasesrequests.index', compact('requests'));
-    }
 
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('purchasesrequests.index', compact('requests', 'selectFor', 'returnUrl'));
+    }
     public function create(Request $request)
     {
         // If this is a fresh create (no picker return, no form data)
