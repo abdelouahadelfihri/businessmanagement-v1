@@ -74,5 +74,13 @@ class PurchaseRequestController extends Controller
             ->route('purchasesrequests.index')
             ->with('success', 'Purchase request created successfully.');
     }
+    public function destroy(PurchaseRequest $purchasesrequest)
+    {
+        $purchasesrequest->delete();
+
+        return redirect()
+            ->route('purchasesrequests.index')
+            ->with('success', 'Purchase request deleted successfully.');
+    }
 
 }
