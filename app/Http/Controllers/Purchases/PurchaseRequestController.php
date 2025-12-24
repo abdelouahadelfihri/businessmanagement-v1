@@ -10,12 +10,28 @@ class PurchaseRequestController extends Controller
 {
     public function index(Request $request)
     {
-        $requests = PurchaseRequest::paginate(12);
-
         $selectFor = $request->query('select_for');
         $returnUrl = $request->query('return_url');
+        $selectedSupplierId = $request->query('selected_supplier_id');
 
-        return view('purchasesrequests.index', compact('requests', 'selectFor', 'returnUrl'));
+        $selectedSupplier = null;
+        if ($selectedSupplierId) {
+            $selectedSupplier = \App\Models\MasterData\Supplier::find($selectedSupplierId);
+        }
+
+        $requestsQuery = PurchaseRequest::query();
+
+        // Optional: filter requests by this supplier
+        if ($selectedSupplierId) {
+            $requestsQuery->where('supplier_id', $selectedSupplierId);
+        }
+
+        $requests = $requestsQuery->paginate(12);
+
+        return view(
+            'purchasesrequests.index',
+            compact('requests', 'selectFor', 'returnUrl', 'selectedSupplier', 'selectedSupplierId')
+        );
     }
     public function create(Request $request)
     {
