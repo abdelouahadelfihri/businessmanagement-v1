@@ -19,16 +19,20 @@
                     <table class="table table-bordered" id="purchasesRequestsTable">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
+                                <th>Purchase Request ID</th>
+                                <th>Supplier</th>
+                                <th>Date</th>
+                                <th>Status</th>
                                 <th width="150">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($requests as $req)
                                 <tr>
-                                    <td>{{ $req->name }}</td>
-                                    <td>{{ $req->email }}</td>
+                                    <td>{{ $req->id }}</td>
+                                    <td>{{ $selectedSupplier->name }}</td>
+                                    <td>{{ $req->date }}</td>
+                                    <td>{{ $req->status }}</td>
                                     <td>
                                         @if($selectFor && $returnUrl)
                                             @php
