@@ -17,7 +17,8 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover table-bordered align-middle mb-0">
+                        <table id="purchasesRequestsTable"
+                            class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
@@ -34,11 +35,12 @@
                                         <td>{{ $req->supplier->name ?? '—' }}</td>
                                         <td>{{ $req->date }}</td>
                                         <td>
-                                            <span class="badge 
-                                                                                    @if($req->status === 'draft') bg-secondary
-                                                                                    @elseif($req->status === 'pending') bg-warning text-dark
-                                                                                    @elseif($req->status === 'approved') bg-success
-                                                                                    @else bg-light text-dark @endif">
+                                            <span
+                                                class="badge 
+                                                                                                            @if($req->status === 'draft') bg-secondary
+                                                                                                            @elseif($req->status === 'pending') bg-warning text-dark
+                                                                                                            @elseif($req->status === 'approved') bg-success
+                                                                                                            @else bg-light text-dark @endif">
                                                 {{ ucfirst($req->status) }}
                                             </span>
                                         </td>
