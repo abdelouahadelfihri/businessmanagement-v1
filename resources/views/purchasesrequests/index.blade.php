@@ -36,11 +36,9 @@
                                         <td>{{ $req->date }}</td>
                                         <td>
                                             <span
-                                                class="badge 
-                                                                                                                                                                                                                        @if($req->status === 'draft') bg-secondary
-                                                                                                                                                                                                                        @elseif($req->status === 'pending') bg-warning text-dark
-                                                                                                                                                                                                                        @elseif($req->status === 'approved') bg-success
-                                                                                                                                                                                                                        @else bg-light text-dark @endif">
+                                                class="badge @if($req->status === 'draft') bg-secondary                                                                                                                                                                                                                        @elseif($req->status === 'pending') bg-warning text-dark
+                                                @elseif($req->status === 'approved') bg-success
+                                                                                                                                                                                                                                    @else bg-light text-dark @endif">
                                                 {{ ucfirst($req->status) }}
                                             </span>
                                         </td>

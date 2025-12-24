@@ -39,7 +39,23 @@
                                                 Select
                                             </a>
                                         @else
-                                            <a class="btn btn-warning btn-sm" href="{{ route('suppliers.edit', $s) }}">Edit</a>
+                                            <div class="d-flex justify-content-center gap-1">
+                                                <!-- Edit button -->
+                                                <a href="{{ route('purchasesrequests.edit', $req) }}" class="btn btn-sm btn-warning"
+                                                    title="Edit">
+                                                    <i class="bi bi-pencil-square"></i> Edit
+                                                </a>
+
+                                                <!-- Delete button -->
+                                                <form action="{{ route('purchasesrequests.destroy', $req) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this request?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                        <i class="bi bi-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
