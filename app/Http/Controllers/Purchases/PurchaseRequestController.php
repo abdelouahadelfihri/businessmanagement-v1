@@ -58,7 +58,12 @@ class PurchaseRequestController extends Controller
             'status' => 'required|in:draft,pending,approved',
         ]);
 
-        PurchaseRequest::create($data);
+        PurchaseRequest::create([
+            'supplier_id' => $data['supplier_id'],
+            'date' => $data['request_date'],  // <-- map it!
+            'description' => $data['description'],
+            'status' => $data['status'],
+        ]);
 
         session()->forget('purchase_request_form');
 
