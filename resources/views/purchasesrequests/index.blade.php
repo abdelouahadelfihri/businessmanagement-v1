@@ -10,11 +10,11 @@
 
             @if($selectFor && $returnUrl)
                 <a class="btn btn-primary"
-                    href="{{ route('purchase-requests.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
+                    href="{{ route('purchasesrequests.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
                     Add Request and Return
                 </a>
             @else
-                <a class="btn btn-primary" href="{{ route('purchase-requests.create') }}">Add Request</a>
+                <a class="btn btn-primary" href="{{ route('purchasesrequests.create') }}">Add Request</a>
             @endif
         @else
 
@@ -39,7 +39,7 @@
                                                 Select
                                             </a>
                                         @else
-                                            <a class="btn btn-warning btn-sm" href="{{ route('purchase-requests.edit', $r) }}">
+                                            <a class="btn btn-warning btn-sm" href="{{ route('purchasesrequests.edit', $r) }}">
                                                 Edit
                                             </a>
                                         @endif
@@ -59,7 +59,7 @@
         @endif
 
         @if(!$selectFor)
-            <a class="btn btn-primary mt-3" href="{{ route('purchase-requests.create') }}">Add Request</a>
+            <a class="btn btn-primary mt-3" href="{{ route('purchasesrequests.create') }}">Add Request</a>
         @endif
 
     </div>
