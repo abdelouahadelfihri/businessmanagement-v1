@@ -34,33 +34,28 @@
                                         <td>{{ $s->name }}</td>
                                         <td>{{ $s->email }}</td>
                                         <td>{{ $s->phone }}</td>
-                                        <td>
+                                        <td class="text-center">
                                             @if($selectFor && $returnUrl)
-                                                @php
-                                                    $form = session('purchase_request_form', []);
-                                                    $query = array_merge(['selected_supplier_id' => $s->id], $form);
-                                                @endphp
                                                 <a class="btn btn-success btn-sm"
-                                                    href="{{ $returnUrl }}?{{ http_build_query($query) }}">
+                                                    href="{{ $returnUrl }}?selected_supplier_id={{ $s->id }}&{{ http_build_query($extra) }}">
                                                     Select
                                                 </a>
                                             @else
                                                 <div class="d-flex justify-content-center gap-1">
-                                                    <!-- Edit button -->
-                                                    <a href="{{ route('purchasesrequests.edit', $req) }}" class="btn btn-sm btn-warning"
-                                                        title="Edit">
+
+                                                    <a href="{{ route('suppliers.edit', $s) }}" class="btn btn-sm btn-warning">
                                                         <i class="bi bi-pencil-square"></i> Edit
                                                     </a>
 
-                                                    <!-- Delete button -->
-                                                    <form action="{{ route('purchasesrequests.destroy', $req) }}" method="POST"
-                                                        onsubmit="return confirm('Are you sure you want to delete this request?');">
+                                                    <form action="{{ route('suppliers.destroy', $s) }}" method="POST"
+                                                        onsubmit="return confirm('Delete this supplier?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                        <button type="submit" class="btn btn-sm btn-danger">
                                                             <i class="bi bi-trash"></i> Delete
                                                         </button>
                                                     </form>
+
                                                 </div>
                                             @endif
                                         </td>
