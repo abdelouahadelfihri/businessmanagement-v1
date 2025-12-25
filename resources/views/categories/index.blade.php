@@ -12,7 +12,7 @@
         </div>
 
         @if($suppliers->isEmpty())
-            <div class="alert alert-info">No suppliers found.</div>
+            <div class="alert alert-info">No categories found.</div>
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
@@ -82,7 +82,7 @@
         <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
         <script>
             $(document).ready(function () {
-                $('#suppliersTable').DataTable({
+                $('#categoriesTable').DataTable({
                     paging: true,
                     searching: true,
                     ordering: true,
