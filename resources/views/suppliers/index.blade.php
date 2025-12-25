@@ -22,9 +22,9 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Supplier</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone</th>
                                     <th scope="col" class="text-center" style="width: 180px;">Action</th>
                                 </tr>
                             </thead>
@@ -33,6 +33,7 @@
                                     <tr>
                                         <td>{{ $s->name }}</td>
                                         <td>{{ $s->email }}</td>
+                                        <td>{{ $s->phone }}</td>
                                         <td>
                                             @if($selectFor && $returnUrl)
                                                 @php
