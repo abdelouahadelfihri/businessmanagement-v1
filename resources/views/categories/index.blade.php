@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1 class="mb-4">Suppliers</h1>
+        <h1 class="mb-4">Categories</h1>
 
         <div class="mb-3">
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('suppliers.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
-                <i class="bi bi-plus-lg"></i> Add a New Supplier
+                href="{{ route('categories.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
+                <i class="bi bi-plus-lg"></i> Add a New Category
             </a>
         </div>
 
@@ -17,7 +17,7 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="suppliersTable" class="table table-striped table-hover table-bordered align-middle mb-0">
+                        <table id="categoriesTable" class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
@@ -43,11 +43,11 @@
                                             @else
                                                 <div class="d-flex justify-content-center gap-1">
 
-                                                    <a href="{{ route('suppliers.edit', $s) }}" class="btn btn-sm btn-warning">
+                                                    <a href="{{ route('categories.edit', $s) }}" class="btn btn-sm btn-warning">
                                                         <i class="bi bi-pencil-square"></i> Edit
                                                     </a>
 
-                                                    <form action="{{ route('suppliers.destroy', $s) }}" method="POST"
+                                                    <form action="{{ route('categories.destroy', $s) }}" method="POST"
                                                         onsubmit="return confirm('Delete this supplier?');">
                                                         @csrf
                                                         @method('DELETE')
