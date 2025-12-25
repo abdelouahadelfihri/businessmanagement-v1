@@ -1,74 +1,89 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container mt-4">
-
-        <h1 class="mb-4">Create Purchase Order</h1>
-
-        <a class="btn btn-secondary mb-3"
-            href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-            Pick Supplier
-        </a>
-
-        <a class="btn btn-secondary mb-3"
-            href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-            Pick Purchase Request
-        </a>
+        <h1 class="mb-4">Create Purchase Invoice</h1>
 
         <div class="card shadow-sm">
             <div class="card-body">
 
-                <form action="{{ route('purchase-orders.store') }}" method="POST">
+                {{-- ORDER PICKER --}}
+                <form id="orderPickerForm" method="GET" action="{{ route('purchaseorders.index') }}">
+                    <input type="hidden" name="select_for" value="purchase-invoice">
+                    <input type="hidden" name="return_url" value="{{ route('purchaseinvoices.create') }}">
+
+                    @foreach(['invoice_number', 'date', 'total', 'paid'] as $f)
+                        <input type="hidden" id="h_{{ $f }}" name="{{ $f }}" value="{{ old($f, $form[$f] ?? '') }}">
+                    @endforeach
+                </form>
+
+                {{-- MAIN FORM --}}
+                <form action="{{ route('purchaseinvoices.store') }}" method="POST">
                     @csrf
 
+                    {{-- ORDER --}}
+                    <div class="mb-3">
+                        <label class="form-label">Purchase Order</label>
+                        <div class="input-group">
+                            <input class="form-control" value="{{ $selectedOrder?->id }}" readonly placeholder="Pick order">
+                            <button class="btn btn-outline-secondary" type="button"
+                                onclick="submitOrderPicker()">Pick</button>
+                        </div>
+                        <input type="hidden" name="order_id" value="{{ $selectedOrder?->id }}">
+                    </div>
+
+                    {{-- SUPPLIER (readonly) --}}
                     <div class="mb-3">
                         <label class="form-label">Supplier</label>
-                        <select name="supplier_id" id="supplier_id" class="form-select" required>
-                            <option value="">-- choose supplier --</option>
-                            @foreach($suppliers as $s)
-                                <option value="{{ $s->id }}" {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                    {{ $s->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" value="{{ $selectedOrder?->supplier?->name }}" readonly>
                     </div>
 
+                    {{-- INVOICE NUMBER --}}
                     <div class="mb-3">
-                        <label class="form-label">Purchase Request</label>
-                        <select name="purchase_request_id" id="request_id" class="form-select" required>
-                            <option value="">-- choose request --</option>
-                            @foreach($requests as $r)
-                                <option value="{{ $r->id }}" {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                    {{ $r->title }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label class="form-label">Invoice Number</label>
+                        <input type="text" name="invoice_number" class="form-control"
+                            value="{{ old('invoice_number', $form['invoice_number'] ?? '') }}" required>
                     </div>
 
+                    {{-- DATE --}}
                     <div class="mb-3">
-                        <label class="form-label">Order Date</label>
-                        <input type="date" name="order_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                        <label class="form-label">Date</label>
+                        <input type="date" id="date" name="date" class="form-control"
+                            value="{{ old('date', $form['date'] ?? '') }}" required>
                     </div>
 
-                    <button class="btn btn-primary">Save</button>
+                    {{-- TOTAL --}}
+                    <div class="mb-3">
+                        <label class="form-label">Total</label>
+                        <input type="number" name="total" step="0.01" class="form-control"
+                            value="{{ old('total', $form['total'] ?? '') }}">
+                    </div>
+
+                    {{-- PAID --}}
+                    <div class="mb-3">
+                        <label class="form-label">Paid</label>
+                        <input type="number" name="paid" step="0.01" class="form-control"
+                            value="{{ old('paid', $form['paid'] ?? '') }}">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary">Save</button>
+                        <a href="{{ route('purchaseinvoices.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
                 </form>
 
             </div>
         </div>
-
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const params = new URLSearchParams(window.location.search);
-
-            if (params.get("selected_supplier_id")) {
-                document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-            }
-            if (params.get("selected_request_id")) {
-                document.getElementById("request_id").value = params.get("selected_request_id");
-            }
-        });
-    </script>
-
 @endsection
+
+@push('scripts')
+    <script>
+        function submitOrderPicker() {
+            ['invoice_number', 'date', 'total', 'paid'].forEach(f => {
+                let inp = document.getElementById(f);
+                if (inp) document.getElementById('h_' + f).value = inp.value;
+            });
+            document.getElementById('orderPickerForm').submit();
+        }
+    </script>
+@endpush
