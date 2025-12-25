@@ -1,75 +1,86 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mt-4">
+<div class="container mt-4">
+    <h1 class="mb-4">Edit Purchase Order #{{ $purchaseOrder->id }}</h1>
 
-        <h1 class="mb-4">Edit Purchase Order #{{ $purchaseOrder->id }}</h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-        <a class="btn btn-secondary mb-3"
-            href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-            Pick Supplier
-        </a>
+            {{-- Supplier Picker --}}
+            <form id="supplierPickerForm" method="GET" action="{{ route('suppliers.index') }}">
+                <input type="hidden" name="select_for" value="purchase-order">
+                <input type="hidden" name="return_url" value="{{ route('purchaseorders.edit', $purchaseOrder) }}">
+                <input type="hidden" id="request_id_hidden" name="request_id"
+                    value="{{ old('request_id', $purchaseOrder->request_id) }}">
+                <input type="hidden" id="order_date_hidden" name="order_date"
+                    value="{{ old('order_date', $purchaseOrder->order_date) }}">
+                <input type="hidden" id="status_hidden" name="status"
+                    value="{{ old('status', $purchaseOrder->status) }}">
+            </form>
 
-        <a class="btn btn-secondary mb-3"
-            href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-            Pick Purchase Request
-        </a>
+            <form action="{{ route('purchaseorders.update', $purchaseOrder) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-
-                <form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="mb-3">
-                        <label class="form-label">Supplier</label>
-                        <select name="supplier_id" id="supplier_id" class="form-select" required>
-                            @foreach($suppliers as $s)
-                                <option value="{{ $s->id }}" {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                    {{ $s->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                {{-- Supplier --}}
+                <div class="mb-3">
+                    <label class="form-label">Supplier</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control"
+                            value="{{ old('supplier_name', $purchaseOrder->supplier?->name) }}" readonly>
+                        <button type="button" class="btn btn-outline-secondary"
+                            onclick="submitSupplierPicker()">Pick</button>
                     </div>
+                    <input type="hidden" name="supplier_id"
+                        value="{{ old('supplier_id', $purchaseOrder->supplier_id) }}">
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Purchase Request</label>
-                        <select name="purchase_request_id" id="request_id" class="form-select" required>
-                            @foreach($requests as $r)
-                                <option value="{{ $r->id }}" {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                    {{ $r->title }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                {{-- Purchase Request --}}
+                <div class="mb-3">
+                    <label class="form-label">Purchase Request</label>
+                    <input type="text" class="form-control"
+                        value="{{ old('request_display', $purchaseOrder->request?->id) }}" readonly>
+                    <input type="hidden" name="request_id" value="{{ old('request_id', $purchaseOrder->request_id) }}">
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Order Date</label>
-                        <input type="date" name="order_date" class="form-control" value="{{ $purchaseOrder->order_date }}"
-                            required>
-                    </div>
+                {{-- Order Date --}}
+                <div class="mb-3">
+                    <label class="form-label">Order Date</label>
+                    <input type="date" name="order_date" id="order_date_input" class="form-control"
+                        value="{{ old('order_date', $purchaseOrder->order_date) }}" required>
+                </div>
 
+                {{-- Status --}}
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" id="status_input" class="form-select" required>
+                        <option value="">-- Select Status --</option>
+                        <option value="draft" @selected(old('status', $purchaseOrder->status) === 'draft')>Draft</option>
+                        <option value="pending" @selected(old('status', $purchaseOrder->status) === 'pending')>Pending
+                        </option>
+                        <option value="approved" @selected(old('status', $purchaseOrder->status) === 'approved')>Approved
+                        </option>
+                    </select>
+                </div>
+
+                <div class="d-flex gap-2">
                     <button class="btn btn-primary">Update</button>
-                    <a class="btn btn-secondary ms-2" href="{{ route('purchase-orders.index') }}">Back</a>
+                    <a href="{{ route('purchaseorders.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
 
-                </form>
-            </div>
+            </form>
         </div>
-
     </div>
+</div>
 
+@push('scripts')
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const params = new URLSearchParams(window.location.search);
-
-            if (params.get("selected_supplier_id")) {
-                document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-            }
-            if (params.get("selected_request_id")) {
-                document.getElementById("request_id").value = params.get("selected_request_id");
-            }
-        });
+        function submitSupplierPicker() {
+            document.getElementById('request_id_hidden').value = document.getElementById('request_id_hidden').value;
+            document.getElementById('order_date_hidden').value = document.getElementById('order_date_input').value;
+            document.getElementById('status_hidden').value = document.getElementById('status_input').value;
+            document.getElementById('supplierPickerForm').submit();
+        }
     </script>
-
-@endsection
+@endpush
