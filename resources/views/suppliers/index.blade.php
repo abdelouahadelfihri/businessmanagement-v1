@@ -30,6 +30,7 @@
                             <tbody>
                                 @foreach($suppliers as $s)
                                     <tr>
+                                        <td>{{ $s->id }}</td>
                                         <td>{{ $s->name }}</td>
                                         <td>{{ $s->email }}</td>
                                         <td>{{ $s->phone }}</td>
