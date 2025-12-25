@@ -17,8 +17,7 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="purchasesRequestsTable"
-                            class="table table-striped table-hover table-bordered align-middle mb-0">
+                        <table id="suppliersTable" class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
