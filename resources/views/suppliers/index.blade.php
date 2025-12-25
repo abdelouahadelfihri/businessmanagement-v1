@@ -5,9 +5,9 @@
         <h1 class="mb-4">Suppliers</h1>
 
         <div class="mb-3">
-            <a class="btn btn-primary"
+            <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('suppliers.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
-                Add Supplier
+                <i class="bi bi-plus-lg"></i> Add a New Supplier
             </a>
         </div>
 
