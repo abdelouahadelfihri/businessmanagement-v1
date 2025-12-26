@@ -13,6 +13,7 @@ class SaleOrder extends Model
 
     protected $fillable = [
         'customer_id',
+        'quotation_id',
         'order_number',
         'date',
         'total',
@@ -21,6 +22,11 @@ class SaleOrder extends Model
 
     public function customer()
     {
-        return $this->belongsTo(\App\Models\MasterData\Customer::class, 'customer_id', 'customerId');
+        return $this->belongsTo(\App\Models\MasterData\Customer::class, 'customer_id', 'id');
+    }
+
+    public function quotation()
+    {
+        return $this->belongsTo(\App\Models\Sales\SaleQuotation::class, 'quotation_id', 'id');
     }
 }
