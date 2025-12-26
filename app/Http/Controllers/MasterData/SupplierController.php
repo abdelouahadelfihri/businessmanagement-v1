@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\MasterData;
 
 use App\Http\Controllers\Controller;
@@ -8,119 +7,70 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    /**
-     * Show list of suppliers (index)
-     */
+    // Normal CRUD
+
     public function index(Request $request)
     {
-        $suppliers = Supplier::paginate(12);
+        $suppliers = Supplier::query();
 
-        return view('suppliers.index', compact('suppliers'));
+        // Search
+        if ($request->has('search')) {
+            $suppliers->where('name', 'like', "%{$request->search}%")
+                ->orWhere('email', 'like', "%{$request->search}%")
+                ->orWhere('phone', 'like', "%{$request->search}%");
+        }
+
+        $suppliers = $suppliers->paginate(12)->withQueryString();
+
+        // Picker mode
+        $selectFor = $request->query('select_for');
+        $returnUrl = $request->query('return_url');
+
+        return view('suppliers.index', compact('suppliers', 'selectFor', 'returnUrl'));
     }
 
-    /**
-     * Show create form
-     */
+    public function picker(Request $request)
+    {
+        // simply redirect to index with select mode
+        return redirect()->route('suppliers.index', [
+            'select_for' => $request->query('select_for'),
+            'return_url' => $request->query('return_url')
+        ]);
+    }
+
     public function create()
     {
         return view('suppliers.create');
     }
-
-    /**
-     * Store Supplier
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
         ]);
-
         Supplier::create($data);
-
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier created successfully.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier created.');
     }
 
-    /**
-     * Show edit form
-     */
     public function edit(Supplier $supplier)
     {
         return view('suppliers.edit', compact('supplier'));
     }
-
-    /**
-     * Update Supplier
-     */
     public function update(Request $request, Supplier $supplier)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
         ]);
-
         $supplier->update($data);
-
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier updated successfully.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
     }
 
-    /**
-     * Delete Supplier
-     */
     public function destroy(Supplier $supplier)
     {
         $supplier->delete();
-
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier deleted successfully.');
-    }
-
-    /* =========================================================================
-       AJAX API ENDPOINTS FOR MODAL PICKER (Option A)
-       ========================================================================= */
-
-    /**
-     * Returns paginated supplier list in JSON for modal picker
-     */
-    public function ajaxList(Request $request)
-    {
-        $search = $request->query('search');
-
-        $query = Supplier::query();
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('phone', 'like', "%$search%");
-            });
-        }
-
-        return response()->json([
-            'data' => $query->orderBy('name')->paginate(10)
-        ]);
-    }
-
-    /**
-     * Creates a supplier via AJAX from within modal
-     */
-    public function ajaxCreate(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:50',
-        ]);
-
-        $supplier = Supplier::create($data);
-
-        return response()->json([
-            'success' => true,
-            'supplier' => $supplier
-        ]);
+        return back()->with('success', 'Deleted');
     }
 }
