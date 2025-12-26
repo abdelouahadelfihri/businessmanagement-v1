@@ -19,7 +19,7 @@ class DeliveryLine extends Model
 
     public function delivery()
     {
-        return $this->belongsTo(Delivery::class, 'delivery_id');
+        return $this->belongsTo(SaleDelivery::class, 'delivery_id');
     }
 
     public function product()
