@@ -1,48 +1,91 @@
 <?php
+
 namespace App\Http\Controllers\MasterData;
 
+use App\Http\Controllers\Controller;
 use App\Models\MasterData\Supplier;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class SupplierController extends Controller
 {
+    /**
+     * Show list of suppliers (index)
+     */
     public function index(Request $request)
     {
         $suppliers = Supplier::paginate(12);
 
-        $selectFor = $request->query('select_for');   // purchase-request | purchase-order | receipt
-        $returnUrl = $request->query('return_url');   // url to go back to form
-        $extra = $request->except(['page']);      // keep all other form values
-
-        return view('suppliers.index', compact('suppliers', 'selectFor', 'returnUrl', 'extra'));
+        return view('suppliers.index', compact('suppliers'));
     }
 
-    public function create(Request $request)
+    /**
+     * Show create form
+     */
+    public function create()
     {
-        // pass along selection params so create view can return to PO after saving
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-
-        return view('suppliers.create', compact('selectFor', 'returnUrl'));
+        return view('suppliers.create');
     }
+
+    /**
+     * Store Supplier
+     */
     public function store(Request $request)
     {
-        $supplier = Supplier::create(
-            $request->only('name', 'email')
-        );
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:50',
+        ]);
 
-        if ($request->filled('return_url')) {
-            return redirect()->to(
-                $request->return_url .
-                (str_contains($request->return_url, '?') ? '&' : '?') .
-                'selected_supplier_id=' . $supplier->id
-            );
-        }
+        Supplier::create($data);
 
-        return redirect()->route('suppliers.index');
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier created successfully.');
     }
 
+    /**
+     * Show edit form
+     */
+    public function edit(Supplier $supplier)
+    {
+        return view('suppliers.edit', compact('supplier'));
+    }
+
+    /**
+     * Update Supplier
+     */
+    public function update(Request $request, Supplier $supplier)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:50',
+        ]);
+
+        $supplier->update($data);
+
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier updated successfully.');
+    }
+
+    /**
+     * Delete Supplier
+     */
+    public function destroy(Supplier $supplier)
+    {
+        $supplier->delete();
+
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier deleted successfully.');
+    }
+
+    /* =========================================================================
+       AJAX API ENDPOINTS FOR MODAL PICKER (Option A)
+       ========================================================================= */
+
+    /**
+     * Returns paginated supplier list in JSON for modal picker
+     */
     public function ajaxList(Request $request)
     {
         $search = $request->query('search');
@@ -62,12 +105,15 @@ class SupplierController extends Controller
         ]);
     }
 
+    /**
+     * Creates a supplier via AJAX from within modal
+     */
     public function ajaxCreate(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => 'nullable|email',
-            'phone' => 'nullable'
+            'phone' => 'nullable|string|max:50',
         ]);
 
         $supplier = Supplier::create($data);
@@ -76,21 +122,5 @@ class SupplierController extends Controller
             'success' => true,
             'supplier' => $supplier
         ]);
-    }
-    public function edit(Supplier $supplier)
-    {
-        return view('suppliers.edit', compact('supplier'));
-    }
-
-    public function update(Request $request, Supplier $supplier)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-        ]);
-
-        $supplier->update($data);
-
-        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
     }
 }
