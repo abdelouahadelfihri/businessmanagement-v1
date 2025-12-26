@@ -7,13 +7,12 @@ use Illuminate\Support\Facades\Route;
 | Controllers
 |--------------------------------------------------------------------------
 */
-
 use App\Http\Controllers\Purchases\PurchaseRequestController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
 use App\Http\Controllers\Purchases\PurchaseInvoiceController;
 
-use App\Http\Controllers\Sales\SaleQuoteController;
+use App\Http\Controllers\Sales\SaleQuotationController;
 use App\Http\Controllers\Sales\SaleOrderController;
 use App\Http\Controllers\Sales\DeliveryController;
 use App\Http\Controllers\Sales\SaleInvoiceController;
@@ -29,32 +28,20 @@ use App\Http\Controllers\MasterData\WarehouseController;
 use App\Http\Controllers\MasterData\LocationController;
 use App\Http\Controllers\MasterData\StockMovementController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes (SESSION ENABLED)
-|--------------------------------------------------------------------------
-|
-| IMPORTANT:
-| Everything is wrapped in the "web" middleware.
-| This ENABLES:
-| - sessions
-| - csrf
-| - cookies
-| - old()
-|
-*/
-
 Route::middleware(['web'])->group(function () {
 
     /*
+    |--------------------------------------------------------------------------
     | Dashboard
+    |--------------------------------------------------------------------------
     */
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', fn() => view('dashboard'))->name('dashboard');
+
 
     /*
+    |--------------------------------------------------------------------------
     | Master Data
+    |--------------------------------------------------------------------------
     */
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
@@ -67,7 +54,9 @@ Route::middleware(['web'])->group(function () {
     Route::resource('stocksmovements', StockMovementController::class);
 
     /*
+    |--------------------------------------------------------------------------
     | Purchases
+    |--------------------------------------------------------------------------
     */
     Route::resource('purchasesrequests', PurchaseRequestController::class);
     Route::resource('purchasesorders', PurchaseOrderController::class);
@@ -75,11 +64,29 @@ Route::middleware(['web'])->group(function () {
     Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
 
     /*
+    |--------------------------------------------------------------------------
     | Sales
+    |--------------------------------------------------------------------------
     */
-    Route::resource('salesquotations', SaleQuoteController::class);
+    Route::resource('salesquotations', SaleQuotationController::class);
     Route::resource('salesorders', SaleOrderController::class);
     Route::resource('salesdeliveries', DeliveryController::class);
     Route::resource('salesinvoices', SaleInvoiceController::class);
     Route::resource('salesreturns', SaleReturnController::class);
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | 🔥 Picker Routes (Option A) – "Return With Selection"
+    |--------------------------------------------------------------------------
+    | example: /suppliers/picker?return=purchasesrequests.create
+    */
+    Route::get('/suppliers/picker', [SupplierController::class, 'picker'])
+        ->name('suppliers.picker');
+    Route::get('/purchasesrequests/picker', [PurchaseRequestController::class, 'picker'])
+        ->name('purchasesrequests.picker');
+    Route::get('/purchasesorders/picker', [PurchaseOrderController::class, 'picker'])
+        ->name('purchasesorders.picker');
+
 });

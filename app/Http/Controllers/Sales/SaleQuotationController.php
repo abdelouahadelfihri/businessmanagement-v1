@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Purchases;
+namespace App\Http\Controllers\Sales;
 
 use App\Models\Sales\SaleQuotation;
 use App\Models\MasterData\Customer;
