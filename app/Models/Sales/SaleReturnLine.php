@@ -19,7 +19,7 @@ class SaleReturnLine extends Model
 
     public function salesReturn()
     {
-        return $this->belongsTo(SalesReturn::class);
+        return $this->belongsTo(SaleReturn::class);
     }
 
     public function product()
