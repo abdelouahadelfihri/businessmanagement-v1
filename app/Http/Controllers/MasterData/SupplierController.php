@@ -43,25 +43,40 @@ class SupplierController extends Controller
         return redirect()->route('suppliers.index');
     }
 
-    /*public function store(Request $request)
+    public function ajaxList(Request $request)
+    {
+        $search = $request->query('search');
+
+        $query = Supplier::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('phone', 'like', "%$search%");
+            });
+        }
+
+        return response()->json([
+            'data' => $query->orderBy('name')->paginate(10)
+        ]);
+    }
+
+    public function ajaxCreate(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'name' => 'required',
+            'email' => 'nullable|email',
+            'phone' => 'nullable'
         ]);
 
         $supplier = Supplier::create($data);
 
-        // If created from a selection flow, redirect back to caller with new id
-        if ($request->filled('select_for') && $request->filled('return_url')) {
-            // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_supplier_id=' . $supplier->id;
-            return redirect($return);
-        }
-
-        return redirect()->route('suppliers.index')->with('success', 'Supplier created.');
-    }*/
-
+        return response()->json([
+            'success' => true,
+            'supplier' => $supplier
+        ]);
+    }
     public function edit(Supplier $supplier)
     {
         return view('suppliers.edit', compact('supplier'));
