@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('sale_orders', function (Blueprint $table) {
+        Schema::table('sales_orders', function (Blueprint $table) {
             // Add quotation_id as nullable (recommended)
             $table->foreignId('quotation_id')
                 ->nullable()
