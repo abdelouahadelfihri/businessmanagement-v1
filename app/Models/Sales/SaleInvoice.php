@@ -27,6 +27,6 @@ class SaleInvoice extends Model
 
     public function salesOrder()
     {
-        return $this->belongsTo(\App\Models\Sales\SalesOrder::class);
+        return $this->belongsTo(\App\Models\Sales\SaleOrder::class);
     }
 }
