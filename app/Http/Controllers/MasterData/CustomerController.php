@@ -9,19 +9,15 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
+        $customers = Customer::paginate(12);
 
-        // Save current form values in session if coming from a purchase request
-        if ($selectFor === 'sale-quotation') {
-            $existing = session('sale_quotation_form', []);
-            session(['sale_quotation_form' => array_merge($existing, $request->except(['page', 'select_for', 'return_url']))]);
-        }
+        $selectFor = $request->query('select_for');   // purchase-request | purchase-order | receipt
+        $returnUrl = $request->query('return_url');   // url to go back to form
+        $extra = $request->except(['page']);      // keep all other form values
 
-        $customers = Customer::paginate(10);
-
-        return view('customers.index', compact('suppliers', 'selectFor', 'returnUrl'));
+        return view('customers.index', compact('customers', 'selectFor', 'returnUrl', 'extra'));
     }
+
     public function create(Request $request)
     {
         // pass along selection params so create view can return to PO after saving
@@ -46,19 +42,19 @@ class CustomerController extends Controller
 
         return redirect()->route('customers.index');
     }
-    public function edit(Customer $customer)
+    public function edit(Customer $supplier)
     {
         return view('customers.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, Customer $supplier)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
         ]);
 
-        $customer->update($data);
+        $supplier->update($data);
 
         return redirect()->route('customers.index')->with('success', 'Customer updated.');
     }
