@@ -17,39 +17,9 @@ class PurchaseRequestController extends Controller
 
         return view('purchasesrequests.index', compact('requests', 'selectFor', 'returnUrl'));
     }
-    public function create(Request $request)
+    public function create()
     {
-        // If this is a fresh create (no picker return, no form data)
-        if (
-            !$request->hasAny([
-                'request_date',
-                'description',
-                'status',
-                'selected_supplier_id'
-            ])
-        ) {
-            session()->forget('purchase_request_form');
-        }
-
-        // Merge session + incoming values
-        $form = array_merge(
-            session('purchase_request_form', []),
-            $request->only([
-                'request_date',
-                'description',
-                'status',
-                'selected_supplier_id'
-            ])
-        );
-
-        session(['purchase_request_form' => $form]);
-
-        $selectedSupplier = null;
-        if (!empty($form['selected_supplier_id'])) {
-            $selectedSupplier = Supplier::find($form['selected_supplier_id']);
-        }
-
-        return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
+        return view('purchasesrequests.create');
     }
 
     public function store(Request $request)
@@ -63,17 +33,14 @@ class PurchaseRequestController extends Controller
 
         PurchaseRequest::create([
             'supplier_id' => $data['supplier_id'],
-            'date' => $data['request_date'],  // <-- map it!
+            'date' => $data['request_date'],
             'description' => $data['description'],
             'status' => $data['status'],
         ]);
 
-        session()->forget('purchase_request_form');
-
-        return redirect()
-            ->route('purchasesrequests.index')
-            ->with('success', 'Purchase request created successfully.');
+        return redirect()->route('purchasesrequests.index')->with('success', 'Purchase request created.');
     }
+
     public function destroy(PurchaseRequest $purchasesrequest)
     {
         $purchasesrequest->delete();
