@@ -5,103 +5,48 @@ use App\Http\Controllers\Controller;
 use App\Models\Purchases\PurchaseRequest;
 use App\Models\MasterData\Supplier;
 use Illuminate\Http\Request;
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\Models\PurchaseRequest;
+use App\Models\Supplier;
 
 class PurchaseRequestController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $requests = PurchaseRequest::with('supplier')->paginate(12);
-
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-
-        return view('purchasesrequests.index', compact('requests', 'selectFor', 'returnUrl'));
+        $requests = PurchaseRequest::with('supplier')->get();
+        return view('purchase_requests.index', compact('requests'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
-        // Merge session + query params
-        if (!$request->hasAny(['request_date', 'description', 'status', 'selected_supplier_id'])) {
-            session()->forget('purchase_request_form');
-        }
-
-        $form = array_merge(
-            session('purchase_request_form', []),
-            $request->only(['request_date', 'description', 'status', 'selected_supplier_id'])
-        );
-
-        session(['purchase_request_form' => $form]);
-
-        $selectedSupplier = null;
-        if (!empty($form['selected_supplier_id'])) {
-            $selectedSupplier = Supplier::find($form['selected_supplier_id']);
-        }
-
-        return view('purchasesrequests.create', compact('selectedSupplier', 'form'));
+        return view('purchase_requests.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'request_date' => 'required|date',
-            'description' => 'nullable|string',
-            'status' => 'required|in:draft,pending,approved',
-        ]);
-
-        PurchaseRequest::create([
-            'supplier_id' => $data['supplier_id'],
-            'date' => $data['request_date'],
-            'description' => $data['description'],
-            'status' => $data['status'],
-        ]);
-
-        session()->forget('purchase_request_form');
-
-        return redirect()->route('purchasesrequests.index')
-            ->with('success', 'Purchase request created.');
+        PurchaseRequest::create($request->all());
+        return redirect()->route('purchase-requests.index');
     }
 
-    public function edit(PurchaseRequest $purchasesrequest)
+    public function edit(PurchaseRequest $purchaseRequest)
     {
-        $selectedSupplier = $purchasesrequest->supplier;
-        $form = [
-            'request_date' => old('request_date', $purchasesrequest->date),
-            'description' => old('description', $purchasesrequest->description),
-            'status' => old('status', $purchasesrequest->status),
-            'selected_supplier_id' => $purchasesrequest->supplier_id,
-        ];
-
-        session(['purchase_request_form' => $form]);
-
-        return view('purchasesrequests.edit', compact('selectedSupplier', 'form', 'purchasesrequest'));
+        return view('purchase_requests.edit', compact('purchaseRequest'));
     }
 
-    public function update(Request $request, PurchaseRequest $purchasesrequest)
+    public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
-        $data = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'request_date' => 'required|date',
-            'description' => 'nullable|string',
-            'status' => 'required|in:draft,pending,approved',
-        ]);
-
-        $purchasesrequest->update([
-            'supplier_id' => $data['supplier_id'],
-            'date' => $data['request_date'],
-            'description' => $data['description'],
-            'status' => $data['status'],
-        ]);
-
-        session()->forget('purchase_request_form');
-
-        return redirect()->route('purchasesrequests.index')
-            ->with('success', 'Purchase request updated.');
+        $purchaseRequest->update($request->all());
+        return redirect()->route('purchase-requests.index');
     }
 
-    public function destroy(PurchaseRequest $purchasesrequest)
+    // AJAX store for modal
+    public function ajaxStore(Request $request)
     {
-        $purchasesrequest->delete();
-        return back()->with('success', 'Deleted successfully');
+        $purchaseRequest = PurchaseRequest::create([
+            'request_number' => $request->request_number,
+            'supplier_id' => $request->supplier_id
+        ]);
+        return response()->json($purchaseRequest);
     }
 }
