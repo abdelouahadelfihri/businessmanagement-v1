@@ -22,5 +22,5 @@
         <button class="btn btn-primary">Save</button>
     </form>
 
-    @include('modals.suppliers')
+    @include('modals.supplier-picker')
 @endsection
