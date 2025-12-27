@@ -76,17 +76,8 @@ Route::middleware(['web'])->group(function () {
 
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | 🔥 Picker Routes (Option A) – "Return With Selection"
-    |--------------------------------------------------------------------------
-    | example: /suppliers/picker?return=purchasesrequests.create
-    */
-    Route::get('/suppliers/picker', [SupplierController::class, 'picker'])
-        ->name('suppliers.picker');
-    Route::get('/purchasesrequests/picker', [PurchaseRequestController::class, 'picker'])
-        ->name('purchasesrequests.picker');
-    Route::get('/purchasesorders/picker', [PurchaseOrderController::class, 'picker'])
-        ->name('purchasesorders.picker');
+    // AJAX routes for modal add
+    Route::post('suppliers/ajax-store', [SupplierController::class, 'ajaxStore'])->name('suppliers.ajaxStore');
+    Route::post('purchase-requests/ajax-store', [PurchaseRequestController::class, 'ajaxStore'])->name('purchaseRequests.ajaxStore');
 
 });
