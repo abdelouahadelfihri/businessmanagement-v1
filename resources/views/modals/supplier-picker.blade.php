@@ -20,12 +20,17 @@
                         @foreach(App\Models\MasterData\Supplier::all() as $s)
                             <tr>
                                 <td>{{ $s->name }}</td>
-                                <td><button type="button" class="btn btn-sm btn-primary select-supplier"
-                                        data-id="{{ $s->id }}" data-name="{{ $s->name }}">Select</button></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary select-supplier"
+                                        data-id="{{ $s->id }}" data-name="{{ $s->name }}">
+                                        Select
+                                    </button>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+
                 <hr>
                 <h6>Add New Supplier</h6>
                 <div class="input-group">
@@ -37,34 +42,67 @@
     </div>
 </div>
 
-<script>
-    $('#addSupplierBtn').click(function () {
-        let name = $('#new_supplier_name').val();
-        if (name) {
-            $.post('{{ route('suppliers.ajaxStore') }}', { _token: '{{ csrf_token() }}', name: name }, function (data) {
-                // append new supplier to table
-                $('#supplierTable tbody').append('<tr><td>' + data.name + '</td><td><button type="button" class="btn btn-sm btn-primary select-supplier" data-id="' + data.id + '" data-name="' + data.name + '">Select</button></td></tr>');
-                $('#new_supplier_name').val('');
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+
+            // --- Filter suppliers in table ---
+            $('#supplierSearch').on('keyup', function () {
+                let value = $(this).val().toLowerCase();
+                $('#supplierTable tbody tr').filter(function () {
+                    $(this).toggle($(this).find('td:first').text().toLowerCase().indexOf(value) > -1)
+                });
             });
-        }
-    });
 
-    $(document).on('click', '.select-supplier', function () {
-        let id = $(this).data('id');
-        let name = $(this).data('name');
+            // --- Add new supplier via AJAX ---
+            $('#addSupplierBtn').click(function () {
+                let name = $('#new_supplier_name').val().trim();
+                if (name === '') return;
 
-        $('#supplier_id').val(id);
-        $('#supplier_name').val(name);
-        $('#invoice_supplier_id').val(id);
-        $('#invoice_supplier_name').val(name);
-        $('#receipt_supplier_id').val(id);
-        $('#receipt_supplier_name').val(name);
+                $.ajax({
+                    url: '{{ route("suppliers.ajaxStore") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        name: name
+                    },
+                    success: function (data) {
+                        // Append to table
+                        $('#supplierTable tbody').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-primary select-supplier"
+                                    data-id="${data.id}" data-name="${data.name}">Select</button>
+                            </td>
+                        </tr>
+                    `);
+                        $('#new_supplier_name').val('');
+                    }
+                });
+            });
 
-        // Bootstrap 5 modal hide
-        let supplierModalEl = document.getElementById('supplierModal');
-        let modal = bootstrap.Modal.getOrCreateInstance(supplierModalEl);
-        modal.hide();
+            // --- Select supplier and hide modal ---
+            $(document).on('click', '.select-supplier', function () {
+                let id = $(this).data('id');
+                let name = $(this).data('name');
 
-    });
-    
-</script>
+                // Fill all relevant inputs
+                $('#supplier_id').val(id);
+                $('#supplier_name').val(name);
+
+                $('#invoice_supplier_id').val(id);
+                $('#invoice_supplier_name').val(name);
+
+                $('#receipt_supplier_id').val(id);
+                $('#receipt_supplier_name').val(name);
+
+                // Bootstrap 5 hide modal
+                let modalEl = document.getElementById('supplierModal');
+                let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.hide();
+            });
+
+        });
+    </script>
+@endpush
