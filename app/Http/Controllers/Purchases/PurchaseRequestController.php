@@ -3,41 +3,35 @@ namespace App\Http\Controllers\Purchases;
 
 use App\Http\Controllers\Controller;
 use App\Models\Purchases\PurchaseRequest;
-use App\Models\MasterData\Supplier;
 use Illuminate\Http\Request;
-namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use App\Models\PurchaseRequest;
-use App\Models\Supplier;
-
 class PurchaseRequestController extends Controller
 {
     public function index()
     {
         $requests = PurchaseRequest::with('supplier')->get();
-        return view('purchase_requests.index', compact('requests'));
+        return view('purchasesrequests.index', compact('requests'));
     }
 
     public function create()
     {
-        return view('purchase_requests.create');
+        return view('purchasesrequests.create');
     }
 
     public function store(Request $request)
     {
         PurchaseRequest::create($request->all());
-        return redirect()->route('purchase-requests.index');
+        return redirect()->route('purchasesrequests.index');
     }
 
     public function edit(PurchaseRequest $purchaseRequest)
     {
-        return view('purchase_requests.edit', compact('purchaseRequest'));
+        return view('purchasesrequests.edit', compact('purchaseRequest'));
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->update($request->all());
-        return redirect()->route('purchase-requests.index');
+        return redirect()->route('purchasesrequests.index');
     }
 
     // AJAX store for modal
