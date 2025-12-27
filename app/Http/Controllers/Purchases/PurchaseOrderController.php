@@ -11,29 +11,29 @@ class PurchaseOrderController extends Controller
     public function index()
     {
         $orders = PurchaseOrder::with('supplier', 'purchaseRequest')->get();
-        return view('purchase_orders.index', compact('orders'));
+        return view('purchasesorders.index', compact('orders'));
     }
 
     public function create()
     {
-        return view('purchase_orders.create');
+        return view('purchasesorders.create');
     }
 
     public function store(Request $request)
     {
         PurchaseOrder::create($request->all());
-        return redirect()->route('purchase-orders.index');
+        return redirect()->route('purchasesorders.index');
     }
 
     public function edit(PurchaseOrder $purchaseOrder)
     {
-        return view('purchase_orders.edit', compact('purchaseOrder'));
+        return view('purchasesorders.edit', compact('purchaseOrder'));
     }
 
     public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
         $purchaseOrder->update($request->all());
-        return redirect()->route('purchase-orders.index');
+        return redirect()->route('purchasesorders.index');
     }
 
     // AJAX method to get orders by supplier
