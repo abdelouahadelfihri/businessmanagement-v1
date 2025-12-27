@@ -7,90 +7,49 @@ use App\Models\Purchases\PurchaseOrder;
 use App\Models\MasterData\Supplier;
 use App\Models\Purchases\PurchaseRequest;
 use Illuminate\Http\Request;
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\Models\PurchaseOrder;
+use App\Models\Supplier;
+use App\Models\PurchaseRequest;
 
 class PurchaseOrderController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $orders = PurchaseOrder::with('supplier', 'request')->paginate(12);
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-        return view('purchaseorders.index', compact('orders', 'selectFor', 'returnUrl'));
+        $orders = PurchaseOrder::with('supplier', 'purchaseRequest')->get();
+        return view('purchase_orders.index', compact('orders'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
-        if (!$request->hasAny(['order_date', 'status', 'selected_supplier_id', 'selected_request_id'])) {
-            session()->forget('purchase_order_form');
-        }
-
-        $form = array_merge(
-            session('purchase_order_form', []),
-            $request->only(['order_date', 'status', 'selected_supplier_id', 'selected_request_id'])
-        );
-        session(['purchase_order_form' => $form]);
-
-        $selectedSupplier = $form['selected_supplier_id'] ?? null ? Supplier::find($form['selected_supplier_id']) : null;
-        $selectedRequest = $form['selected_request_id'] ?? null ? PurchaseRequest::find($form['selected_request_id']) : null;
-
-        return view('purchaseorders.create', compact('form', 'selectedSupplier', 'selectedRequest'));
+        return view('purchase_orders.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'request_id' => 'nullable|exists:purchases_requests,id',
-            'order_date' => 'required|date',
-            'status' => 'required|in:draft,sent,partially_received,completed,cancelled'
-        ]);
-
-        PurchaseOrder::create([
-            'supplier_id' => $data['supplier_id'],
-            'request_id' => $data['request_id'] ?? null,
-            'order_date' => $data['order_date'],
-            'status' => $data['status']
-        ]);
-
-        session()->forget('purchase_order_form');
-        return redirect()->route('purchaseorders.index')->with('success', 'Purchase order created successfully.');
+        PurchaseOrder::create($request->all());
+        return redirect()->route('purchase-orders.index');
     }
 
-    public function edit(PurchaseOrder $purchaseorder)
+    public function edit(PurchaseOrder $purchaseOrder)
     {
-        $form = [
-            'order_date' => $purchaseorder->order_date,
-            'status' => $purchaseorder->status,
-            'selected_supplier_id' => $purchaseorder->supplier_id,
-            'selected_request_id' => $purchaseorder->request_id,
-        ];
-        $selectedSupplier = $purchaseorder->supplier;
-        $selectedRequest = $purchaseorder->request;
-        return view('purchaseorders.edit', compact('purchaseorder', 'form', 'selectedSupplier', 'selectedRequest'));
+        return view('purchase_orders.edit', compact('purchaseOrder'));
     }
 
-    public function update(Request $request, PurchaseOrder $purchaseorder)
+    public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
-        $data = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'request_id' => 'nullable|exists:purchases_requests,id',
-            'order_date' => 'required|date',
-            'status' => 'required|in:draft,sent,partially_received,completed,cancelled'
-        ]);
-
-        $purchaseorder->update([
-            'supplier_id' => $data['supplier_id'],
-            'request_id' => $data['request_id'] ?? null,
-            'order_date' => $data['order_date'],
-            'status' => $data['status']
-        ]);
-
-        return redirect()->route('purchaseorders.index')->with('success', 'Purchase order updated successfully.');
+        $purchaseOrder->update($request->all());
+        return redirect()->route('purchase-orders.index');
     }
 
-    public function destroy(PurchaseOrder $purchaseorder)
+    // AJAX method to get orders by supplier
+    public function getBySupplier($supplier_id)
     {
-        $purchaseorder->delete();
-        return redirect()->route('purchaseorders.index')->with('success', 'Purchase order deleted successfully.');
+        $orders = PurchaseOrder::where('supplier_id', $supplier_id)->with('supplier')->get();
+        $result = $orders->map(function ($o) {
+            return ['id' => $o->id, 'order_number' => $o->order_number, 'supplier_name' => $o->supplier->name];
+        });
+        return response()->json($result);
     }
 }
