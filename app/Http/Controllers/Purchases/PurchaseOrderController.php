@@ -4,14 +4,7 @@ namespace App\Http\Controllers\Purchases;
 
 use App\Http\Controllers\Controller;
 use App\Models\Purchases\PurchaseOrder;
-use App\Models\MasterData\Supplier;
-use App\Models\Purchases\PurchaseRequest;
 use Illuminate\Http\Request;
-namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use App\Models\PurchaseOrder;
-use App\Models\Supplier;
-use App\Models\PurchaseRequest;
 
 class PurchaseOrderController extends Controller
 {
