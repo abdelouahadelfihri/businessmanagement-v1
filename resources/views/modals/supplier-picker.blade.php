@@ -61,9 +61,10 @@
         $('#receipt_supplier_name').val(name);
 
         // Bootstrap 5 modal hide
-        let supplierModal = document.getElementById('supplierModal');
-        let modal = bootstrap.Modal.getInstance(supplierModal);
+        let supplierModalEl = document.getElementById('supplierModal');
+        let modal = bootstrap.Modal.getOrCreateInstance(supplierModalEl);
         modal.hide();
-    });
 
+    });
+    
 </script>
