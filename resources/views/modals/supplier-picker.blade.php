@@ -52,12 +52,18 @@
     $(document).on('click', '.select-supplier', function () {
         let id = $(this).data('id');
         let name = $(this).data('name');
+
         $('#supplier_id').val(id);
         $('#supplier_name').val(name);
         $('#invoice_supplier_id').val(id);
         $('#invoice_supplier_name').val(name);
         $('#receipt_supplier_id').val(id);
         $('#receipt_supplier_name').val(name);
-        $('#supplierModal').modal('hide');
+
+        // Bootstrap 5 modal hide
+        let supplierModal = document.getElementById('supplierModal');
+        let modal = bootstrap.Modal.getInstance(supplierModal);
+        modal.hide();
     });
+
 </script>
