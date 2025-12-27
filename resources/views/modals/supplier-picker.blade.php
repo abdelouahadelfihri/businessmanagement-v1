@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach(App\Models\Supplier::all() as $s)
+                        @foreach(App\Models\MasterData\Supplier::all() as $s)
                             <tr>
                                 <td>{{ $s->name }}</td>
                                 <td><button type="button" class="btn btn-sm btn-primary select-supplier"
