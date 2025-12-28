@@ -16,38 +16,21 @@ class SaleQuotationController extends Controller
 
     public function create()
     {
-        $last = SaleQuotation::orderBy('id', 'desc')->first();
-        $nextId = $last ? $last->id + 1 : 1;
-        $preview = 'QT-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
-
-        return view('salesquotations.create', compact('preview'));
+        return view('salesquotations.create');
     }
-
 
     public function store(Request $request)
     {
-        // Validate
         $request->validate([
             'customer_id' => 'required',
-            'quotation_date' => 'required',
-            'status' => 'required',
+            'quotation_date' => 'required|date',
+            'status' => 'required'
         ]);
 
-        // Generate quote number
-        $last = SaleQuotation::orderBy('id', 'desc')->first();
-        $nextId = $last ? $last->id + 1 : 1;
-        $quoteNumber = 'QT-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        SaleQuotation::create($request->all());
 
-        // Save quotation
-        $quotation = SaleQuotation::create([
-            'customer_id' => $request->customer_id,
-            'quote_number' => $quoteNumber,
-            'quotation_date' => $request->quotation_date,
-            'status' => $request->status,
-        ]);
-
-        return redirect()->route('salesquotations.index')->with('success', 'Quotation created!');
+        return redirect()->route('salesquotations.index')
+            ->with('success', 'Sales Quotation Created');
     }
-
 
 }
