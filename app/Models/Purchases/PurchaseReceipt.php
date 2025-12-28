@@ -17,7 +17,17 @@ class PurchaseReceipt extends Model
         'total',
         'status',
     ];
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::creating(function ($model) {
+            $last = PurchaseReceipt::orderBy('id', 'desc')->first();
+            $nextId = $last ? $last->id + 1 : 1;
+
+            $model->receipt_number = 'GR-' . date('Y') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        });
+    }
     public function purchaseOrder()
     {
         return $this->belongsTo(PurchaseOrder::class, 'purchase_order_id');
