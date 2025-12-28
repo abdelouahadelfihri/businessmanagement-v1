@@ -25,7 +25,8 @@ class SaleQuotation extends Model
         static::creating(function ($model) {
             $last = SaleQuotation::orderBy('id', 'desc')->first();
             $nextId = $last ? $last->id + 1 : 1;
-            $model->quote_number = 'QT-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+            $model->quote_number = 'QT-' . date('Y') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
         });
     }
     public function customer()
