@@ -16,7 +16,7 @@
 
         <div class="mb-3">
             <label>Quote Number</label>
-            <input name="quote_number" class="form-control">
+            <input name="quote_number" class="form-control" value="Auto-Generated" readonly>
         </div>
         <div class="mb-3">
             <label>Date</label>
