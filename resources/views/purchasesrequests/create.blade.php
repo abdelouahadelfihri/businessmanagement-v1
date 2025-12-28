@@ -15,8 +15,8 @@
         </div>
 
         <div class="mb-3">
-            <label>Request Number</label>
-            <input name="request_number" class="form-control">
+            <label>Purchase Request No.</label>
+            <input type="text" class="form-control" value="{{ $preview }}" readonly>
         </div>
 
         <button class="btn btn-primary">Save</button>

@@ -19,10 +19,26 @@ class PurchaseRequestController extends Controller
 
     public function store(Request $request)
     {
-        PurchaseRequest::create($request->all());
-        return redirect()->route('purchasesrequests.index');
-    }
+        $request->validate([
+            'supplier_id' => 'required',
+            'request_date' => 'required',
+            'status' => 'required'
+        ]);
 
+        // Generate purchase request number
+        $last = PurchaseRequest::orderBy('id', 'desc')->first();
+        $nextId = $last ? $last->id + 1 : 1;
+        $prNumber = 'PR-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+        $purchaseRequest = PurchaseRequest::create([
+            'supplier_id' => $request->supplier_id,
+            'request_number' => $prNumber,
+            'request_date' => $request->request_date,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('purchaserequests.index')->with('success', 'Purchase Request created!');
+    }
     public function edit(PurchaseRequest $purchaseRequest)
     {
         return view('purchasesrequests.edit', compact('purchaseRequest'));
