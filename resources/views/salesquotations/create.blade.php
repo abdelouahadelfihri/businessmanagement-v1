@@ -3,20 +3,20 @@
 @section('content')
     <h3>Create Purchase Request</h3>
 
-    <form method="POST" action="{{ route('purchase-requests.store') }}">
+    <form method="POST" action="{{ route('salesquotations.store') }}">
         @csrf
 
         <div class="mb-3">
             <label>Supplier</label>
-            <input type="hidden" name="supplier_id" id="supplier_id">
-            <input type="text" id="supplier_name" class="form-control" readonly>
+            <input type="hidden" name="customer_id" id="customer_id">
+            <input type="text" id="customer_name" class="form-control" readonly>
             <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
-                data-bs-target="#supplierModal">Select Supplier</button>
+                data-bs-target="#customerModal">Select Supplier</button>
         </div>
 
         <div class="mb-3">
             <label>Quote Number</label>
-            <input name="request_number" class="form-control">
+            <input name="quote_number" class="form-control">
         </div>
         <div class="mb-3">
             <label>Date</label>
