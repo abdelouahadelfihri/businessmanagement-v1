@@ -14,57 +14,40 @@ class SaleQuotationController extends Controller
         return view('salesquotations.index', compact('requests'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
-        // If this is a fresh create (no picker return, no form data)
-        if (
-            !$request->hasAny([
-                'quotation_date',
-                'description',
-                'status',
-                'selected_customer_id'
-            ])
-        ) {
-            session()->forget('purchase_request_form');
-        }
+        $last = SaleQuotation::orderBy('id', 'desc')->first();
+        $nextId = $last ? $last->id + 1 : 1;
+        $preview = 'QT-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
-        // Merge session + incoming values
-        $form = array_merge(
-            session('purchase_request_form', []),
-            $request->only([
-                'quotation_date',
-                'description',
-                'status',
-                'selected_customer_id'
-            ])
-        );
-
-        session(['purchase_request_form' => $form]);
-
-        $selectedCustomer = null;
-        if (!empty($form['selected_customer_id'])) {
-            $selectedCustomer = Customer::find($form['selected_customer_id']);
-        }
-
-        return view('salesquotations.create', compact('selectedCustomer', 'form'));
+        return view('salesquotations.create', compact('preview'));
     }
+
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'customer_id' => 'required|exists:suppliers,id',
-            'quotation_date' => 'required|date',
-            'description' => 'nullable|string',
-            'status' => 'required|in:draft,pending,approved',
+        // Validate
+        $request->validate([
+            'customer_id' => 'required',
+            'quotation_date' => 'required',
+            'status' => 'required',
         ]);
 
-        SaleQuotation::create($data);
+        // Generate quote number
+        $last = SaleQuotation::orderBy('id', 'desc')->first();
+        $nextId = $last ? $last->id + 1 : 1;
+        $quoteNumber = 'QT-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
-        session()->forget('purchase_request_form');
+        // Save quotation
+        $quotation = SaleQuotation::create([
+            'customer_id' => $request->customer_id,
+            'quote_number' => $quoteNumber,
+            'quotation_date' => $request->quotation_date,
+            'status' => $request->status,
+        ]);
 
-        return redirect()
-            ->route('salesquotations.index')
-            ->with('success', 'Sale quotation created successfully.');
+        return redirect()->route('salesquotations.index')->with('success', 'Quotation created!');
     }
+
 
 }
