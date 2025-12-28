@@ -18,7 +18,17 @@ class PurchaseRequest extends Model
         'date',
         'status',
     ];
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::creating(function ($model) {
+            $last = PurchaseRequest::orderBy('id', 'desc')->first();
+            $nextId = $last ? $last->id + 1 : 1;
+
+            $model->pr_number = 'PR-' . date('Y') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        });
+    }
     // Relationship to Supplier
     public function supplier()
     {
