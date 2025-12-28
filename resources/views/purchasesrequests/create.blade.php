@@ -14,11 +14,6 @@
                 data-bs-target="#supplierModal">Select Supplier</button>
         </div>
 
-        <div class="mb-3">
-            <label>Purchase Request No.</label>
-            <input type="text" class="form-control" value="{{ $preview }}" readonly>
-        </div>
-
         <button class="btn btn-primary">Save</button>
     </form>
 

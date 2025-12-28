@@ -13,12 +13,10 @@ class SaleQuotationController extends Controller
         $requests = SaleQuotation::paginate(12);
         return view('salesquotations.index', compact('requests'));
     }
-
     public function create()
     {
         return view('salesquotations.create');
     }
-
     public function store(Request $request)
     {
         $request->validate([
