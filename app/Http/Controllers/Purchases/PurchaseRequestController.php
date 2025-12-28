@@ -11,36 +11,22 @@ class PurchaseRequestController extends Controller
         $requests = PurchaseRequest::with('supplier')->get();
         return view('purchasesrequests.index', compact('requests'));
     }
-
     public function create()
     {
-        $last = PurchaseRequest::orderBy('id', 'desc')->first();
-        $nextId = $last ? $last->id + 1 : 1;
-        $preview = 'PR-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
-
-        return view('purchaserequests.create', compact('preview'));
+        return view('purchaserequests.create');
     }
     public function store(Request $request)
     {
         $request->validate([
             'supplier_id' => 'required',
-            'request_date' => 'required',
+            'request_date' => 'required|date',
             'status' => 'required'
         ]);
 
-        // Generate purchase request number
-        $last = PurchaseRequest::orderBy('id', 'desc')->first();
-        $nextId = $last ? $last->id + 1 : 1;
-        $prNumber = 'PR-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        PurchaseRequest::create($request->all());
 
-        $purchaseRequest = PurchaseRequest::create([
-            'supplier_id' => $request->supplier_id,
-            'request_number' => $prNumber,
-            'request_date' => $request->request_date,
-            'status' => $request->status,
-        ]);
-
-        return redirect()->route('purchaserequests.index')->with('success', 'Purchase Request created!');
+        return redirect()->route('purchaserequests.index')
+            ->with('success', 'Purchase Request Created');
     }
     public function edit(PurchaseRequest $purchaseRequest)
     {
