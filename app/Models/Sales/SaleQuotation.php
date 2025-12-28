@@ -18,7 +18,16 @@ class SaleQuotation extends Model
         'total',
         'status'
     ];
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::creating(function ($model) {
+            $last = SaleQuotation::orderBy('id', 'desc')->first();
+            $nextId = $last ? $last->id + 1 : 1;
+            $model->quote_number = 'QT-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        });
+    }
     public function customer()
     {
         return $this->belongsTo(\App\Models\MasterData\Customer::class, 'customer_id');
