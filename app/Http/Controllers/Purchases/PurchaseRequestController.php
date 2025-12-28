@@ -14,9 +14,12 @@ class PurchaseRequestController extends Controller
 
     public function create()
     {
-        return view('purchasesrequests.create');
-    }
+        $last = PurchaseRequest::orderBy('id', 'desc')->first();
+        $nextId = $last ? $last->id + 1 : 1;
+        $preview = 'PR-' . date('Y') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
+        return view('purchaserequests.create', compact('preview'));
+    }
     public function store(Request $request)
     {
         $request->validate([
