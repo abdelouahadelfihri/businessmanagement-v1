@@ -14,6 +14,7 @@ class PurchaseRequest extends Model
 
     protected $fillable = [
         'supplier_id',
+        'pr_number',
         'description',
         'date',
         'status',
