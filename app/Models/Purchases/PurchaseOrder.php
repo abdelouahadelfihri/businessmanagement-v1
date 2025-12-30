@@ -16,11 +16,19 @@ class PurchaseOrder extends Model
         'status',
         'total_amount',
     ];
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::creating(function ($model) {
+            $last = static::orderBy('id', 'desc')->first();
+            $nextId = $last ? $last->id + 1 : 1;
+            $model->po_number = 'PO-' . date('Y') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        });
+    }
     /**
      * Relationships
      */
-
     public function supplier()
     {
         return $this->belongsTo(\App\Models\MasterData\Supplier::class);
