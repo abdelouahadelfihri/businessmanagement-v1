@@ -6,12 +6,41 @@
     <form method="POST" action="{{ route('purchase-requests.store') }}">
         @csrf
 
+        <!-- Supplier -->
         <div class="mb-3">
             <label>Supplier</label>
             <input type="hidden" name="supplier_id" id="supplier_id">
             <input type="text" id="supplier_name" class="form-control" readonly>
             <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
                 data-bs-target="#supplierModal">Select Supplier</button>
+        </div>
+
+        <!-- PR Number -->
+        <div class="mb-3">
+            <label class="form-label">PR Number</label>
+            <input type="text" name="pr_number" class="form-control" value="{{ old('pr_number') }}" required>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
+        </div>
+
+        <!-- Date -->
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control" value="{{ old('date') }}" required>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-control">
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
         </div>
 
         <button class="btn btn-primary">Save</button>
