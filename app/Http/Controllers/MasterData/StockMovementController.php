@@ -1,75 +1,44 @@
 <?php
 namespace App\Http\Controllers\MasterData;
 
+use App\Http\Controllers\Controller;
 use App\Models\MasterData\StockMovement;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class StockMovementController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $categories = StockMovement::paginate(12); // paginate for big lists
-
-        // selection mode params (if opened from PO)
-        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
-        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
-
-        return view('stocksmovements.index', compact('categories', 'selectFor', 'returnUrl'));
+        $stockMovements = StockMovement::all();
+        return view('stocksmovements.index', compact('stockMovements'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
-        // pass along selection params so create view can return to PO after saving
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-
-        return view('stocksmovements.create', compact('selectFor', 'returnUrl'));
+        return view('stocksmovements.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-        ]);
-
-        $stockMovement = StockMovement::create($data);
-
-        // If created from a selection flow, redirect back to caller with new id
-        if ($request->filled('select_for') && $request->filled('return_url')) {
-            // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_category_id=' . $stockMovement->id;
-            return redirect($return);
-        }
-
-        return redirect()->route('stocksmovements.index')->with('success', 'Category created.');
+        StockMovement::create($request->all());
+        return redirect()->route('stocksmovements.index');
     }
 
     public function edit(StockMovement $supplier)
     {
-        return view('stocksmovements.edit', compact('unit'));
+        return view('stocksmovements.edit', compact('supplier'));
     }
 
     public function update(Request $request, StockMovement $supplier)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-        ]);
-
-        $supplier->update($data);
-
-        return redirect()->route('stocksmovements.index')->with('success', 'Category updated.');
+        $supplier->update($request->all());
+        return redirect()->route('stocksmovements.index');
     }
 
-    public function destroy(StockMovement $stockMovement)
+    // AJAX store for modal
+    public function ajaxStore(Request $request)
     {
-        $stockMovement->delete();
-
-        return redirect()
-            ->route('stocksmovements.index')
-            ->with('success', 'Category deleted.');
+        $supplier = StockMovement::create(['name' => $request->name]);
+        return response()->json($supplier);
     }
-
 }
