@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\StockMovement;
-use App\Models\Product;
-use App\Models\Warehouse;
-use App\Models\PurchaseOrder;
+use App\Models\MasterData\Product;
+use App\Models\MasterData\Warehouse;
 use Illuminate\Http\Request;
 
 class StockMovementController extends Controller
