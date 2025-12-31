@@ -32,13 +32,11 @@ class PurchaseRequestController extends Controller
     {
         return view('purchasesrequests.edit', compact('purchaseRequest'));
     }
-
     public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->update($request->all());
         return redirect()->route('purchasesrequests.index');
     }
-
     // AJAX store for modal
     public function ajaxStore(Request $request)
     {
