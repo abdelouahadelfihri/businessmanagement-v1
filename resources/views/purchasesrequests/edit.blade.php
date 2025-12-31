@@ -1,27 +1,72 @@
-// ---------------------------
-// resources/views/purchase_requests/edit.blade.php
-// ---------------------------
-@extends('layout')
+@extends('layouts.app')
+
 @section('content')
-    <h3>Edit Purchase Request</h3>
-    <form method="POST" action="{{ route('purchase-requests.update', $purchaseRequest->id) }}">
-        @csrf @method('PUT')
+<div class="container">
+    <h2 class="mb-3">Edit Purchase Request</h2>
+
+    {{-- 🔹 Display Purchase Request ID --}}
+    <div class="alert alert-info">
+        <strong>PR ID:</strong> {{ $purchaseRequest->id }} <br>
+        <strong>PR Number:</strong> {{ $purchaseRequest->pr_number }}
+    </div>
+
+    <form action="{{ route('purchasesrequests.update', $purchaseRequest->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        {{-- Supplier --}}
         <div class="mb-3">
-            <label>Request Number</label>
-            <input type="text" name="request_number" value="{{ $purchaseRequest->request_number }}" class="form-control"
-                required>
-        </div>
-        <div class="mb-3">
-            <label>Supplier</label>
+            <label class="form-label">Supplier</label>
+
+            {{-- hidden supplier_id --}}
+            <input type="hidden" name="supplier_id" id="supplier_id" value="{{ old('supplier_id', $purchaseRequest->supplier_id) }}">
+
+            {{-- visible name --}}
             <div class="input-group">
-                <input type="text" id="supplier_name" class="form-control" value="{{ $purchaseRequest->supplier->name }}"
-                    readonly>
-                <input type="hidden" name="supplier_id" id="supplier_id" value="{{ $purchaseRequest->supplier_id }}">
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                    data-bs-target="#supplierModal">Pick</button>
+                <input type="text" id="supplier_name" class="form-control" 
+                       value="{{ optional($purchaseRequest->supplier)->name }}" readonly>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#supplierModal">
+                    Pick Supplier
+                </button>
             </div>
         </div>
-        <button class="btn btn-success">Update</button>
+
+        {{-- PR Number (readonly or editable, depending on your logic) --}}
+        <div class="mb-3">
+            <label class="form-label">PR Number</label>
+            <input type="text" name="pr_number" class="form-control" 
+                   value="{{ old('pr_number', $purchaseRequest->pr_number) }}" readonly>
+        </div>
+
+        {{-- Description --}}
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ old('description', $purchaseRequest->description) }}</textarea>
+        </div>
+
+        {{-- Date --}}
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control"
+                   value="{{ old('date', $purchaseRequest->date) }}" required>
+        </div>
+
+        {{-- Status --}}
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-control">
+                <option value="pending"  {{ $purchaseRequest->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="approved" {{ $purchaseRequest->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ $purchaseRequest->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ route('purchasesrequests.index') }}" class="btn btn-secondary">Cancel</a>
     </form>
-    @include('modals.supplier-picker')
+</div>
+
+{{-- Include supplier picker modal --}}
+@include('modals.supplier-picker')
+
 @endsection
