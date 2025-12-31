@@ -1,78 +1,72 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container">
+    <h2 class="mb-3">Edit Purchase Request</h2>
 
-    <h1 class="mb-4">Edit Purchase Order #{{ $purchaseOrder->id }}</h1>
-
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Supplier
-    </a>
-
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Purchase Request
-    </a>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <select name="supplier_id" id="supplier_id" class="form-select" required>
-                        @foreach($suppliers as $s)
-                            <option value="{{ $s->id }}" 
-                                {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                {{ $s->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Purchase Request</label>
-                    <select name="purchase_request_id" id="request_id" class="form-select" required>
-                        @foreach($requests as $r)
-                            <option value="{{ $r->id }}" 
-                                {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                {{ $r->title }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Order Date</label>
-                    <input type="date" name="order_date" 
-                           class="form-control"
-                           value="{{ $purchaseOrder->order_date }}" required>
-                </div>
-
-                <button class="btn btn-primary">Update</button>
-                <a class="btn btn-secondary ms-2" href="{{ route('purchase-orders.index') }}">Back</a>
-
-            </form>
-        </div>
+    {{-- 🔹 Display Purchase Request ID --}}
+    <div class="alert alert-info">
+        <strong>PR ID:</strong> {{ $purchaseRequest->id }} <br>
+        <strong>PR Number:</strong> {{ $purchaseRequest->pr_number }}
     </div>
 
+    <form action="{{ route('purchasesrequests.update', $purchaseRequest->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        {{-- Supplier --}}
+        <div class="mb-3">
+            <label class="form-label">Supplier</label>
+
+            {{-- hidden supplier_id --}}
+            <input type="hidden" name="supplier_id" id="supplier_id" value="{{ old('supplier_id', $purchaseRequest->supplier_id) }}">
+
+            {{-- visible name --}}
+            <div class="input-group">
+                <input type="text" id="supplier_name" class="form-control" 
+                       value="{{ optional($purchaseRequest->supplier)->name }}" readonly>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#supplierModal">
+                    Pick Supplier
+                </button>
+            </div>
+        </div>
+
+        {{-- PR Number (readonly or editable, depending on your logic) --}}
+        <div class="mb-3">
+            <label class="form-label">PR Number</label>
+            <input type="text" name="pr_number" class="form-control" 
+                   value="{{ old('pr_number', $purchaseRequest->pr_number) }}" readonly>
+        </div>
+
+        {{-- Description --}}
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ old('description', $purchaseRequest->description) }}</textarea>
+        </div>
+
+        {{-- Date --}}
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control"
+                   value="{{ old('date', $purchaseRequest->date) }}" required>
+        </div>
+
+        {{-- Status --}}
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-control">
+                <option value="pending"  {{ $purchaseRequest->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="approved" {{ $purchaseRequest->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ $purchaseRequest->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ route('purchasesrequests.index') }}" class="btn btn-secondary">Cancel</a>
+    </form>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get("selected_supplier_id")) {
-        document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-    }
-    if (params.get("selected_request_id")) {
-        document.getElementById("request_id").value = params.get("selected_request_id");
-    }
-});
-</script>
+{{-- Include supplier picker modal --}}
+@include('modals.supplier-picker')
 
 @endsection

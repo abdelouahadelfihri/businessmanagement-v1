@@ -1,78 +1,50 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+    <h3>Create Purchase Request</h3>
 
-    <h1 class="mb-4">Create Purchase Order</h1>
+    <form method="POST" action="{{ route('purchase-requests.store') }}">
+        @csrf
 
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Supplier
-    </a>
-
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Purchase Request
-    </a>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <form action="{{ route('purchase-orders.store') }}" method="POST">
-                @csrf
-
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <select name="supplier_id" id="supplier_id" class="form-select" required>
-                        <option value="">-- choose supplier --</option>
-                        @foreach($suppliers as $s)
-                            <option value="{{ $s->id }}"
-                                {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                {{ $s->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Purchase Request</label>
-                    <select name="purchase_request_id" id="request_id" class="form-select" required>
-                        <option value="">-- choose request --</option>
-                        @foreach($requests as $r)
-                            <option value="{{ $r->id }}"
-                                {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                {{ $r->title }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Order Date</label>
-                    <input type="date" name="order_date" 
-                           class="form-control" 
-                           value="{{ date('Y-m-d') }}" required>
-                </div>
-
-                <button class="btn btn-primary">Save</button>
-            </form>
-
+        <!-- Supplier -->
+        <div class="mb-3">
+            <label>Supplier</label>
+            <input type="hidden" name="supplier_id" id="supplier_id">
+            <input type="text" id="supplier_name" class="form-control" readonly>
+            <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
+                data-bs-target="#supplierModal">Select Supplier</button>
         </div>
-    </div>
 
-</div>
+        <!-- PR Number -->
+        <div class="mb-3">
+            <label class="form-label">PR Number</label>
+            <input type="text" name="pr_number" class="form-control" value="{{ old('pr_number') }}" required>
+        </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const params = new URLSearchParams(window.location.search);
+        <!-- Description -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
+        </div>
 
-    if (params.get("selected_supplier_id")) {
-        document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-    }
-    if (params.get("selected_request_id")) {
-        document.getElementById("request_id").value = params.get("selected_request_id");
-    }
-});
-</script>
+        <!-- Date -->
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control" value="{{ old('date') }}" required>
+        </div>
 
+        <!-- Status -->
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-control">
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary">Save</button>
+    </form>
+
+    @include('modals.supplier-picker')
 @endsection
