@@ -6,13 +6,13 @@
 
         <div class="mb-3">
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('purchasesrequests.create', ['select_for' => $selectFor, 'return_url' => $returnUrl]) }}">
+                href="{{ route('purchasesrequests.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Purchase Request
             </a>
         </div>
 
         @if($requests->isEmpty())
-            <div class="alert alert-info">No suppliers found.</div>
+            <div class="alert alert-info">No purchases requests found.</div>
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
@@ -22,6 +22,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
+                                    <th scope="col">PR-Number</th>
                                     <th scope="col">Supplier</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Status</th>
@@ -31,17 +32,11 @@
                             <tbody>
                                 @foreach($requests as $req)
                                     <tr>
-                                        <th scope="row">{{ $req->id }}</th>
+                                        <td scope="row">{{ $req->id }}</td>
+                                        <td scope="row">{{ $req->pr_number }}</td>
                                         <td>{{ $req->supplier->name ?? '—' }}</td>
                                         <td>{{ $req->date }}</td>
-                                        <td>
-                                            <span
-                                                class="badge @if($req->status === 'draft') bg-secondary                                                                                                                                                                                                                        @elseif($req->status === 'pending') bg-warning text-dark
-                                                @elseif($req->status === 'approved') bg-success
-                                                                                                                                                                                                                                    @else bg-light text-dark @endif">
-                                                {{ ucfirst($req->status) }}
-                                            </span>
-                                        </td>
+                                        <td>{{ $req->status }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
