@@ -8,11 +8,10 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('stock_movements', function (Blueprint $table) {
-            // Polymorphic reference to document (purchase, invoice, etc.)
-            $table->nullableMorphs('source'); // source_type + source_id
+            $table->nullableMorphs('source');
 
-            // Optional origin warehouse for transfers
-            $table->unsignedBigInteger('source_warehouse_id')->nullable();
+            // Match warehouses.id type
+            $table->unsignedInteger('source_warehouse_id')->nullable();
             $table->foreign('source_warehouse_id')
                 ->references('id')
                 ->on('warehouses')
@@ -23,9 +22,9 @@ return new class extends Migration {
     public function down()
     {
         Schema::table('stock_movements', function (Blueprint $table) {
-            $table->dropMorphs('source');
             $table->dropForeign(['source_warehouse_id']);
             $table->dropColumn('source_warehouse_id');
+            $table->dropMorphs('source');
         });
     }
 };
