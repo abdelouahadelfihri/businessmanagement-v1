@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\MasterData;
 
-use App\Models\StockMovement;
+use App\Models\MasterData\StockMovement;
 use App\Models\MasterData\Product;
 use App\Models\MasterData\Warehouse;
 use Illuminate\Http\Request;
