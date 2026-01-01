@@ -12,14 +12,14 @@ class StockMovementController extends Controller
     public function index()
     {
         $movements = StockMovement::with(['product', 'warehouse', 'sourceWarehouse'])->get();
-        return view('stock_movements.index', compact('movements'));
+        return view('stocksmovements.index', compact('movements'));
     }
 
     public function create()
     {
         $products = Product::all();
         $warehouses = Warehouse::all();
-        return view('stock_movements.create', compact('products', 'warehouses'));
+        return view('stocksmovements.create', compact('products', 'warehouses'));
     }
 
     public function store(Request $request)
@@ -41,14 +41,14 @@ class StockMovementController extends Controller
             'source_id' => $source_id
         ]));
 
-        return redirect()->route('stock_movements.index')->with('success', 'Movement created successfully.');
+        return redirect()->route('stocksmovements.index')->with('success', 'Movement created successfully.');
     }
 
     public function edit(StockMovement $stock_movement)
     {
         $products = Product::all();
         $warehouses = Warehouse::all();
-        return view('stock_movements.edit', [
+        return view('stocksmovements.edit', [
             'movement' => $stock_movement,
             'products' => $products,
             'warehouses' => $warehouses
@@ -66,7 +66,7 @@ class StockMovementController extends Controller
 
         $stock_movement->update($request->all());
 
-        return redirect()->route('stock_movements.index')->with('success', 'Movement updated successfully.');
+        return redirect()->route('stocksmovements.index')->with('success', 'Movement updated successfully.');
     }
     public function transferForm()
     {
