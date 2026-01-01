@@ -74,12 +74,11 @@ Route::middleware(['web'])->group(function () {
     Route::resource('salesinvoices', SaleInvoiceController::class);
     Route::resource('salesreturns', SaleReturnController::class);
 
-    Route::get('/stock/transfer', function () {
-        return view('stocksmovements.transfer', [
-            'products' => \App\Models\MasterData\Product::all(),
-            'warehouses' => \App\Models\MasterData\Warehouse::all(),
-        ]);
-    })->name('stocksmovements.transfer_form');
+    Route::get('/stock/transfer', [StockMovementController::class, 'transferForm'])
+        ->name('stockmovements.transfer_form');
+
+    Route::post('/stock/transfer', [StockMovementController::class, 'transfer'])
+        ->name('stockmovements.transfer');
 
 
 
