@@ -86,4 +86,6 @@
         <button class="btn btn-success">Save</button>
     </form>
 </div>
+@include('modals.supplier-picker')
+@include('modals.supplier-picker')
 @endsection
