@@ -591,7 +591,7 @@
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#stocksMovementsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
-                                    <span>Suppliers</span>
+                                    <span>Stocks Movements</span>
                                 </a>
                                 <div class="collapse" id="stocksMovementsMenu">
                                     <ul class="nav flex-column submenu">
