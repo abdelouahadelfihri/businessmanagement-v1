@@ -75,10 +75,10 @@ Route::middleware(['web'])->group(function () {
     Route::resource('salesreturns', SaleReturnController::class);
 
     Route::get('/stock/transfer', [StockMovementController::class, 'transferForm'])
-        ->name('stockmovements.transfer_form');
+        ->name('stocksmovements.transfer_form');
 
     Route::post('/stock/transfer', [StockMovementController::class, 'transfer'])
-        ->name('stockmovements.transfer');
+        ->name('stocksmovements.transfer');
 
 
 
