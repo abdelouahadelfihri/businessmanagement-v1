@@ -1,50 +1,54 @@
 @extends('layouts.app')
-
 @section('content')
-    <h3>Create Purchase Request</h3>
-
-    <form method="POST" action="{{ route('purchase-requests.store') }}">
+<div class="container">
+    <h3>Add Stock Movement</h3>
+    <form action="{{ route('stock_movements.store') }}" method="POST">
         @csrf
-
-        <!-- Supplier -->
         <div class="mb-3">
-            <label>Supplier</label>
-            <input type="hidden" name="supplier_id" id="supplier_id">
-            <input type="text" id="supplier_name" class="form-control" readonly>
-            <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
-                data-bs-target="#supplierModal">Select Supplier</button>
-        </div>
-
-        <!-- PR Number -->
-        <div class="mb-3">
-            <label class="form-label">PR Number</label>
-            <input type="text" name="pr_number" class="form-control" value="{{ old('pr_number') }}" required>
-        </div>
-
-        <!-- Description -->
-        <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
-        </div>
-
-        <!-- Date -->
-        <div class="mb-3">
-            <label class="form-label">Date</label>
-            <input type="date" name="date" class="form-control" value="{{ old('date') }}" required>
-        </div>
-
-        <!-- Status -->
-        <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-control">
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+            <label>Product</label>
+            <select name="product_id" class="form-control" required>
+                @foreach($products as $p)
+                    <option value="{{ $p->id }}">{{ $p->name }}</option>
+                @endforeach
             </select>
         </div>
 
-        <button class="btn btn-primary">Save</button>
-    </form>
+        <div class="mb-3">
+            <label>Warehouse</label>
+            <select name="warehouse_id" class="form-control" required>
+                @foreach($warehouses as $w)
+                    <option value="{{ $w->id }}">{{ $w->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-    @include('modals.supplier-picker')
+        <div class="mb-3">
+            <label>Type</label>
+            <select name="type" class="form-control" required>
+                <option value="in">IN</option>
+                <option value="out">OUT</option>
+                <option value="transfer_in">Transfer In</option>
+                <option value="transfer_out">Transfer Out</option>
+                <option value="adjustment">Adjustment</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Quantity</label>
+            <input type="number" name="quantity" class="form-control" step="0.01" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Reason</label>
+            <input type="text" name="reason" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label>Date</label>
+            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+        </div>
+
+        <button class="btn btn-success">Save</button>
+    </form>
+</div>
 @endsection
