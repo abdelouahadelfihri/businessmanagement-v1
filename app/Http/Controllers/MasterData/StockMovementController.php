@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MasterData;
 
 use App\Models\StockMovement;
 use App\Models\MasterData\Product;
 use App\Models\MasterData\Warehouse;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Controller;
 class StockMovementController extends Controller
 {
     public function index()
