@@ -8,6 +8,10 @@
                 href="{{ route('suppliers.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a Movement
             </a>
+            <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
+                href="{{ route('suppliers.create') }}">
+                <i class="bi bi-plus-lg"></i> Add a Movement
+            </a>
         </div>
 
         @if(session('success'))
