@@ -3,15 +3,18 @@
 @section('content')
     <div class="container mt-4">
         <div class="d-flex justify-content-between mb-3">
-            <h3>Stock Movements</h3>
-            <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('stocksmovements.create') }}">
-                <i class="bi bi-plus-lg"></i> Add a Movement
-            </a>
-            <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('stocksmovements.transfer_form') }}">
-                <i class="bi bi-plus-lg"></i> Transfer Stock
-            </a>
+            <h3 class="m-0">Stock Movements</h3>
+            <div class="d-flex gap-2">
+                <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
+                    href="{{ route('stocksmovements.create') }}">
+                    <i class="bi bi-plus-lg"></i> Add Movement
+                </a>
+
+                <a class="btn btn-secondary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
+                    href="{{ route('stocksmovements.transfer_form') }}">
+                    <i class="bi bi-arrow-left-right"></i> Transfer Stock
+                </a>
+            </div>
         </div>
 
         @if(session('success'))
@@ -48,7 +51,8 @@
                                         <td>{{ ucfirst($m->type) }}</td>
                                         <td>{{ $m->quantity }}</td>
                                         <td>{{ $m->date }}</td>
-                                        <td>{{ $m->source_type ? class_basename($m->source_type) . ' #' . $m->source_id : '-' }}</td>
+                                        <td>{{ $m->source_type ? class_basename($m->source_type) . ' #' . $m->source_id : '-' }}
+                                        </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
