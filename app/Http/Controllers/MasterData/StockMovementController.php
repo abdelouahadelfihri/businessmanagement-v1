@@ -68,6 +68,13 @@ class StockMovementController extends Controller
 
         return redirect()->route('stock_movements.index')->with('success', 'Movement updated successfully.');
     }
+    public function transferForm()
+    {
+        return view('stockmovements.transfer', [
+            'products' => Product::all(),
+            'warehouses' => Warehouse::all(),
+        ]);
+    }
 
     // Transfer between warehouses
     public function transfer(Request $request)
