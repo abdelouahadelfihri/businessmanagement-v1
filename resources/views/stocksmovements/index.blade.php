@@ -5,12 +5,12 @@
         <div class="d-flex justify-content-between mb-3">
             <h3>Stock Movements</h3>
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('suppliers.create') }}">
+                href="{{ route('stocksmovements.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a Movement
             </a>
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('suppliers.create') }}">
-                <i class="bi bi-plus-lg"></i> Add a Movement
+                href="{{ route('stocksmovements.transfer_form') }}">
+                <i class="bi bi-plus-lg"></i> Transfer Stock
             </a>
         </div>
 
