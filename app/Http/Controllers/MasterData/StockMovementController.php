@@ -75,7 +75,6 @@ class StockMovementController extends Controller
             'warehouses' => Warehouse::all(),
         ]);
     }
-
     // Transfer between warehouses
     public function transfer(Request $request)
     {
@@ -109,5 +108,11 @@ class StockMovementController extends Controller
         ]);
 
         return back()->with('success', 'Transfer completed successfully.');
+    }
+
+    public function destroy(StockMovement $stockMovement)
+    {
+        $stockMovement->delete();
+        return redirect()->route('stocksmovements.index')->with('success', 'Purchase invoice deleted successfully.');
     }
 }
