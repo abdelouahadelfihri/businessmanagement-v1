@@ -74,6 +74,13 @@ Route::middleware(['web'])->group(function () {
     Route::resource('salesinvoices', SaleInvoiceController::class);
     Route::resource('salesreturns', SaleReturnController::class);
 
+    Route::get('/stock/transfer', function () {
+        return view('stock_movements.transfer', [
+            'products' => \App\Models\MasterData\Product::all(),
+            'warehouses' => \App\Models\MasterData\Warehouse::all(),
+        ]);
+    })->name('stock_movements.transfer_form');
+
 
 
     // AJAX routes for modal add
@@ -82,5 +89,6 @@ Route::middleware(['web'])->group(function () {
     Route::post('units/ajax-store', [UnitController::class, 'ajaxStore'])->name('units.ajaxStore');
     Route::post('locations/ajax-store', [UnitController::class, 'ajaxStore'])->name('locations.ajaxStore');
     Route::post('purchase-requests/ajax-store', [PurchaseRequestController::class, 'ajaxStore'])->name('purchaseRequests.ajaxStore');
+
 
 });
