@@ -18,8 +18,8 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        @if($suppliers->isEmpty())
-            <div class="alert alert-info">No suppliers found.</div>
+        @if($movements->isEmpty())
+            <div class="alert alert-info">No stocks movements found.</div>
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
