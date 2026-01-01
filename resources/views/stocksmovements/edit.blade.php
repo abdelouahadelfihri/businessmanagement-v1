@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
         <h3>Edit Movement #{{ $movement->id }}</h3>
-        <form action="{{ route('stock_movements.update', $movement) }}" method="POST">
+        <form action="{{ route('stocksmovements.update', $movement) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -15,7 +15,8 @@
                 <label>Warehouse</label>
                 <select name="warehouse_id" class="form-control">
                     @foreach($warehouses as $w)
-                        <option value="{{ $w->id }}" {{ $movement->warehouse_id == $w->id ? 'selected' : '' }}>{{ $w->name }}</option>
+                        <option value="{{ $w->id }}" {{ $movement->warehouse_id == $w->id ? 'selected' : '' }}>{{ $w->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>
