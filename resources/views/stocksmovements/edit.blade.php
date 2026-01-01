@@ -20,12 +20,17 @@
                 <label>Warehouse</label>
                 <select name="warehouse_id" class="form-control">
                     @foreach($warehouses as $w)
-                        <option value="{{ $w->id }}" {{ $movement->warehouse_id == $w->id ? 'selected' : '' }}>{{ $w->name }}
+                        <option value="{{ $w->id }}" {{ $movement->warehouse_id == $w->id ? 'selected' : '' }}>
+                            {{ $w->name }}
                         </option>
                     @endforeach
                 </select>
+                <small class="form-text text-muted">
+                    The warehouse **receiving** the stock (where the quantity will be added or removed).
+                </small>
                 <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
-                    data-bs-target="#supplierModal">Select A Warehouse</button>
+                    data-bs-target="#warehouseModal">Select
+                    A Warehouse</button>
             </div>
 
             <div class="mb-3">
@@ -51,8 +56,12 @@
                 <label>Source Warehouse</label>
                 <input class="form-control"
                     value="{{ $movement->sourceWarehouse ? $movement->sourceWarehouse->name : '-' }}" disabled>
+                <small class="form-text text-muted">
+                    Used **only for transfers** — this is the warehouse **sending** the items before they arrive to the
+                    destination.
+                </small>
                 <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
-                    data-bs-target="#supplierModal">Select A Source Warehouse</button>
+                    data-bs-target="#sourceWarehouseModal">Select A Source Warehouse</button>
             </div>
 
             <div class="mb-3">
