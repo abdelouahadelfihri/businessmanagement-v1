@@ -75,11 +75,11 @@ Route::middleware(['web'])->group(function () {
     Route::resource('salesreturns', SaleReturnController::class);
 
     Route::get('/stock/transfer', function () {
-        return view('stock_movements.transfer', [
+        return view('stocksmovements.transfer', [
             'products' => \App\Models\MasterData\Product::all(),
             'warehouses' => \App\Models\MasterData\Warehouse::all(),
         ]);
-    })->name('stock_movements.transfer_form');
+    })->name('stocksmovements.transfer_form');
 
 
 
