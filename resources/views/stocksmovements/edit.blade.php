@@ -10,6 +10,11 @@
                 <label>Product</label>
                 <input class="form-control" value="{{ $movement->product->name }}" disabled>
             </div>
+            <div class="row">
+                <div class="col-sm-12">
+
+                </div>
+            </div>
 
             <div class="mb-3">
                 <label>Warehouse</label>
@@ -19,6 +24,8 @@
                         </option>
                     @endforeach
                 </select>
+                <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
+                    data-bs-target="#supplierModal">Select A Warehouse</button>
             </div>
 
             <div class="mb-3">
@@ -44,6 +51,8 @@
                 <label>Source Warehouse</label>
                 <input class="form-control"
                     value="{{ $movement->sourceWarehouse ? $movement->sourceWarehouse->name : '-' }}" disabled>
+                <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
+                    data-bs-target="#supplierModal">Select A Source Warehouse</button>
             </div>
 
             <div class="mb-3">
