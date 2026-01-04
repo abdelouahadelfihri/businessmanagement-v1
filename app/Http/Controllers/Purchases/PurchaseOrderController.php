@@ -1,48 +1,46 @@
 <?php
 
-namespace App\Http\Controllers\Purchases;
-
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers;
 use App\Models\Purchases\PurchaseOrder;
+use App\Models\MasterData\Supplier;
+use App\Models\MasterData\Product;
 use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
 {
     public function index()
     {
-        $orders = PurchaseOrder::with('supplier', 'purchaseRequest')->get();
-        return view('purchasesorders.index', compact('orders'));
+        $orders = PurchaseOrder::latest()->paginate(15);
+        return view('purchase_orders.index', compact('orders'));
     }
-
     public function create()
     {
-        return view('purchasesorders.create');
+        return view('purchase_orders.create', ['suppliers' => Supplier::all(), 'products' => Product::all()]);
     }
-
     public function store(Request $request)
     {
-        PurchaseOrder::create($request->all());
-        return redirect()->route('purchasesorders.index');
+        $data = $request->validate([
+            'supplier_id' => 'required',
+            'lines.*.product_id' => 'required',
+            'lines.*.quantity' => 'required|integer|min:1',
+            'lines.*.unit_price' => 'required|numeric|min:0'
+        ]);
+        $po = PurchaseOrder::create(['supplier_id' => $data['supplier_id']]);
+        foreach ($data['lines'] as $line)
+            $po->lines()->create($line);
+        return redirect()->route('purchase-orders.index');
     }
-
     public function edit(PurchaseOrder $purchaseOrder)
     {
-        return view('purchasesorders.edit', compact('purchaseOrder'));
+        return view('purchase_orders.edit', ['po' => $purchaseOrder->load('lines'), 'suppliers' => Supplier::all(), 'products' => Product::all()]);
     }
-
-    public function update(Request $request, PurchaseOrder $purchaseOrder)
+    public function update(Request $request, PurchaseOrder $po)
     {
-        $purchaseOrder->update($request->all());
-        return redirect()->route('purchasesorders.index');
-    }
-
-    // AJAX method to get orders by supplier
-    public function getBySupplier($supplier_id)
-    {
-        $orders = PurchaseOrder::where('supplier_id', $supplier_id)->with('supplier')->get();
-        $result = $orders->map(function ($o) {
-            return ['id' => $o->id, 'order_number' => $o->order_number, 'supplier_name' => $o->supplier->name];
-        });
-        return response()->json($result);
+        $data = $request->validate(['supplier_id' => 'required', 'lines.*.product_id' => 'required', 'lines.*.quantity' => 'required|integer|min:1', 'lines.*.unit_price' => 'required|numeric|min:0']);
+        $po->lines()->delete();
+        $po->update(['supplier_id' => $data['supplier_id']]);
+        foreach ($data['lines'] as $line)
+            $po->lines()->create($line);
+        return redirect()->route('purchase-orders.index');
     }
 }
