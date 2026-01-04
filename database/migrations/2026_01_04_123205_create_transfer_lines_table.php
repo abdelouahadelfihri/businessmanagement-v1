@@ -8,20 +8,28 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('transfer_lines', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
 
-            $table->foreignId('transfer_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->increments('id'); // UNSIGNED INT
 
-            $table->foreignId('product_id')
-                ->constrained()
-                ->restrictOnDelete();
+            $table->unsignedInteger('transfer_id'); // MUST MATCH transfers.id
+            $table->unsignedInteger('product_id');  // MUST MATCH products.id
 
             $table->integer('quantity');
 
             $table->timestamps();
+
+            $table->foreign('transfer_id')
+                ->references('id')
+                ->on('transfers')
+                ->onDelete('cascade');
+
+            $table->foreign('product_id')
+                ->references('id')
+                ->on('products')
+                ->onDelete('restrict');
         });
+
     }
 
     public function down(): void
