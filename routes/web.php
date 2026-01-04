@@ -27,6 +27,7 @@ use App\Http\Controllers\MasterData\UnitController;
 use App\Http\Controllers\MasterData\WarehouseController;
 use App\Http\Controllers\MasterData\LocationController;
 use App\Http\Controllers\MasterData\StockMovementController;
+use App\Http\Controllers\MasterData\TransferController;
 
 Route::middleware(['web'])->group(function () {
 
