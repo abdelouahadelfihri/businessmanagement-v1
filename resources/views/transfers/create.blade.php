@@ -2,90 +2,97 @@
 
 @section('content')
 <div class="container">
-    <h3 class="mb-3">Add Stock Movement</h3>
+    <h1>Create Transfer</h1>
 
-    <form action="{{ route('stocksmovements.store') }}" method="POST">
+    <form action="{{ route('transfers.store') }}" method="POST">
         @csrf
 
-        <!-- Product -->
         <div class="mb-3">
-            <label>Product</label>
-            <div class="input-group">
-                <input id="product_name" class="form-control" placeholder="Select product" readonly required>
-                <input type="hidden" name="product_id" id="product_id" required>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal">
-                    Pick Product
-                </button>
-            </div>
-            <small class="form-text text-muted">Select the product for which stock is being updated.</small>
-        </div>
-
-        <!-- Warehouse (Destination) -->
-        <div class="mb-3">
-            <label>Warehouse (Destination)</label>
-            <div class="input-group">
-                <input id="warehouse_name" class="form-control" placeholder="Select warehouse" readonly required>
-                <input type="hidden" name="warehouse_id" id="warehouse_id" required>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#warehouseModal">
-                    Pick Warehouse
-                </button>
-            </div>
-            <small class="form-text text-muted">
-                The warehouse receiving or adjusting the stock. For transfers, this is the warehouse where the stock will arrive.
-            </small>
-        </div>
-
-        <!-- Source Warehouse -->
-        <div class="mb-3">
-            <label>Source Warehouse</label>
-            <div class="input-group">
-                <input id="source_warehouse_name" class="form-control" placeholder="Select source warehouse (optional)" readonly>
-                <input type="hidden" name="source_warehouse_id" id="source_warehouse_id">
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#sourceWarehouseModal">
-                    Pick Source
-                </button>
-            </div>
-            <small class="form-text text-muted">
-                Only used for transfers — the warehouse sending the items. Leave empty unless you selected Transfer.
-            </small>
-        </div>
-
-        <!-- Movement Type -->
-        <div class="mb-3">
-            <label>Type</label>
-            <select name="type" class="form-control" required>
-                <option value="in">IN (Stock Increase)</option>
-                <option value="out">OUT (Stock Decrease)</option>
-                <option value="transfer_in">Transfer IN (Receiving)</option>
-                <option value="transfer_out">Transfer OUT (Sending)</option>
-                <option value="adjustment">Adjustment (Manual Correction)</option>
+            <label>From Warehouse</label>
+            <select name="from_warehouse_id" class="form-control" required>
+                @foreach(App\Models\MasterData\Warehouse::all() as $w)
+                <option value="{{ $w->id }}">{{ $w->name }}</option>
+                @endforeach
             </select>
-            <small class="form-text text-muted">
-                Choose the reason for this movement — transfers require both source and destination warehouses.
-            </small>
         </div>
 
-        <!-- Quantity -->
         <div class="mb-3">
-            <label>Quantity</label>
-            <input type="number" name="quantity" class="form-control" step="0.01" required>
+            <label>To Warehouse</label>
+            <select name="to_warehouse_id" class="form-control" required>
+                @foreach(App\Models\MasterData\Warehouse::all() as $w)
+                <option value="{{ $w->id }}">{{ $w->name }}</option>
+                @endforeach
+            </select>
         </div>
 
-        <!-- Reason -->
-        <div class="mb-3">
-            <label>Reason</label>
-            <input type="text" name="reason" class="form-control" placeholder="Ex: New shipment, damage, cost adjustment...">
-        </div>
+        <h4>Products</h4>
+        <table class="table" id="lines-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
-        <!-- Date -->
-        <div class="mb-3">
-            <label>Date</label>
-            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
-        </div>
-
-        <button class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary" id="add-line">Add Product</button>
+        <button type="submit" class="btn btn-primary">Save Transfer</button>
     </form>
 </div>
-@include('modals.supplier-picker')
-@include('modals.supplier-picker')
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Select Product</h5></div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="product-list">
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach(App\Models\MasterData\Product::all() as $product)
+                        <tr>
+                            <td>{{ $product->id }}</td>
+                            <td>{{ $product->name }}</td>
+                            <td><button type="button" class="btn btn-sm btn-success select-product" data-id="{{ $product->id }}" data-name="{{ $product->name }}">Select</button></td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let lineCount = 0;
+
+document.getElementById('add-line').addEventListener('click', function() {
+    $('#productModal').modal('show');
+});
+
+$(document).on('click', '.select-product', function() {
+    const id = $(this).data('id');
+    const name = $(this).data('name');
+    const row = `
+        <tr>
+            <td>
+                <input type="hidden" name="lines[${lineCount}][product_id]" value="${id}">
+                ${name}
+            </td>
+            <td><input type="number" name="lines[${lineCount}][quantity]" class="form-control" min="1" required></td>
+            <td><button type="button" class="btn btn-danger remove-line">Remove</button></td>
+        </tr>`;
+    $('#lines-table tbody').append(row);
+    lineCount++;
+    $('#productModal').modal('hide');
+});
+
+$(document).on('click', '.remove-line', function() {
+    $(this).closest('tr').remove();
+});
+</script>
 @endsection
