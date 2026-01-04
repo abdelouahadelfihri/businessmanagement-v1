@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\DB;
 use App\Services\StockService;
 class PurchaseReceiptController extends Controller
 {
+    public function index()
+    {
+        $receipts = PurchaseReceipt::latest()->paginate(15);
+        return view('purchase_receipts.index', compact('receipts'));
+    }
+    public function create()
+    {
+        return view('purchase_receipts.create', ['purchaseOrders' => PurchaseOrder::with('lines.product')->get(), 'products' => Product::all()]);
+    }
     public function store(Request $request)
     {
         DB::transaction(function () use ($request) {
