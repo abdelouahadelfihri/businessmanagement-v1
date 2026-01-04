@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Controllers\MasterData;
 
-use App\Models\MasterData\Warehouse;
+use App\Models\MasterData\WarehouseStock;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Models\MasterData\Transfer;
+use App\Services\StockService;
 
 class TransferController extends Controller
 {
