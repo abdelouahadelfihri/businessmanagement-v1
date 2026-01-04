@@ -1,66 +1,105 @@
 @extends('layouts.app')
+
 @section('content')
-<h3>Create Purchase Receipt</h3>
-<form method="POST" action="{{ route('purchase-receipts.store') }}">
-@csrf
+<div class="container">
+    <h1>Create Purchase Receipt</h1>
 
-<div class="mb-3">
-<label>Purchase Order</label>
-<div class="input-group">
-<input type="text" id="po_number" class="form-control" readonly placeholder="Pick PO">
-<input type="hidden" name="purchase_order_id" id="purchase_order_id">
-<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#poModal">Pick PO</button>
+    <form action="{{ route('purchase-receipts.store') }}" method="POST">
+        @csrf
+
+        <div class="mb-3">
+            <label>Warehouse</label>
+            <select name="warehouse_id" class="form-control" required>
+                @foreach($warehouses as $warehouse)
+                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Supplier</label>
+            <select name="supplier_id" class="form-control">
+                @foreach($suppliers as $supplier)
+                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Receipt Date</label>
+            <input type="date" name="receipt_date" class="form-control" required>
+        </div>
+
+        <h4>Products</h4>
+        <table class="table" id="lines-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button type="button" class="btn btn-secondary" id="add-line">Add Product</button>
+        <button type="submit" class="btn btn-primary">Save Receipt</button>
+    </form>
 </div>
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Select Product</h5></div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="product-list">
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach($products as $product)
+                        <tr>
+                            <td>{{ $product->id }}</td>
+                            <td>{{ $product->name }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success select-product" data-id="{{ $product->id }}" data-name="{{ $product->name }}">Select</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-<input type="date" name="receipt_date" class="form-control mb-3" required>
-
-<table class="table" id="lines">
-<thead><tr><th>Product</th><th>Quantity</th><th></th></tr></thead>
-<tbody></tbody>
-</table>
-
-<button type="submit" class="btn btn-success">Save</button>
-</form>
-
-<!-- PO Modal -->
-<div class="modal fade" id="poModal">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-<div class="modal-header">
-<h5>Select Purchase Order</h5>
-<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-<table class="table table-hover">
-@foreach($purchaseOrders as $po)
-<tr style="cursor:pointer" onclick="selectPO({{ $po->id }}, '{{ $po->po_number }}', {{ json_encode($po->lines) }})">
-<td>{{ $po->po_number }}</td><td>{{ $po->supplier->name }}</td>
-</tr>
-@endforeach
-</table>
-</div></div></div></div>
-
-@endsection
-
-@section('scripts')
 <script>
-let i=0;
-function selectPO(id,number,lines){
-    document.getElementById('purchase_order_id').value=id;
-    document.getElementById('po_number').value=number;
-    let tbody = document.querySelector('#lines tbody');
-    tbody.innerHTML = '';
-    lines.forEach(line=>{
-        tbody.insertAdjacentHTML('beforeend',`
-<tr>
-<td><input type="hidden" name="lines[${i}][product_id]" value="${line.product_id}">${line.product.name}</td>
-<td><input type="number" name="lines[${i}][quantity]" class="form-control" value="${line.quantity}"></td>
-<td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">X</button></td>
-</tr>`);
-        i++;
-    });
-    bootstrap.Modal.getInstance(document.getElementById('poModal')).hide();
-}
+let lineCount = 0;
+
+document.getElementById('add-line').addEventListener('click', function() {
+    $('#productModal').modal('show');
+});
+
+$(document).on('click', '.select-product', function() {
+    const id = $(this).data('id');
+    const name = $(this).data('name');
+    const row = `
+        <tr>
+            <td>
+                <input type="hidden" name="lines[${lineCount}][product_id]" value="${id}">
+                ${name}
+            </td>
+            <td><input type="number" name="lines[${lineCount}][quantity]" class="form-control" min="1" required></td>
+            <td><button type="button" class="btn btn-danger remove-line">Remove</button></td>
+        </tr>`;
+    $('#lines-table tbody').append(row);
+    lineCount++;
+    $('#productModal').modal('hide');
+});
+
+$(document).on('click', '.remove-line', function() {
+    $(this).closest('tr').remove();
+});
 </script>
 @endsection
