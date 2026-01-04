@@ -1,112 +1,83 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="container mt-4">
-        <h1 class="mb-4">Create Purchase Order</h1>
+<h3>Create Purchase Order</h3>
+<form method="POST" action="{{ route('purchase-orders.store') }}">
+@csrf
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-
-                {{-- ================= SUPPLIER PICKER ================= --}}
-                <form id="supplierPickerForm" method="GET" action="{{ route('suppliers.index') }}">
-                    <input type="hidden" name="select_for" value="purchase-order">
-                    <input type="hidden" name="return_url" value="{{ route('purchaseorders.create') }}">
-
-                    {{-- preserve form fields --}}
-                    @foreach(['order_date', 'status'] as $field)
-                        <input type="hidden" id="hidden_{{ $field }}" name="{{ $field }}"
-                            value="{{ old($field, $form[$field] ?? '') }}">
-                    @endforeach
-                </form>
-
-                {{-- ================= REQUEST PICKER ================= --}}
-                <form id="requestPickerForm" method="GET" action="{{ route('purchasesrequests.index') }}">
-                    <input type="hidden" name="select_for" value="purchase-order">
-                    <input type="hidden" name="return_url" value="{{ route('purchaseorders.create') }}">
-
-                    {{-- preserve form fields --}}
-                    @foreach(['order_date', 'status'] as $field)
-                        <input type="hidden" id="hidden2_{{ $field }}" name="{{ $field }}"
-                            value="{{ old($field, $form[$field] ?? '') }}">
-                    @endforeach
-
-                    @if(!empty($selectedSupplier))
-                        <input type="hidden" name="selected_supplier_id" value="{{ $selectedSupplier->id }}">
-                    @endif
-                </form>
-
-                {{-- ================= MAIN FORM ================= --}}
-                <form action="{{ route('purchaseorders.store') }}" method="POST">
-                    @csrf
-
-                    {{-- SUPPLIER --}}
-                    <div class="mb-3">
-                        <label class="form-label">Supplier</label>
-                        <div class="input-group">
-                            <input class="form-control" value="{{ $selectedSupplier?->name }}" readonly
-                                placeholder="No supplier selected">
-                            <button type="button" class="btn btn-outline-secondary"
-                                onclick="submitSupplierPicker()">Pick</button>
-                        </div>
-                        <input type="hidden" name="supplier_id" value="{{ $selectedSupplier?->id }}">
-                    </div>
-
-                    {{-- PURCHASE REQUEST --}}
-                    <div class="mb-3">
-                        <label class="form-label">Linked Purchase Request (optional)</label>
-                        <div class="input-group">
-                            <input class="form-control" value="{{ $selectedRequest?->title }}" readonly
-                                placeholder="None selected">
-                            <button type="button" class="btn btn-outline-secondary"
-                                onclick="submitRequestPicker()">Pick</button>
-                        </div>
-                        <input type="hidden" name="request_id" value="{{ $selectedRequest?->id }}">
-                    </div>
-
-                    {{-- ORDER DATE --}}
-                    <div class="mb-3">
-                        <label class="form-label">Order Date</label>
-                        <input type="date" id="order_date" name="order_date" required class="form-control"
-                            value="{{ old('order_date', $form['order_date'] ?? '') }}">
-                    </div>
-
-                    {{-- STATUS --}}
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select id="status" name="status" class="form-select">
-                            <option value="">-- Select --</option>
-                            @foreach(['draft', 'sent', 'partially_received', 'completed', 'cancelled'] as $s)
-                                <option value="{{ $s }}" @selected(($form['status'] ?? '') === $s)>{{ ucfirst($s) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- ACTIONS --}}
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary">Save</button>
-                        <a href="{{ route('purchaseorders.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                    </div>
-                </form>
-            </div>
-        </div>
+<div class="mb-3">
+    <label>Supplier</label>
+    <div class="input-group">
+        <input type="text" id="supplier_name" class="form-control" readonly placeholder="Select Supplier">
+        <input type="hidden" name="supplier_id" id="supplier_id">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#supplierModal">Pick Supplier</button>
     </div>
+</div>
+
+<table class="table" id="lines">
+<thead>
+<tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th></th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<button type="button" class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#productModal">Add Product</button>
+<button type="submit" class="btn btn-success">Save</button>
+</form>
+
+<!-- Supplier Modal -->
+<div class="modal fade" id="supplierModal">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5>Select Supplier</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+<table class="table table-hover">
+@foreach($suppliers as $s)
+<tr style="cursor:pointer" onclick="selectSupplier({{ $s->id }}, '{{ $s->name }}')"><td>{{ $s->name }}</td></tr>
+@endforeach
+</table>
+</div></div></div></div>
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h5>Select Product</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+<table class="table table-hover">
+@foreach($products as $p)
+<tr style="cursor:pointer" onclick="addLine({{ $p->id }}, '{{ $p->name }}', {{ $p->price }})">
+<td>{{ $p->name }}</td><td>{{ $p->price }}</td></tr>
+@endforeach
+</table>
+</div></div></div></div>
+
 @endsection
 
-@push('scripts')
-    <script>
-        function submitSupplierPicker() {
-            ['order_date', 'status'].forEach(f => {
-                document.getElementById('hidden_' + f).value =
-                    document.getElementById(f)?.value;
-            });
-            document.getElementById('supplierPickerForm').submit();
-        }
-        function submitRequestPicker() {
-            ['order_date', 'status'].forEach(f => {
-                document.getElementById('hidden2_' + f).value =
-                    document.getElementById(f)?.value;
-            });
-            document.getElementById('requestPickerForm').submit();
-        }
-    </script>
-@endpush
+@section('scripts')
+<script>
+let i=0;
+function selectSupplier(id,name){
+    document.getElementById('supplier_id').value=id;
+    document.getElementById('supplier_name').value=name;
+    bootstrap.Modal.getInstance(document.getElementById('supplierModal')).hide();
+}
+function addLine(id,name,price){
+    document.querySelector('#lines tbody').insertAdjacentHTML('beforeend',`
+<tr>
+<td><input type="hidden" name="lines[${i}][product_id]" value="${id}">${name}</td>
+<td><input type="number" name="lines[${i}][quantity]" class="form-control" value="1"></td>
+<td><input type="number" name="lines[${i}][unit_price]" class="form-control" value="${price}" step="0.01"></td>
+<td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">X</button></td>
+</tr>
+`);
+i++;
+bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+}
+</script>
+@endsection
