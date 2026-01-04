@@ -4,6 +4,7 @@ namespace App\Models\MasteData;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MasteData\Warehouse;
+use App\Models\MasterData\TransferLine;
 class Transfer extends Model
 {
     protected $fillable = [

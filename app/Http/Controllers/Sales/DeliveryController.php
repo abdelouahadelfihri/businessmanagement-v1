@@ -13,6 +13,58 @@ class DeliveryController extends Controller
         return Delivery::with('salesOrder')->get();
     }
 
+    public function post(SaleDelivery $delivery, StockService $stock)
+    {
+        abort_if($delivery->status !== 'draft', 400);
+
+        foreach ($delivery->lines as $line) {
+            $available = WarehouseStock::where('warehouse_id', $delivery->warehouse_id)
+                ->where('product_id', $line->product_id)
+                ->value('quantity') ?? 0;
+
+            if ($available < $line->quantity) {
+                throw ValidationException::withMessages([
+                    'stock' => 'Insufficient stock'
+                ]);
+            }
+        }
+
+        DB::transaction(function () use ($delivery, $stock) {
+            foreach ($delivery->lines as $line) {
+                $stock->move(
+                    $line->product_id,
+                    $delivery->warehouse_id,
+                    $line->quantity,
+                    'out',
+                    'sale_delivery',
+                    $delivery->id
+                );
+            }
+
+            $delivery->update(['status' => 'posted']);
+        });
+    }
+
+    public function cancel(SaleDelivery $delivery, StockService $stock)
+    {
+        abort_if($delivery->status !== 'posted', 400);
+
+        DB::transaction(function () use ($delivery, $stock) {
+            foreach ($delivery->lines as $line) {
+                $stock->move(
+                    $line->product_id,
+                    $delivery->warehouse_id,
+                    $line->quantity,
+                    'in',
+                    'sale_delivery_cancel',
+                    $delivery->id
+                );
+            }
+
+            $delivery->update(['status' => 'cancelled']);
+        });
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
