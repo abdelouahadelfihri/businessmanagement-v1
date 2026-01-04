@@ -10,10 +10,13 @@ return new class extends Migration {
         Schema::create('transfer_lines', function (Blueprint $table) {
             $table->engine = 'InnoDB';
 
-            $table->increments('id'); // UNSIGNED INT
+            $table->increments('id'); // UNSIGNED INT (OK for this table)
 
-            $table->unsignedInteger('transfer_id'); // MUST MATCH transfers.id
-            $table->unsignedInteger('product_id');  // MUST MATCH products.id
+            // MATCH transfers.id (increments)
+            $table->unsignedInteger('transfer_id');
+
+            // MATCH products.id (bigIncrements)
+            $table->unsignedBigInteger('product_id');
 
             $table->integer('quantity');
 
