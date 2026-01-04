@@ -1,98 +1,88 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h1 class="mb-4">Edit Purchase Receipt #{{ $purchaseReceipt->id }}</h1>
+<div class="container">
+    <h1>Edit Purchase Receipt #{{ $receipt->id }}</h1>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <form action="{{ route('purchase-receipts.update', $receipt->id) }}" method="POST">
+        @csrf
+        @method('PUT')
 
-            {{-- Supplier Picker --}}
-            <form id="supplierPickerForm" method="GET" action="{{ route('suppliers.index') }}">
-                <input type="hidden" name="select_for" value="purchase-receipt">
-                <input type="hidden" name="return_url" value="{{ route('purchasereceipts.edit', $purchaseReceipt) }}">
-                <input type="hidden" id="purchase_order_id_hidden" name="purchase_order_id"
-                    value="{{ old('purchase_order_id', $purchaseReceipt->purchase_order_id) }}">
-                <input type="hidden" id="receipt_number_hidden" name="receipt_number"
-                    value="{{ old('receipt_number', $purchaseReceipt->receipt_number) }}">
-                <input type="hidden" id="receipt_date_hidden" name="receipt_date"
-                    value="{{ old('receipt_date', $purchaseReceipt->date) }}">
-                <input type="hidden" id="status_hidden" name="status"
-                    value="{{ old('status', $purchaseReceipt->status) }}">
-            </form>
-
-            <form action="{{ route('purchasereceipts.update', $purchaseReceipt) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                {{-- Supplier --}}
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control"
-                            value="{{ old('supplier_name', $purchaseReceipt->supplier?->name) }}" readonly>
-                        <button type="button" class="btn btn-outline-secondary"
-                            onclick="submitSupplierPicker()">Pick</button>
-                    </div>
-                    <input type="hidden" name="supplier_id"
-                        value="{{ old('supplier_id', $purchaseReceipt->supplier_id) }}">
-                </div>
-
-                {{-- Purchase Order --}}
-                <div class="mb-3">
-                    <label class="form-label">Purchase Order</label>
-                    <input type="text" class="form-control"
-                        value="{{ old('purchase_order_display', $purchaseReceipt->purchaseOrder?->id) }}" readonly>
-                    <input type="hidden" name="purchase_order_id"
-                        value="{{ old('purchase_order_id', $purchaseReceipt->purchase_order_id) }}">
-                </div>
-
-                {{-- Receipt Number --}}
-                <div class="mb-3">
-                    <label class="form-label">Receipt Number</label>
-                    <input type="text" name="receipt_number" class="form-control"
-                        value="{{ old('receipt_number', $purchaseReceipt->receipt_number) }}">
-                </div>
-
-                {{-- Receipt Date --}}
-                <div class="mb-3">
-                    <label class="form-label">Receipt Date</label>
-                    <input type="date" name="receipt_date" class="form-control"
-                        value="{{ old('receipt_date', $purchaseReceipt->date) }}">
-                </div>
-
-                {{-- Status --}}
-                <div class="mb-3">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select" required>
-                        <option value="">-- Select Status --</option>
-                        <option value="draft" @selected(old('status', $purchaseReceipt->status) === 'draft')>Draft
-                        </option>
-                        <option value="pending" @selected(old('status', $purchaseReceipt->status) === 'pending')>Pending
-                        </option>
-                        <option value="approved" @selected(old('status', $purchaseReceipt->status) === 'approved')>
-                            Approved</option>
-                    </select>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary">Update</button>
-                    <a href="{{ route('purchasereceipts.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-
-            </form>
+        <div class="mb-3">
+            <label>Warehouse</label>
+            <select name="warehouse_id" class="form-control" required>
+                @foreach($warehouses as $warehouse)
+                <option value="{{ $warehouse->id }}" @if($warehouse->id == $receipt->warehouse_id) selected @endif>{{ $warehouse->name }}</option>
+                @endforeach
+            </select>
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label>Supplier</label>
+            <select name="supplier_id" class="form-control">
+                @foreach($suppliers as $supplier)
+                <option value="{{ $supplier->id }}" @if($supplier->id == $receipt->supplier_id) selected @endif>{{ $supplier->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Receipt Date</label>
+            <input type="date" name="receipt_date" class="form-control" value="{{ $receipt->receipt_date }}" required>
+        </div>
+
+        <h4>Products</h4>
+        <table class="table" id="lines-table">
+            <thead>
+                <tr><th>Product</th><th>Quantity</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                @foreach($receipt->lines as $i => $line)
+                <tr>
+                    <td>
+                        <input type="hidden" name="lines[{{ $i }}][product_id]" value="{{ $line->product_id }}">
+                        {{ $line->product->name }}
+                    </td>
+                    <td><input type="number" name="lines[{{ $i }}][quantity]" value="{{ $line->quantity }}" class="form-control" min="1" required></td>
+                    <td><button type="button" class="btn btn-danger remove-line">Remove</button></td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-secondary" id="add-line">Add Product</button>
+        <button type="submit" class="btn btn-primary">Update Receipt</button>
+    </form>
 </div>
 
-@push('scripts')
-    <script>
-        function submitSupplierPicker() {
-            document.getElementById('purchase_order_id_hidden').value = document.getElementById('purchase_order_id_hidden').value;
-            document.getElementById('receipt_number_hidden').value = document.querySelector('[name="receipt_number"]').value;
-            document.getElementById('receipt_date_hidden').value = document.querySelector('[name="receipt_date"]').value;
-            document.getElementById('status_hidden').value = document.querySelector('[name="status"]').value;
-            document.getElementById('supplierPickerForm').submit();
-        }
-    </script>
-@endpush
+@include('purchase_receipts.partials.product_modal')
+
+<script>
+let lineCount = {{ $receipt->lines->count() }};
+
+$(document).on('click', '.remove-line', function() {
+    $(this).closest('tr').remove();
+});
+
+document.getElementById('add-line').addEventListener('click', function() {
+    $('#productModal').modal('show');
+});
+
+$(document).on('click', '.select-product', function() {
+    const id = $(this).data('id');
+    const name = $(this).data('name');
+    const row = `
+        <tr>
+            <td>
+                <input type="hidden" name="lines[${lineCount}][product_id]" value="${id}">
+                ${name}
+            </td>
+            <td><input type="number" name="lines[${lineCount}][quantity]" class="form-control" min="1" required></td>
+            <td><button type="button" class="btn btn-danger remove-line">Remove</button></td>
+        </tr>`;
+    $('#lines-table tbody').append(row);
+    lineCount++;
+    $('#productModal').modal('hide');
+});
+</script>
+@endsection
