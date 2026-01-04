@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MasterData\Product;
