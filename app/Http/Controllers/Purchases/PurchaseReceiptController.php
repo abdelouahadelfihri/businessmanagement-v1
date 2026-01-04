@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Purchases;
 use App\Http\Controllers\Controller;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseOrder;
+use App\Models\MasterData\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\StockService;
