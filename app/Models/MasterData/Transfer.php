@@ -3,7 +3,7 @@
 namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\MasteData\Warehouse;
+use App\Models\MasterData\Warehouse;
 use App\Models\MasterData\TransferLine;
 class Transfer extends Model
 {
