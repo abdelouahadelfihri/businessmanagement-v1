@@ -1,78 +1,105 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container">
+    <h1>Create Purchase Receipt</h1>
 
-    <h1 class="mb-4">Create Purchase Order</h1>
+    <form action="{{ route('purchase-receipts.store') }}" method="POST">
+        @csrf
 
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Supplier
-    </a>
+        <div class="mb-3">
+            <label>Warehouse</label>
+            <select name="warehouse_id" class="form-control" required>
+                @foreach($warehouses as $warehouse)
+                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Purchase Request
-    </a>
+        <div class="mb-3">
+            <label>Supplier</label>
+            <select name="supplier_id" class="form-control">
+                @foreach($suppliers as $supplier)
+                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="mb-3">
+            <label>Receipt Date</label>
+            <input type="date" name="receipt_date" class="form-control" required>
+        </div>
 
-            <form action="{{ route('purchase-orders.store') }}" method="POST">
-                @csrf
+        <h4>Products</h4>
+        <table class="table" id="lines-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <select name="supplier_id" id="supplier_id" class="form-select" required>
-                        <option value="">-- choose supplier --</option>
-                        @foreach($suppliers as $s)
-                            <option value="{{ $s->id }}"
-                                {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                {{ $s->name }}
-                            </option>
+        <button type="button" class="btn btn-secondary" id="add-line">Add Product</button>
+        <button type="submit" class="btn btn-primary">Save Receipt</button>
+    </form>
+</div>
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Select Product</h5></div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="product-list">
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach($products as $product)
+                        <tr>
+                            <td>{{ $product->id }}</td>
+                            <td>{{ $product->name }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success select-product" data-id="{{ $product->id }}" data-name="{{ $product->name }}">Select</button>
+                            </td>
+                        </tr>
                         @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Purchase Request</label>
-                    <select name="purchase_request_id" id="request_id" class="form-select" required>
-                        <option value="">-- choose request --</option>
-                        @foreach($requests as $r)
-                            <option value="{{ $r->id }}"
-                                {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                {{ $r->title }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Order Date</label>
-                    <input type="date" name="order_date" 
-                           class="form-control" 
-                           value="{{ date('Y-m-d') }}" required>
-                </div>
-
-                <button class="btn btn-primary">Save</button>
-            </form>
-
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const params = new URLSearchParams(window.location.search);
+let lineCount = 0;
 
-    if (params.get("selected_supplier_id")) {
-        document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-    }
-    if (params.get("selected_request_id")) {
-        document.getElementById("request_id").value = params.get("selected_request_id");
-    }
+document.getElementById('add-line').addEventListener('click', function() {
+    $('#productModal').modal('show');
+});
+
+$(document).on('click', '.select-product', function() {
+    const id = $(this).data('id');
+    const name = $(this).data('name');
+    const row = `
+        <tr>
+            <td>
+                <input type="hidden" name="lines[${lineCount}][product_id]" value="${id}">
+                ${name}
+            </td>
+            <td><input type="number" name="lines[${lineCount}][quantity]" class="form-control" min="1" required></td>
+            <td><button type="button" class="btn btn-danger remove-line">Remove</button></td>
+        </tr>`;
+    $('#lines-table tbody').append(row);
+    lineCount++;
+    $('#productModal').modal('hide');
+});
+
+$(document).on('click', '.remove-line', function() {
+    $(this).closest('tr').remove();
 });
 </script>
-
 @endsection
