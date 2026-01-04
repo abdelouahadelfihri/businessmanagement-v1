@@ -52,6 +52,7 @@ Route::middleware(['web'])->group(function () {
     Route::resource('warehouses', WarehouseController::class);
     Route::resource('locations', LocationController::class);
     Route::resource('stocksmovements', StockMovementController::class);
+    Route::resource('transfers', TransferController::class);
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +81,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('/stock/transfer', [StockMovementController::class, 'transfer'])
         ->name('stocksmovements.transfer');
 
-
+    Route::resource('stock-movements', StockMovementController::class)
+        ->except(['show', 'destroy']);
 
     // AJAX routes for modal add
     Route::post('suppliers/ajax-store', [SupplierController::class, 'ajaxStore'])->name('suppliers.ajaxStore');
