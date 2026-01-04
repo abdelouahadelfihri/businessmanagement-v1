@@ -1,48 +1,84 @@
 <?php
-namespace App\Http\Controllers\MasterData;
 
-use App\Models\MasterData\WarehouseStock;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+namespace App\Http\Controllers;
+
 use App\Models\MasterData\Transfer;
+use App\Models\MasterData\Warehouse;
+use App\Models\MasterData\Product;
+use Illuminate\Http\Request;
 use App\Services\StockService;
+use DB;
+use Exception;
 
 class TransferController extends Controller
 {
     public function index()
     {
-        return view('transfers.index', [
-            'transfers' => Transfer::latest()->get()
-        ]);
+        $transfers = Transfer::latest()->paginate(15);
+        return view('transfers.index', compact('transfers'));
     }
 
     public function create()
     {
-        return view('transfers.create');
+        return view('transfers.create', [
+            'warehouses' => Warehouse::all(),
+            'products' => Product::all()
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, StockService $stockService)
     {
-        $request->validate([
+        $data = $request->validate([
             'from_warehouse_id' => 'required|different:to_warehouse_id',
             'to_warehouse_id' => 'required',
-            'lines' => 'required|array|min:1',
+            'transfer_date' => 'required|date',
             'lines.*.product_id' => 'required',
             'lines.*.quantity' => 'required|integer|min:1'
         ]);
 
-        DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($data, $stockService) {
+
+            // Create transfer as draft first
             $transfer = Transfer::create([
-                'from_warehouse_id' => $request->from_warehouse_id,
-                'to_warehouse_id' => $request->to_warehouse_id,
-                'status' => 'draft'
+                'from_warehouse_id' => $data['from_warehouse_id'],
+                'to_warehouse_id' => $data['to_warehouse_id'],
+                'transfer_date' => $data['transfer_date'],
+                'status' => 'draft'  // draft first
             ]);
 
-            foreach ($request->lines as $line) {
+            // Save transfer lines
+            foreach ($data['lines'] as $line) {
                 $transfer->lines()->create($line);
             }
+
+            // Complete the transfer (move stock)
+            foreach ($transfer->lines as $line) {
+
+                // OUT from source warehouse
+                $stockService->move(
+                    $line['product_id'],
+                    $transfer->from_warehouse_id,
+                    $line['quantity'],
+                    'out',
+                    'transfer',
+                    $transfer->id,
+                    'Transfer OUT'
+                );
+
+                // IN to destination warehouse
+                $stockService->move(
+                    $line['product_id'],
+                    $transfer->to_warehouse_id,
+                    $line['quantity'],
+                    'in',
+                    'transfer',
+                    $transfer->id,
+                    'Transfer IN'
+                );
+            }
+
+            // Mark transfer as completed
+            $transfer->update(['status' => 'completed']);
         });
 
         return redirect()->route('transfers.index');
@@ -50,89 +86,43 @@ class TransferController extends Controller
 
     public function edit(Transfer $transfer)
     {
-        abort_if($transfer->status !== 'draft', 403);
-        return view('transfers.edit', compact('transfer'));
+        return view('transfers.edit', [
+            'transfer' => $transfer->load('lines.product'),
+            'warehouses' => Warehouse::all(),
+            'products' => Product::all()
+        ]);
     }
 
-    public function update(Request $request, Transfer $transfer)
+    // Cancel completed transfer (reverse stock)
+    public function cancel(Transfer $transfer, StockService $stockService)
     {
-        abort_if($transfer->status !== 'draft', 403);
-
-        DB::transaction(function () use ($request, $transfer) {
-            $transfer->lines()->delete();
-            foreach ($request->lines as $line) {
-                $transfer->lines()->create($line);
-            }
-        });
-
-        return redirect()->route('transfers.index');
-    }
-
-    public function complete(Transfer $transfer, StockService $stock)
-    {
-        abort_if($transfer->status !== 'draft', 400);
-
-        foreach ($transfer->lines as $line) {
-            $available = WarehouseStock::where('warehouse_id', $transfer->from_warehouse_id)
-                ->where('product_id', $line->product_id)
-                ->value('quantity') ?? 0;
-
-            if ($available < $line->quantity) {
-                throw ValidationException::withMessages([
-                    'stock' => 'Insufficient stock for transfer'
-                ]);
-            }
+        if ($transfer->status !== 'completed') {
+            throw new Exception('Only completed transfers can be cancelled.');
         }
 
-        DB::transaction(function () use ($transfer, $stock) {
+        DB::transaction(function () use ($transfer, $stockService) {
             foreach ($transfer->lines as $line) {
-                $stock->move(
-                    $line->product_id,
-                    $transfer->from_warehouse_id,
-                    $line->quantity,
-                    'out',
-                    'transfer',
-                    $transfer->id
-                );
 
-                $stock->move(
-                    $line->product_id,
+                // OUT from destination warehouse
+                $stockService->move(
+                    $line['product_id'],
                     $transfer->to_warehouse_id,
-                    $line->quantity,
-                    'in',
-                    'transfer',
-                    $transfer->id
-                );
-            }
-
-            $transfer->update(['status' => 'completed']);
-        });
-
-        return redirect()->route('transfers.index');
-    }
-
-    public function cancel(Transfer $transfer, StockService $stock)
-    {
-        abort_if($transfer->status !== 'completed', 400);
-
-        DB::transaction(function () use ($transfer, $stock) {
-            foreach ($transfer->lines as $line) {
-                $stock->move(
-                    $line->product_id,
-                    $transfer->to_warehouse_id,
-                    $line->quantity,
+                    $line['quantity'],
                     'out',
                     'transfer_cancel',
-                    $transfer->id
+                    $transfer->id,
+                    'Cancel Transfer OUT'
                 );
 
-                $stock->move(
-                    $line->product_id,
+                // IN to source warehouse
+                $stockService->move(
+                    $line['product_id'],
                     $transfer->from_warehouse_id,
-                    $line->quantity,
+                    $line['quantity'],
                     'in',
                     'transfer_cancel',
-                    $transfer->id
+                    $transfer->id,
+                    'Cancel Transfer IN'
                 );
             }
 
