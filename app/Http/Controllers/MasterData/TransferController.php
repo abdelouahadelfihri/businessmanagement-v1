@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MasterData;
 
 use App\Models\MasterData\Transfer;
 use App\Models\MasterData\Warehouse;
@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\StockService;
 use DB;
 use Exception;
+use App\Http\Controllers\Controller;
 
 class TransferController extends Controller
 {
