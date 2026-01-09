@@ -66,10 +66,7 @@
 
             <!-- Include Bootstrap Icons CDN if not already in your layout -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-            <div class="mt-3">
-                {{ $requests->withQueryString()->links() }}
-            </div>
+            
         @endif
     </div>
 @endsection
