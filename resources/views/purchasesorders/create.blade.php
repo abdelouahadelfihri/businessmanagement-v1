@@ -55,22 +55,25 @@
 
         function addLine() {
             const row = `
-                                        <tr>
-                                            <td>
-                                                <input type="hidden" name="lines[${lineIndex}][product_id]" class="product-id">
-                                                <input type="text" class="form-control product-name" readonly
-                                                       onclick="openProductModal(this)" placeholder="Select product">
-                                            </td>
-                                            <td>
-                                                <input type="number" name="lines[${lineIndex}][quantity]" class="form-control" min="1" required>
-                                            </td>
-                                            <td>
-                                                <input type="number" name="lines[${lineIndex}][unit_price]" class="form-control" step="0.01" required>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">×</button>
-                                            </td>
-                                        </tr>`;
+
+            
+
+            <tr>
+                <td>
+                    <input type="hidden" name="lines[${lineIndex}][product_id]" class="product-id">
+                    <input type="text" class="form-control product-name" readonly
+                            onclick="openProductModal(this)" placeholder="Select product">
+                </td>
+                <td>
+                    <input type="number" name="lines[${lineIndex}][quantity]" class="form-control" min="1" required>
+                </td>
+                <td>
+                    <input type="number" name="lines[${lineIndex}][unit_price]" class="form-control" step="0.01" required>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">×</button>
+                </td>
+            </tr>`;
             document.querySelector('#linesTable tbody').insertAdjacentHTML('beforeend', row);
             lineIndex++;
         }
