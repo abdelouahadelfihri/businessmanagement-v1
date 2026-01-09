@@ -46,7 +46,7 @@
     </div>
 
     {{-- PRODUCT MODAL --}}
-    @include('partials.product-modal')
+    @include('modals.product-picker')
 @endsection
 
 @push('scripts')
