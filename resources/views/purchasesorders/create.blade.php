@@ -11,11 +11,10 @@
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label>Supplier</label>
-                    <select name="supplier_id" class="form-control" required>
-                        @foreach($suppliers as $supplier)
-                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                        @endforeach
-                    </select>
+                    <input type="hidden" name="supplier_id" id="supplier_id">
+                    <input type="text" id="supplier_name" class="form-control" readonly>
+                    <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
+                        data-bs-target="#supplierModal">Select Supplier</button>
                 </div>
 
                 <div class="col-md-4">
@@ -47,6 +46,8 @@
 
     {{-- PRODUCT MODAL --}}
     @include('modals.product-picker')
+    {{-- SUPPLIER MODAL --}}
+    @include('modals.supplier-picker')
 @endsection
 
 @push('scripts')
