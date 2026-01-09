@@ -13,11 +13,11 @@ class PurchaseOrderController extends Controller
     public function index()
     {
         $orders = PurchaseOrder::latest()->paginate(15);
-        return view('purchase_orders.index', compact('orders'));
+        return view('purchasesorders.index', compact('orders'));
     }
     public function create()
     {
-        return view('purchase_orders.create', ['suppliers' => Supplier::all(), 'products' => Product::all()]);
+        return view('purchasesorders.create', ['suppliers' => Supplier::all(), 'products' => Product::all()]);
     }
     public function store(Request $request)
     {
@@ -34,7 +34,7 @@ class PurchaseOrderController extends Controller
     }
     public function edit(PurchaseOrder $purchaseOrder)
     {
-        return view('purchase_orders.edit', ['po' => $purchaseOrder->load('lines'), 'suppliers' => Supplier::all(), 'products' => Product::all()]);
+        return view('purchasesorders.edit', ['po' => $purchaseOrder->load('lines'), 'suppliers' => Supplier::all(), 'products' => Product::all()]);
     }
     public function update(Request $request, PurchaseOrder $po)
     {
