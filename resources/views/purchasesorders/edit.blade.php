@@ -9,25 +9,26 @@
         @method('PUT')
 
         {{-- HEADER --}}
-        <div class="row mb-4">
+        <div class="row mb-3">
             <div class="col-md-4">
                 <label>Supplier</label>
-                <select name="supplier_id" class="form-control" required>
-                    @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}"
-                            @selected($order->supplier_id == $supplier->id)>
-                            {{ $supplier->name }}
-                        </option>
-                    @endforeach
-                </select>
+                <div class="input-group">
+                    <input type="hidden" name="supplier_id" id="supplier_id">
+                    <input type="text" id="supplier_name" class="form-control" readonly>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                        data-bs-target="#supplierModal">Select</button>
+                </div>
             </div>
 
             <div class="col-md-4">
                 <label>Order Date</label>
-                <input type="date" name="order_date"
-                       value="{{ $order->order_date }}"
-                       class="form-control" required>
+                <input type="date" name="order_date" class="form-control" required>
             </div>
+        </div>
+
+        {{-- ADD LINE BUTTON --}}
+        <div class="mb-2">
+            <button type="button" class="btn btn-secondary" onclick="addLine()">+ Add Line</button>
         </div>
 
         {{-- LINES --}}
@@ -86,12 +87,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <button type="button"
-                class="btn btn-secondary"
-                onclick="addLine()">
-            + Add Line
-        </button>
 
         <div class="mt-4">
             <button class="btn btn-primary">
