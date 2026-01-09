@@ -75,40 +75,6 @@ class StockMovementController extends Controller
             'warehouses' => Warehouse::all(),
         ]);
     }
-    // Transfer between warehouses
-    public function transfer(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'from_warehouse' => 'required|exists:warehouses,id',
-            'to_warehouse' => 'required|exists:warehouses,id|different:from_warehouse',
-            'quantity' => 'required|numeric|min:0.01',
-        ]);
-
-        // OUT movement
-        StockMovement::create([
-            'product_id' => $request->product_id,
-            'warehouse_id' => $request->from_warehouse,
-            'source_warehouse_id' => $request->from_warehouse,
-            'type' => 'transfer_out',
-            'quantity' => -$request->quantity,
-            'reason' => 'Transfer to warehouse ' . $request->to_warehouse,
-            'date' => now(),
-        ]);
-
-        // IN movement
-        StockMovement::create([
-            'product_id' => $request->product_id,
-            'warehouse_id' => $request->to_warehouse,
-            'source_warehouse_id' => $request->from_warehouse,
-            'type' => 'transfer_in',
-            'quantity' => $request->quantity,
-            'reason' => 'Transfer from warehouse ' . $request->from_warehouse,
-            'date' => now(),
-        ]);
-
-        return back()->with('success', 'Transfer completed successfully.');
-    }
 
     public function destroy(StockMovement $stockMovement)
     {
