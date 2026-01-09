@@ -111,82 +111,82 @@
 
 @push('scripts')
 <script>
-let lineIndex = {{ $order->lines->count() }};
-let currentProductInput = null;
+    let lineIndex = {{ $order->lines->count() }};
+    let currentProductInput = null;
 
-function addLine() {
-    const row = `
-    <tr>
-        <td>
-            <input type="hidden"
-                   name="lines[${lineIndex}][product_id]"
-                   class="product-id">
+    function addLine() {
+        const row = `
+        <tr>
+            <td>
+                <input type="hidden"
+                    name="lines[${lineIndex}][product_id]"
+                    class="product-id">
 
-            <input type="text"
-                   class="form-control product-name"
-                   readonly
-                   onclick="openProductModal(this)"
-                   placeholder="Select product">
-        </td>
+                <input type="text"
+                    class="form-control product-name"
+                    readonly
+                    onclick="openProductModal(this)"
+                    placeholder="Select product">
+            </td>
 
-        <td>
-            <input type="number"
-                   name="lines[${lineIndex}][quantity]"
-                   min="1"
-                   class="form-control"
-                   required>
-        </td>
+            <td>
+                <input type="number"
+                    name="lines[${lineIndex}][quantity]"
+                    min="1"
+                    class="form-control"
+                    required>
+            </td>
 
-        <td>
-            <input type="number"
-                   name="lines[${lineIndex}][unit_price]"
-                   step="0.01"
-                   class="form-control"
-                   required>
-        </td>
+            <td>
+                <input type="number"
+                    name="lines[${lineIndex}][unit_price]"
+                    step="0.01"
+                    class="form-control"
+                    required>
+            </td>
 
-        <td>
-            <button type="button"
-                    class="btn btn-danger btn-sm"
-                    onclick="this.closest('tr').remove()">
-                ×
-            </button>
-        </td>
-    </tr>
-    `;
-    document.querySelector('#linesTable tbody')
-        .insertAdjacentHTML('beforeend', row);
+            <td>
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        onclick="this.closest('tr').remove()">
+                    ×
+                </button>
+            </td>
+        </tr>
+        `;
+        document.querySelector('#linesTable tbody')
+            .insertAdjacentHTML('beforeend', row);
 
-    lineIndex++;
-}
-
-function openProductModal(input) {
-    currentProductInput = input;
-    $('#productModal').modal('show');
-}
-
-function selectProduct(id, name) {
-
-    // collect selected product ids
-    let selectedProducts = [];
-    document.querySelectorAll('.product-id').forEach(input => {
-        if (input.value) {
-            selectedProducts.push(input.value);
-        }
-    });
-
-    // check duplicate
-    if (selectedProducts.includes(String(id))) {
-        alert('This product is already added. Please change the quantity instead.');
-        return;
+        lineIndex++;
     }
 
-    // assign product
-    currentProductInput.value = name;
-    currentProductInput.closest('td')
-        .querySelector('.product-id').value = id;
+    function openProductModal(input) {
+        currentProductInput = input;
+        $('#productModal').modal('show');
+    }
 
-    $('#productModal').modal('hide');
-}
+    function selectProduct(id, name) {
+
+        // collect selected product ids
+        let selectedProducts = [];
+        document.querySelectorAll('.product-id').forEach(input => {
+            if (input.value) {
+                selectedProducts.push(input.value);
+            }
+        });
+
+        // check duplicate
+        if (selectedProducts.includes(String(id))) {
+            alert('This product is already added. Please change the quantity instead.');
+            return;
+        }
+
+        // assign product
+        currentProductInput.value = name;
+        currentProductInput.closest('td')
+            .querySelector('.product-id').value = id;
+
+        $('#productModal').modal('hide');
+    }
 </script>
 @endpush
