@@ -601,12 +601,6 @@
                                                 <span>List</span>
                                             </a>
                                         </li>
-                                        <li>
-                                            <a class="nav-link" href="{{ route('stocksmovements.create') }}">
-                                                <i class="bi bi-plus-circle"></i>
-                                                <span>Add</span>
-                                            </a>
-                                        </li>
                                     </ul>
                                 </div>
                             </li>
