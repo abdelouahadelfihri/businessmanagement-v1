@@ -10,7 +10,7 @@
         <strong>PR Number:</strong> {{ $purchaseRequest->pr_number }}
     </div>
 
-    <form action="{{ route('purchasesrequests.update', $purchaseRequest->id) }}" method="POST">
+    <form action="{{ route('purchasesrequests.update', $purchaseRequest) }}" method="POST">
         @csrf
         @method('PUT')
 
