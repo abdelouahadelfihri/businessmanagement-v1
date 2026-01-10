@@ -37,13 +37,5 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->update($request->all());
         return redirect()->route('purchasesrequests.index');
     }
-    // AJAX store for modal
-    public function ajaxStore(Request $request)
-    {
-        $purchaseRequest = PurchaseRequest::create([
-            'request_number' => $request->request_number,
-            'supplier_id' => $request->supplier_id
-        ]);
-        return response()->json($purchaseRequest);
-    }
+
 }
