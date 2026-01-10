@@ -90,7 +90,5 @@ Route::middleware(['web'])->group(function () {
     Route::post('categories/ajax-store', [CategoryController::class, 'ajaxStore'])->name('categories.ajaxStore');
     Route::post('units/ajax-store', [UnitController::class, 'ajaxStore'])->name('units.ajaxStore');
     Route::post('locations/ajax-store', [UnitController::class, 'ajaxStore'])->name('locations.ajaxStore');
-    Route::post('purchase-requests/ajax-store', [PurchaseRequestController::class, 'ajaxStore'])->name('purchaseRequests.ajaxStore');
-
 
 });
