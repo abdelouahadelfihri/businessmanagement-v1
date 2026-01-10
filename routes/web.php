@@ -60,7 +60,13 @@ Route::middleware(['web'])->group(function () {
     | Purchases
     |--------------------------------------------------------------------------
     */
-    Route::resource('purchasesrequests', PurchaseRequestController::class);
+    Route::resource(
+        'purchasesrequests',
+        PurchaseRequestController::class
+    )->parameters([
+                'purchasesrequests' => 'purchaseRequest'
+            ]);
+
     Route::resource('purchasesorders', PurchaseOrderController::class);
     Route::resource('purchasesreceipts', PurchaseReceiptController::class);
     Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
