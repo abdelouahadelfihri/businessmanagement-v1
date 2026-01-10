@@ -13,8 +13,9 @@ class PurchaseRequestController extends Controller
     }
     public function create()
     {
-        return view('purchaserequests.create');
+        return view('purchasesrequests.create'); // ✅ FIXED
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -25,7 +26,8 @@ class PurchaseRequestController extends Controller
 
         PurchaseRequest::create($request->all());
 
-        return redirect()->route('purchaserequests.index')
+        return redirect()
+            ->route('purchasesrequests.index') // ✅ FIXED
             ->with('success', 'Purchase Request Created');
     }
     public function edit(PurchaseRequest $purchaseRequest)
