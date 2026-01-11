@@ -68,7 +68,7 @@
     </form>
 </div>
 
-@include('products.partials.pick-modals')
-@include('products.partials.pick-modals')
+@include('modals.category-picker')
+@include('modals.unit-picker')
 @include('products.partials.barcode-script')
 @endsection
