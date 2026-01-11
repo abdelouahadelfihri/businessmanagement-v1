@@ -1,78 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container">
+    <h3>Edit Product</h3>
 
-    <h1 class="mb-4">Edit Purchase Order #{{ $purchaseOrder->id }}</h1>
+    <form method="POST" action="{{ route('products.update', $product->id) }}">
+        @csrf
+        @method('PUT')
 
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Supplier
-    </a>
-
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Purchase Request
-    </a>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <select name="supplier_id" id="supplier_id" class="form-select" required>
-                        @foreach($suppliers as $s)
-                            <option value="{{ $s->id }}" 
-                                {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                {{ $s->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Purchase Request</label>
-                    <select name="purchase_request_id" id="request_id" class="form-select" required>
-                        @foreach($requests as $r)
-                            <option value="{{ $r->id }}" 
-                                {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                {{ $r->title }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Order Date</label>
-                    <input type="date" name="order_date" 
-                           class="form-control"
-                           value="{{ $purchaseOrder->order_date }}" required>
-                </div>
-
-                <button class="btn btn-primary">Update</button>
-                <a class="btn btn-secondary ms-2" href="{{ route('purchase-orders.index') }}">Back</a>
-
-            </form>
+        <div class="mb-3">
+            <label>Product Name</label>
+            <input type="text" name="name" value="{{ $product->name }}" class="form-control">
         </div>
-    </div>
 
+        <div class="mb-3">
+            <label>Product Code</label>
+            <input type="text" name="code" value="{{ $product->code }}" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label>Barcode</label>
+            <div class="input-group">
+                <input type="text" name="bar_code" id="barcode" value="{{ $product->bar_code }}" class="form-control">
+                <button type="button" class="btn btn-outline-secondary" onclick="startBarcodeScan()">📷 Scan</button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Category</label>
+            <div class="input-group">
+                <input type="text" name="category" id="category" value="{{ $product->category }}" class="form-control" readonly>
+                <button type="button" class="btn btn-outline-primary" onclick="openCategoryModal()">Pick</button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Unit</label>
+            <div class="input-group">
+                <input type="text" name="unit" id="unit" value="{{ $product->unit }}" class="form-control" readonly>
+                <button type="button" class="btn btn-outline-primary" onclick="openUnitModal()">Pick</button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Reorder Level</label>
+            <input type="number" name="reorder_level" value="{{ $product->reorder_level }}" class="form-control">
+        </div>
+
+        <div class="form-check mb-3">
+            <input type="checkbox" name="is_active" value="1" class="form-check-input"
+                   {{ $product->is_active ? 'checked' : '' }}>
+            <label class="form-check-label">Active</label>
+        </div>
+
+        <button class="btn btn-primary">Update Product</button>
+    </form>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get("selected_supplier_id")) {
-        document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-    }
-    if (params.get("selected_request_id")) {
-        document.getElementById("request_id").value = params.get("selected_request_id");
-    }
-});
-</script>
-
+@include('modals.category-picker')
+@include('modals.unit-picker')
+@include('products.partials.barcode-script')
 @endsection
