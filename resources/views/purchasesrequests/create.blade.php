@@ -8,17 +8,14 @@
 
         <!-- Supplier -->
         <div class="mb-3">
-            <label>Supplier</label>
-            <input type="hidden" name="supplier_id" id="supplier_id">
-            <input type="text" id="supplier_name" class="form-control" readonly>
-            <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
-                data-bs-target="#supplierModal">Select Supplier</button>
-        </div>
-
-        <!-- PR Number -->
-        <div class="mb-3">
-            <label class="form-label">PR Number</label>
-            <input type="text" name="pr_number" class="form-control" value="{{ old('pr_number') }}" required>
+            <label class="form-label">Supplier</label>
+            <div class="input-group">
+                <input type="hidden" name="supplier_id" id="supplier_id">
+                <input type="text" id="supplier_name" class="form-control" readonly>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#supplierModal">
+                    Select Supplier
+                </button>
+            </div>
         </div>
 
         <!-- Description -->
