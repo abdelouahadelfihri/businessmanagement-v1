@@ -11,14 +11,13 @@
             </a>
         </div>
 
-        @if($requests->isEmpty())
+        @if($products->isEmpty())
             <div class="alert alert-info">No purchases requests found.</div>
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="purchasesRequestsTable"
-                            class="table table-striped table-hover table-bordered align-middle mb-0">
+                        <table id="productsTable" class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
@@ -30,7 +29,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($requests as $req)
+                                @foreach($products as $req)
                                     <tr>
                                         <td scope="row">{{ $req->id }}</td>
                                         <td scope="row">{{ $req->pr_number }}</td>
@@ -80,7 +79,7 @@
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#purchasesRequestsTable').DataTable({
+            $('#productsTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
