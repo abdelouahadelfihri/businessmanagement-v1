@@ -2,17 +2,17 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1 class="mb-4">Liste of Purchases Requests</h1>
+        <h1 class="mb-4">List of Products</h1>
 
         <div class="mb-3">
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('purchasesrequests.create') }}">
-                <i class="bi bi-plus-lg"></i> Add a New Purchase Request
+                <i class="bi bi-plus-lg"></i> Add a New Product
             </a>
         </div>
 
         @if($products->isEmpty())
-            <div class="alert alert-info">No purchases requests found.</div>
+            <div class="alert alert-info">No products found.</div>
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
