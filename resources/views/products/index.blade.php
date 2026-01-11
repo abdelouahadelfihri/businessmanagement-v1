@@ -6,7 +6,7 @@
 
         <div class="mb-3">
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('purchasesrequests.create') }}">
+                href="{{ route('products.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Product
             </a>
         </div>
