@@ -34,7 +34,8 @@
             <div class="mb-3">
                 <label class="form-label">Category</label>
                 <div class="input-group">
-                    <input type="text" name="category" id="category" class="form-control" readonly>
+                    <input type="hidden" name="category_id" id="category_id">
+                    <input type="text" name="category_name" id="category_name" class="form-control" readonly>
                     <button type="button" class="btn btn-outline-primary" onclick="openCategoryModal()">
                         Pick
                     </button>
@@ -45,7 +46,8 @@
             <div class="mb-3">
                 <label class="form-label">Unit</label>
                 <div class="input-group">
-                    <input type="text" name="unit" id="unit" class="form-control" readonly>
+                    <input type="hidden" name="unit_id" id="unit_id">
+                    <input type="text" name="unit_name" id="unit_name" class="form-control" readonly>
                     <button type="button" class="btn btn-outline-primary" onclick="openUnitModal()">
                         Pick
                     </button>
