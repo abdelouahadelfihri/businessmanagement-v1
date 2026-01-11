@@ -1,65 +1,100 @@
 <?php
+
 namespace App\Http\Controllers\MasterData;
 
-use App\Models\MasterData\Product;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\MasterData\Product;
+use App\Models\MasterData\Category;
+use App\Models\MasterData\Unit;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Display a listing of products.
+     */
+    public function index()
     {
-        $products = Product::paginate(12); // paginate for big lists
+        $products = Product::with(['categoryRelation', 'unitRelation'])->get();
 
-        // selection mode params (if opened from PO)
-        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
-        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
-
-        return view('products.index', compact('products','selectFor','returnUrl'));
+        return view('products.index', compact('products'));
     }
 
-    public function create(Request $request)
+    /**
+     * Show the form for creating a new product.
+     */
+    public function create()
     {
-        // pass along selection params so create view can return to PO after saving
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
+        $categories = Category::all();
+        $units = Unit::all();
 
-        return view('products.create', compact('selectFor','returnUrl'));
+        return view('products.create', compact('categories', 'units'));
     }
 
+    /**
+     * Store a newly created product.
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'code' => 'required|string|max:100|unique:products,code',
+            'bar_code' => 'nullable|string|max:100|unique:products,bar_code',
+            'category' => 'required|exists:categories,id',
+            'unit' => 'required|exists:units,unit_id',
+            'reorder_level' => 'nullable|integer|min:0',
+            'is_active' => 'required|boolean',
         ]);
 
-        $category = Product::create($data);
+        Product::create($data);
 
-        // If created from a selection flow, redirect back to caller with new id
-        if ($request->filled('select_for') && $request->filled('return_url')) {
-            // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_product_id=' . $category->id;
-            return redirect($return);
-        }
-
-        return redirect()->route('products.index')->with('success','Product created.');
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Product created successfully.');
     }
 
-    public function edit(Product $supplier)
+    /**
+     * Show the form for editing the specified product.
+     */
+    public function edit(Product $product)
     {
-        return view('products.edit', compact('unit'));
+        $categories = Category::all();
+        $units = Unit::all();
+
+        return view('products.edit', compact('product', 'categories', 'units'));
     }
 
-    public function update(Request $request, Product $supplier)
+    /**
+     * Update the specified product.
+     */
+    public function update(Request $request, Product $product)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'code' => 'required|string|max:100|unique:products,code,' . $product->id,
+            'bar_code' => 'nullable|string|max:100|unique:products,bar_code,' . $product->id,
+            'category' => 'required|exists:categories,id',
+            'unit' => 'required|exists:units,unit_id',
+            'reorder_level' => 'nullable|integer|min:0',
+            'is_active' => 'required|boolean',
         ]);
 
-        $supplier->update($data);
+        $product->update($data);
 
-        return redirect()->route('products.index')->with('success','Product updated.');
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Product updated successfully.');
+    }
+
+    /**
+     * Remove the specified product.
+     */
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Product deleted successfully.');
     }
 }
