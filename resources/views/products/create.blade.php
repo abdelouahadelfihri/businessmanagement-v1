@@ -69,5 +69,6 @@
 </div>
 
 @include('products.partials.pick-modals')
+@include('products.partials.pick-modals')
 @include('products.partials.barcode-script')
 @endsection
