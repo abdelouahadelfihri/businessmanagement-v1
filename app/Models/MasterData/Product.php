@@ -23,13 +23,13 @@ class Product extends Model
     ];
 
     // Relationships
-    public function categoryRelation()
+    public function category()
     {
-        return $this->belongsTo(Category::class, 'category', 'id');
+        return $this->belongsTo(Category::class);
     }
 
-    public function unitRelation()
+    public function unit()
     {
-        return $this->belongsTo(Unit::class, 'unit', 'unit_id');
+        return $this->belongsTo(Unit::class);
     }
 }

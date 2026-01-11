@@ -29,13 +29,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($products as $req)
+                                @foreach($products as $pr)
                                     <tr>
-                                        <td scope="row">{{ $req->id }}</td>
-                                        <td scope="row">{{ $req->pr_number }}</td>
-                                        <td>{{ $req->supplier->name ?? '—' }}</td>
-                                        <td>{{ $req->date }}</td>
-                                        <td>{{ $req->status }}</td>
+                                        <td scope="row">{{ $pr->id }}</td>
+                                        <td scope="row">{{ $pr->name }}</td>
+                                        <td>{{ $pr->code }}</td>
+                                        <td>{{ $product->reorder_level }}</td>
+                                        <td>
+                                            @if ($product->is_active)
+                                            <span class="badge bg-success">Active</span>
+                                            @else
+                                            <span class="badge bg-danger">Inactive</span>
+                                            @endif
+                                        </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
