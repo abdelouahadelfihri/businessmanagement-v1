@@ -74,3 +74,21 @@
     @include('modals.unit-picker')
     @include('products.partials.barcode-script')
 @endsection
+
+@push('scripts')
+    <script>
+        // 🔹 Open Category Modal
+        function openCategoryModal() {
+            let modalEl = document.getElementById('categoryModal');
+            let modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        // 🔹 Open Unit Modal
+        function openUnitModal() {
+            let modalEl = document.getElementById('unitModal');
+            let modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+    </script>
+@endpush
