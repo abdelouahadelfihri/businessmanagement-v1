@@ -9,57 +9,36 @@ class WarehouseController extends Controller
 {
     public function index(Request $request)
     {
-        $warehouses = Warehouse::paginate(12); // paginate for big lists
-
-        // selection mode params (if opened from PO)
-        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
-        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
-
-        return view('warehouses.index', compact('warehouses','selectFor','returnUrl'));
+        $warehouses = Warehouse::all();
+        return view('warehouses.index', compact('$warehouses'));
     }
 
     public function create(Request $request)
     {
-        // pass along selection params so create view can return to PO after saving
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-
-        return view('warehouses.create', compact('selectFor','returnUrl'));
+        return view('warehouses.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-        ]);
-
-        $category = Warehouse::create($data);
-
-        // If created from a selection flow, redirect back to caller with new id
-        if ($request->filled('select_for') && $request->filled('return_url')) {
-            // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_product_id=' . $category->id;
-            return redirect($return);
-        }
-
-        return redirect()->route('warehouses.index')->with('success','Warehouse created.');
+        Warehouse::create($request->all());
+        return redirect()->route('warehouses.index');
     }
 
-    public function edit(Warehouse $supplier)
+    public function edit(Warehouse $warehouse)
     {
-        return view('warehouses.edit', compact('unit'));
+        return view('warehouses.edit', compact('warehouse'));
     }
 
-    public function update(Request $request, Warehouse $supplier)
+    public function update(Request $request, Warehouse $warehouse)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-        ]);
-
-        $supplier->update($data);
-
-        return redirect()->route('warehouses.index')->with('success','Warehouse updated.');
+        $warehouse->update($request->all());
+        return redirect()->route('warehouses.index');
+    }
+    public function destroy(Warehouse $warehouse)
+    {
+        $warehouse->delete();
+        return redirect()
+            ->route('warehouses.index')
+            ->with('success', 'Warehouse deleted successfully.');
     }
 }
