@@ -53,5 +53,5 @@
         <button class="btn btn-primary">Save</button>
     </form>
 
-    @include('modals.location-owner-picker')
+    @include('modals.location-picker')
 @endsection
