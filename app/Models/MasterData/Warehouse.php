@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Models\MasterData;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MasterData\Location;
 
 class Warehouse extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id';
     protected $table = 'warehouses';
 
     protected $fillable = [
@@ -18,21 +18,15 @@ class Warehouse extends Model
         'location_owner_id',
     ];
 
-    // Relationship: Warehouse belongs to Location
+    protected $casts = [
+        'is_refrigerated' => 'boolean',
+    ];
+
+    /**
+     * Warehouse belongs to a Location
+     */
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_owner_id', 'location_id');
-    }
-
-    // Relationship: Warehouse has many Transfers as origin
-    public function originTransfers()
-    {
-        return $this->hasMany(Transfer::class, 'origin_warehouse_id', 'id');
-    }
-
-    // Relationship: Warehouse has many Transfers as destination
-    public function destinationTransfers()
-    {
-        return $this->hasMany(Transfer::class, 'destination_warehouse_id', 'id');
     }
 }
