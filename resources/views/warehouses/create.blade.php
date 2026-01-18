@@ -1,78 +1,57 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+    <h3>Create Warehouse</h3>
 
-    <h1 class="mb-4">Create Purchase Order</h1>
+    <form method="POST" action="{{ route('warehouses.store') }}">
+        @csrf
 
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Supplier
-    </a>
-
-    <a class="btn btn-secondary mb-3"
-       href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
-       Pick Purchase Request
-    </a>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <form action="{{ route('purchase-orders.store') }}" method="POST">
-                @csrf
-
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <select name="supplier_id" id="supplier_id" class="form-select" required>
-                        <option value="">-- choose supplier --</option>
-                        @foreach($suppliers as $s)
-                            <option value="{{ $s->id }}"
-                                {{ $selectedSupplierId == $s->id ? 'selected' : '' }}>
-                                {{ $s->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Purchase Request</label>
-                    <select name="purchase_request_id" id="request_id" class="form-select" required>
-                        <option value="">-- choose request --</option>
-                        @foreach($requests as $r)
-                            <option value="{{ $r->id }}"
-                                {{ $selectedRequestId == $r->id ? 'selected' : '' }}>
-                                {{ $r->title }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Order Date</label>
-                    <input type="date" name="order_date" 
-                           class="form-control" 
-                           value="{{ date('Y-m-d') }}" required>
-                </div>
-
-                <button class="btn btn-primary">Save</button>
-            </form>
-
+        <!-- Warehouse Name -->
+        <div class="mb-3">
+            <label class="form-label">Warehouse Name</label>
+            <input
+                type="text"
+                name="name"
+                class="form-control"
+                value="{{ old('name') }}"
+                required
+            >
         </div>
-    </div>
 
-</div>
+        <!-- Location Owner -->
+        <div class="mb-3">
+            <label class="form-label">Location Owner</label>
+            <div class="input-group">
+                <input type="hidden" name="location_owner_id" id="location_owner_id">
+                <input type="text" id="location_owner_name" class="form-control" readonly>
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#locationOwnerModal"
+                >
+                    Select Location Owner
+                </button>
+            </div>
+        </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const params = new URLSearchParams(window.location.search);
+        <!-- Is Refrigerated -->
+        <div class="mb-3 form-check">
+            <input
+                type="checkbox"
+                name="is_refrigerated"
+                value="1"
+                class="form-check-input"
+                id="is_refrigerated"
+                {{ old('is_refrigerated') ? 'checked' : '' }}
+            >
+            <label class="form-check-label" for="is_refrigerated">
+                Refrigerated Warehouse
+            </label>
+        </div>
 
-    if (params.get("selected_supplier_id")) {
-        document.getElementById("supplier_id").value = params.get("selected_supplier_id");
-    }
-    if (params.get("selected_request_id")) {
-        document.getElementById("request_id").value = params.get("selected_request_id");
-    }
-});
-</script>
+        <button class="btn btn-primary">Save</button>
+    </form>
 
+    @include('modals.location-owner-picker')
 @endsection
