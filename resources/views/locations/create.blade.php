@@ -4,8 +4,8 @@
     <div class="container mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Create Supplier</h1>
-            <a href="{{ route('suppliers.index') }}" class="btn btn-secondary">
+            <h1>Create Location</h1>
+            <a href="{{ route('locations.index') }}" class="btn btn-secondary">
                 Back
             </a>
         </div>
@@ -13,7 +13,7 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
-                <form action="{{ route('suppliers.store') }}" method="POST">
+                <form action="{{ route('locations.store') }}" method="POST">
                     @csrf
 
                     <!-- Name -->
@@ -38,11 +38,11 @@
 
                     <!-- Actions -->
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary me-2">
+                        <a href="{{ route('locations.index') }}" class="btn btn-outline-secondary me-2">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Save Supplier
+                            Save Location
                         </button>
                     </div>
 
