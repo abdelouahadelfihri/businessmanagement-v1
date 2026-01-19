@@ -11,8 +11,8 @@
             </a>
         </div>
 
-        @if($suppliers->isEmpty())
-            <div class="alert alert-info">No suppliers found.</div>
+        @if($locations->isEmpty())
+            <div class="alert alert-info">No locations found.</div>
         @else
             <div class="card shadow-sm">
                 <div class="card-body p-0">
@@ -20,27 +20,18 @@
                         <table id="locationsTable" class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
-                                    <th scope="col" class="text-center" style="width: 180px;">Action</th>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th class="text-center" style="width: 180px;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($suppliers as $s)
+                                @foreach($locations as $loc)
                                     <tr>
-                                        <th scope="row">{{ $s->id }}</th>
-                                        <td>{{ $s->name }}</td>
-                                        <td>{{ $s->email }}</td>
-                                        <td>{{ $s->phone }}</td>
-                                        <td>
-                                            <span class="badge @if($req->status === 'draft') bg-secondary                                                                                                                                                                                                                        @elseif($req->status === 'pending') bg-warning text-dark
-                                            @elseif($req->status === 'approved') bg-success
-                                                        @else bg-light text-dark @endif">
-                                                {{ ucfirst($req->status) }}
-                                            </span>
-                                        </td>
+                                        <th>{{ $loc->id }}</th>
+                                        <td>{{ $loc->name }}</td>
+                                        <td>{{ $loc->address }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
