@@ -3,33 +3,51 @@
 @section('content')
     <div class="container mt-4">
 
-        <h1 class="mb-4">Create Supplier</h1>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Create Supplier</h1>
+            <a href="{{ route('suppliers.index') }}" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
 
         <div class="card shadow-sm">
             <div class="card-body">
+
                 <form action="{{ route('suppliers.store') }}" method="POST">
                     @csrf
 
+                    <!-- Name -->
                     <div class="mb-3">
                         <label class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                            value="{{ old('name') }}" required>
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    <!-- Email -->
                     <div class="mb-3">
                         <label class="form-label">Email (optional)</label>
-                        <input type="email" name="email" class="form-control">
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                            value="{{ old('email') }}">
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <input type="hidden" name="select_for" value="{{ request('select_for') }}">
-                    <input type="hidden" name="return_url" value="{{ request('return_url') }}">
-
-                    <button class="btn btn-primary">Save</button>
-
-                    @if(request('return_url'))
-                        <a href="{{ request('return_url') }}" class="btn btn-secondary ms-2">Cancel & Return</a>
-                    @endif
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary me-2">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            Save Supplier
+                        </button>
+                    </div>
 
                 </form>
+
             </div>
         </div>
 
