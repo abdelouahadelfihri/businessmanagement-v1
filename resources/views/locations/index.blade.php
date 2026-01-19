@@ -17,7 +17,7 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="suppliersTable" class="table table-striped table-hover table-bordered align-middle mb-0">
+                        <table id="locationsTable" class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
@@ -87,7 +87,7 @@
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#suppliersTable').DataTable({
+            $('#locationsTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
