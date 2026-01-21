@@ -29,19 +29,19 @@
                             <tbody>
                                 @foreach($locations as $loc)
                                     <tr>
-                                        <th>{{ $loc->location_id }}</th>
-                                        <td>{{ $loc->name }}</td>
-                                        <td>{{ $loc->address }}</td>
+                                        <th>{{ $location->location_id }}</th>
+                                        <td>{{ $location->name }}</td>
+                                        <td>{{ $location->address }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
-                                                <a href="{{ route('locations.edit', $loc) }}" class="btn btn-sm btn-warning"
+                                                <a href="{{ route('locations.edit', $location) }}" class="btn btn-sm btn-warning"
                                                     title="Edit">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
 
                                                 <!-- Delete button -->
-                                                <form action="{{ route('locations.destroy', $loc) }}" method="POST"
+                                                <form action="{{ route('locations.destroy', $location) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this request?');">
                                                     @csrf
                                                     @method('DELETE')
