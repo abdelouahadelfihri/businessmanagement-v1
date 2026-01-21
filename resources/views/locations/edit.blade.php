@@ -13,7 +13,7 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
-                <form action="{{ route('locations.update', $loc) }}" method="POST">
+                <form action="{{ route('locations.update', $location) }}" method="POST">
                     @csrf
                     @method('PUT')
 
