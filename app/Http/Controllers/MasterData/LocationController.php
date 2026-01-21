@@ -23,18 +23,16 @@ class LocationController extends Controller
         Location::create($request->all());
         return redirect()->route('locations.index');
     }
-
-    public function edit(Location $supplier)
+    public function edit(Location $location)
     {
-        return view('locations.edit', compact('supplier'));
+        return view('locations.edit', compact('location'));
     }
 
-    public function update(Request $request, Location $supplier)
+    public function update(Request $request, Location $location)
     {
-        $supplier->update($request->all());
+        $location->update($request->all());
         return redirect()->route('locations.index');
     }
-
     // AJAX store for modal
     public function ajaxStore(Request $request)
     {
