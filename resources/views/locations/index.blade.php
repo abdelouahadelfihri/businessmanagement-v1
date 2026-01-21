@@ -29,7 +29,7 @@
                             <tbody>
                                 @foreach($locations as $loc)
                                     <tr>
-                                        <th>{{ $loc->id }}</th>
+                                        <th>{{ $loc->location_id }}</th>
                                         <td>{{ $loc->name }}</td>
                                         <td>{{ $loc->address }}</td>
                                         <td class="text-center">
