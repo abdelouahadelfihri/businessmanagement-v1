@@ -27,7 +27,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($locations as $loc)
+                                @foreach($locations as $location)
                                     <tr>
                                         <th>{{ $location->location_id }}</th>
                                         <td>{{ $location->name }}</td>
