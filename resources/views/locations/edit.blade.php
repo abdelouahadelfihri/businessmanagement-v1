@@ -27,12 +27,12 @@
                         @enderror
                     </div>
 
-                    <!-- Email -->
+                    <!-- Address -->
                     <div class="mb-3">
-                        <label class="form-label">Email (optional)</label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                            value="{{ old('email', $supplier->email) }}">
-                        @error('email')
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
+                            value="{{ old('address', $location->address) }}">
+                        @error('address')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
