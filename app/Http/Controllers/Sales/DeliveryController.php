@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sales\Delivery;
+use App\Models\Sales\SaleDelivery;
+use App\Services\StockService;
 use Illuminate\Http\Request;
+use App\Models\MasterData\WarehouseStock;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class DeliveryController extends Controller
 {
     public function index()
     {
-        return Delivery::with('salesOrder')->get();
+        return SaleDelivery::with('salesOrder')->get();
     }
 
     public function post(SaleDelivery $delivery, StockService $stock)
@@ -75,19 +79,19 @@ class DeliveryController extends Controller
             'total' => 'required|numeric'
         ]);
 
-        $delivery = Delivery::create($validated);
+        $delivery = SaleDelivery::create($validated);
 
         return response()->json($delivery, 201);
     }
 
     public function show($id)
     {
-        return Delivery::with('salesOrder')->findOrFail($id);
+        return SaleDelivery::with('salesOrder')->findOrFail($id);
     }
 
     public function update(Request $request, $id)
     {
-        $delivery = Delivery::findOrFail($id);
+        $delivery = SaleDelivery::findOrFail($id);
 
         $validated = $request->validate([
             'sales_order_id' => 'sometimes|exists:sales_orders,id',
@@ -104,7 +108,7 @@ class DeliveryController extends Controller
 
     public function destroy($id)
     {
-        $delivery = Delivery::findOrFail($id);
+        $delivery = SaleDelivery::findOrFail($id);
         $delivery->delete();
 
         return response()->json(['message' => 'Deleted successfully']);
