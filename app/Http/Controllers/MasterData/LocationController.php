@@ -39,4 +39,13 @@ class LocationController extends Controller
         $location = Location::create(['name' => $request->name]);
         return response()->json($location);
     }
+
+    public function destroy(Location $location)
+    {
+        $location->delete;
+        return redirect()
+            ->route("locations.index")
+            ->with('success', "Location deleted successfully");
+    }
+
 }
