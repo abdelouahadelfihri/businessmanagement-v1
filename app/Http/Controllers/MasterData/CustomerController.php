@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterData;
 use App\Models\MasterData\Customer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -58,4 +59,26 @@ class CustomerController extends Controller
 
         return redirect()->route('customers.index')->with('success', 'Customer updated.');
     }
+
+    // AJAX store for modal
+    public function ajaxStore(Request $request)
+    {
+        $customer = Customer::create(['name' => $request->name]);
+        return response()->json($customer);
+    }
+
+    public function destroy(Customer $customer)
+    {
+        $customer->delete();
+
+        // If table is empty, reset primary key counter
+        if (Customer::count() === 0) {
+            DB::statement('ALTER TABLE categories AUTO_INCREMENT = 1');
+        }
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Customer deleted successfully.');
+    }
+
 }
