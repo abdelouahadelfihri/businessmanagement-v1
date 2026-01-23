@@ -13,7 +13,7 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
-                <form action="{{ route('categories.update', $location) }}" method="POST">
+                <form action="{{ route('categories.update', $category) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -21,7 +21,7 @@
                     <div class="mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                            value="{{ old('name', $location->name) }}" required>
+                            value="{{ old('name', $category->name) }}" required>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -32,7 +32,7 @@
                         <label class="form-label">Description</label>
                         <input type="text" name="description"
                             class="form-control @error('description') is-invalid @enderror"
-                            value="{{ old('description', $location->description) }}">
+                            value="{{ old('description', $category->description) }}">
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
