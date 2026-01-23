@@ -39,4 +39,13 @@ class CategoryController extends Controller
         $category = Category::create(['name' => $request->name]);
         return response()->json($category);
     }
+
+    public function destroy(Category $category)
+    {
+        $category->delete();
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Category deleted successfully.');
+    }
 }
