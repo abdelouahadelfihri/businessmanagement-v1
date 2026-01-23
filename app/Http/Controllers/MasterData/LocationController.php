@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterData;
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
@@ -42,10 +43,15 @@ class LocationController extends Controller
 
     public function destroy(Location $location)
     {
-        $location->delete;
-        return redirect()
-            ->route("locations.index")
-            ->with('success', "Location deleted successfully");
-    }
+        $location->delete();
 
+        // If table is empty, reset primary key counter
+        if (Location::count() === 0) {
+            DB::statement('ALTER TABLE categories AUTO_INCREMENT = 1');
+        }
+
+        return redirect()
+            ->route('locations.index')
+            ->with('success', 'Location deleted successfully.');
+    }
 }
