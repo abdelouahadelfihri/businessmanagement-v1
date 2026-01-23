@@ -36,7 +36,7 @@ class LocationController extends Controller
     // AJAX store for modal
     public function ajaxStore(Request $request)
     {
-        $supplier = Location::create(['name' => $request->name]);
-        return response()->json($supplier);
+        $location = Location::create(['name' => $request->name]);
+        return response()->json($location);
     }
 }
