@@ -23,22 +23,20 @@ class CategoryController extends Controller
         Category::create($request->all());
         return redirect()->route('categories.index');
     }
-
-    public function edit(Category $supplier)
+    public function edit(Category $location)
     {
-        return view('categories.edit', compact('supplier'));
+        return view('categories.edit', compact('location'));
     }
 
-    public function update(Request $request, Category $supplier)
+    public function update(Request $request, Category $location)
     {
-        $supplier->update($request->all());
+        $location->update($request->all());
         return redirect()->route('categories.index');
     }
-
     // AJAX store for modal
     public function ajaxStore(Request $request)
     {
-        $supplier = Category::create(['name' => $request->name]);
-        return response()->json($supplier);
+        $location = Category::create(['name' => $request->name]);
+        return response()->json($location);
     }
 }
