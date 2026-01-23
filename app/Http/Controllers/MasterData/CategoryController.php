@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterData;
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -43,6 +44,11 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
+
+        // If table is empty, reset primary key counter
+        if (Category::count() === 0) {
+            DB::statement('ALTER TABLE categories AUTO_INCREMENT = 1');
+        }
 
         return redirect()
             ->route('categories.index')
