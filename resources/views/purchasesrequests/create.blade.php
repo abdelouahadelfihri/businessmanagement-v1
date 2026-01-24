@@ -54,7 +54,7 @@
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Save Purchase Request
+                            Save
                         </button>
                     </div>
                 </form>
