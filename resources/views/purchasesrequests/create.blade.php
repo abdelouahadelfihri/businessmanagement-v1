@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3>Create Purchase Request</h3>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Create Purchase Request</h3>
+            <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+    </div>
 
     <form method="POST" action="{{ route('purchase-requests.store') }}">
         @csrf
@@ -40,8 +47,15 @@
             </select>
         </div>
 
-        <button class="btn btn-primary">Save</button>
+        <!-- Actions -->
+        <div class="d-flex justify-content-end">
+            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary me-2">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                Save Category
+            </button>
+        </div>
     </form>
-
     @include('modals.supplier-picker')
 @endsection
