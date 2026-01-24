@@ -81,7 +81,7 @@
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Update Category
+                            Update Purchase Request
                         </button>
                     </div>
                 </form>
