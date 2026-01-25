@@ -22,7 +22,7 @@ class PurchaseRequestController extends Controller
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'date' => 'required|date',
-            'status' => 'required|string|in:draft,approved,ordered,cancelled',
+            'status' => 'required|in:draft,approved,cancelled',
             'description' => 'nullable|string',
         ]);
 
@@ -41,7 +41,7 @@ class PurchaseRequestController extends Controller
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'date' => 'required|date',
-            'status' => 'required|string|in:draft,approved,ordered,cancelled',
+            'status' => 'required|in:draft,approved,cancelled',
             'description' => 'nullable|string',
         ]);
 
