@@ -19,9 +19,9 @@ class PurchaseRequestController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'supplier_id' => 'required',
-            'request_date' => 'required|date',
-            'status' => 'required'
+            'supplier_id' => 'required|exists:suppliers,id',
+            'date' => 'required|date',
+            'status' => 'required|string',
         ]);
 
         PurchaseRequest::create($request->all());
