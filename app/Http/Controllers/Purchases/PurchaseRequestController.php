@@ -60,18 +60,16 @@ class PurchaseRequestController extends Controller
         return redirect()->route('purchasesrequests.index');
 
     }
-
-    public function destroy(PurchaseRequest $category)
+    public function destroy(PurchaseRequest $purchaseRequest)
     {
-        $category->delete();
+        $purchaseRequest->delete();
 
-        // If table is empty, reset primary key counter
         if (PurchaseRequest::count() === 0) {
-            DB::statement('ALTER TABLE categories AUTO_INCREMENT = 1');
+            DB::statement('ALTER TABLE purchase_requests AUTO_INCREMENT = 1');
         }
 
         return redirect()
-            ->route('categories.index')
+            ->route('purchasesrequests.index')
             ->with('success', 'Purchase request deleted successfully.');
     }
 
