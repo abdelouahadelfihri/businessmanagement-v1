@@ -26,7 +26,12 @@ class PurchaseRequestController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        PurchaseRequest::create($request->all());
+        PurchaseRequest::create($request->only([
+            'supplier_id',
+            'date',
+            'status',
+            'description',
+        ]));
 
         return redirect()
             ->route('purchasesrequests.index') // ✅ FIXED
@@ -45,7 +50,12 @@ class PurchaseRequestController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $purchaseRequest->update($request->all());
+        $purchaseRequest->update($request->only([
+            'supplier_id',
+            'date',
+            'status',
+            'description',
+        ]));
 
         return redirect()->route('purchasesrequests.index');
 
