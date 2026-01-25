@@ -41,10 +41,10 @@
                     <!-- Status -->
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-control">
-                            <option value="pending">Pending</option>
+                        <select name="status" class="form-control" required>
+                            <option value="draft">Draft</option>
                             <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
 
