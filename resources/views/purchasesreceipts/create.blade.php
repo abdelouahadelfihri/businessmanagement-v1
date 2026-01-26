@@ -49,4 +49,6 @@
     </div>
     {{-- PRODUCT MODAL --}}
     @include('modals.product-picker')
+    {{-- SUPPLIER MODAL --}}
+    @include('modals.supplier-picker')
 @endsection
