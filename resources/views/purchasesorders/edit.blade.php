@@ -10,7 +10,7 @@
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <form method="POST" action="{{ route('purchase-orders.update', $order) }}">
+                <form method="POST" action="{{ route('purchasesorders.update', $order) }}">
                     @csrf
                     @method('PUT')
 
@@ -103,44 +103,44 @@
 
         function addLine() {
             const row = `
-                                                    <tr>
-                                                        <td>
-                                                            <input type="hidden"
-                                                                name="lines[${lineIndex}][product_id]"
-                                                                class="product-id">
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="hidden"
+                                                                        name="lines[${lineIndex}][product_id]"
+                                                                        class="product-id">
 
-                                                            <input type="text"
-                                                                class="form-control product-name"
-                                                                readonly
-                                                                onclick="openProductModal(this)"
-                                                                placeholder="Select product">
-                                                        </td>
+                                                                    <input type="text"
+                                                                        class="form-control product-name"
+                                                                        readonly
+                                                                        onclick="openProductModal(this)"
+                                                                        placeholder="Select product">
+                                                                </td>
 
-                                                        <td>
-                                                            <input type="number"
-                                                                name="lines[${lineIndex}][quantity]"
-                                                                min="1"
-                                                                class="form-control"
-                                                                required>
-                                                        </td>
+                                                                <td>
+                                                                    <input type="number"
+                                                                        name="lines[${lineIndex}][quantity]"
+                                                                        min="1"
+                                                                        class="form-control"
+                                                                        required>
+                                                                </td>
 
-                                                        <td>
-                                                            <input type="number"
-                                                                name="lines[${lineIndex}][unit_price]"
-                                                                step="0.01"
-                                                                class="form-control"
-                                                                required>
-                                                        </td>
+                                                                <td>
+                                                                    <input type="number"
+                                                                        name="lines[${lineIndex}][unit_price]"
+                                                                        step="0.01"
+                                                                        class="form-control"
+                                                                        required>
+                                                                </td>
 
-                                                        <td>
-                                                            <button type="button"
-                                                                    class="btn btn-danger btn-sm"
-                                                                    onclick="this.closest('tr').remove()">
-                                                                ×
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    `;
+                                                                <td>
+                                                                    <button type="button"
+                                                                            class="btn btn-danger btn-sm"
+                                                                            onclick="this.closest('tr').remove()">
+                                                                        ×
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            `;
             document.querySelector('#linesTable tbody')
                 .insertAdjacentHTML('beforeend', row);
 
