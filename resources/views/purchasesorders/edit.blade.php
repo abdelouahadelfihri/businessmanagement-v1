@@ -97,3 +97,76 @@
     @include('modals.product-picker')
     @include('modals.supplier-picker')
 @endsection
+
+@push('scripts')
+    <script>
+        let lineIndex = {{ isset($order) ? $order->lines->count() : 0 }};
+
+        // Open product modal
+        $('#add-line').on('click', function () {
+            $('#productModal').modal('show');
+        });
+
+        // Select product
+        $(document).on('click', '.select-product', function () {
+            const productId = $(this).data('id');
+            const productName = $(this).data('name');
+
+            // Prevent duplicate product
+            let exists = false;
+            $('.product-id').each(function () {
+                if ($(this).val() == productId) {
+                    exists = true;
+                }
+            });
+
+            if (exists) {
+                alert('This product is already added. Change quantity instead.');
+                return;
+            }
+
+            const row = `
+                    <tr>
+                        <td>
+                            ${productName}
+                            <input type="hidden"
+                                   name="lines[${lineIndex}][product_id]"
+                                   class="product-id"
+                                   value="${productId}">
+                        </td>
+                        <td>
+                            <input type="number"
+                                   name="lines[${lineIndex}][quantity]"
+                                   class="form-control"
+                                   min="1"
+                                   value="1"
+                                   required>
+                        </td>
+                        <td>
+                            <input type="number"
+                                   name="lines[${lineIndex}][unit_price]"
+                                   class="form-control"
+                                   step="0.01"
+                                   required>
+                        </td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm remove-line">
+                                ×
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+            $('#lines-table tbody').append(row);
+            lineIndex++;
+
+            $('#productModal').modal('hide');
+        });
+
+        // Remove line
+        $(document).on('click', '.remove-line', function () {
+            $(this).closest('tr').remove();
+        });
+    </script>
+@endpush
