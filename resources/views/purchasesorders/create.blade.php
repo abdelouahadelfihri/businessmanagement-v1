@@ -2,14 +2,15 @@
 
 @section('content')
     <div class="container mt-4">
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Create Purchase Order</h3>
-            <a href="{{ route('purchasesorders.index') }}" class="btn btn-secondary">
-                Back
-            </a>
+            <a href="{{ route('purchasesorders.index') }}" class="btn btn-secondary">Back</a>
         </div>
+
         <div class="card shadow-sm">
             <div class="card-body">
+
                 <form method="POST" action="{{ route('purchasesorders.store') }}">
                     @csrf
 
@@ -21,7 +22,9 @@
                                 <input type="hidden" name="supplier_id" id="supplier_id">
                                 <input type="text" id="supplier_name" class="form-control" readonly>
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                    data-bs-target="#supplierModal">Select</button>
+                                    data-bs-target="#supplierModal">
+                                    Select
+                                </button>
                             </div>
                         </div>
 
@@ -31,93 +34,40 @@
                         </div>
                     </div>
 
-                    {{-- ADD LINE BUTTON --}}
-                    <div class="mb-2">
-                        <button type="button" class="btn btn-secondary" onclick="addLine()">+ Add Line</button>
-                    </div>
+                    {{-- ADD PRODUCT --}}
+                    <button type="button" class="btn btn-secondary mb-2" id="add-line">
+                        + Add Product
+                    </button>
 
-                    {{-- LINES TABLE --}}
-                    <table class="table table-bordered" id="linesTable">
+                    {{-- LINES --}}
+                    <table class="table table-bordered" id="lines-table">
                         <thead>
                             <tr>
                                 <th>Product</th>
                                 <th width="120">Qty</th>
                                 <th width="150">Unit Price</th>
-                                <th width="50"></th>
+                                <th width="60"></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
 
-                    <!-- Actions -->
+                    {{-- ACTIONS --}}
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('purchasesrequests.index') }}" class="btn btn-outline-secondary me-2">
+                        <a href="{{ route('purchasesorders.index') }}" class="btn btn-outline-secondary me-2">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
                             Save
                         </button>
                     </div>
+
                 </form>
+
             </div>
         </div>
     </div>
 
-    {{-- PRODUCT MODAL --}}
     @include('modals.product-picker')
-    {{-- SUPPLIER MODAL --}}
     @include('modals.supplier-picker')
 @endsection
-
-@push('scripts')
-    <script>
-        let lineIndex = 0;
-
-        function addLine() {
-            const row = `
-            <tr>
-                <td>
-                    <input type="hidden" name="lines[${lineIndex}][product_id]" class="product-id">
-                    <input type="text" class="form-control product-name" readonly
-                            onclick="openProductModal(this)" placeholder="Select product">
-                </td>
-                <td>
-                    <input type="number" name="lines[${lineIndex}][quantity]" class="form-control" min="1" required>
-                </td>
-                <td>
-                    <input type="number" name="lines[${lineIndex}][unit_price]" class="form-control" step="0.01" required>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">×</button>
-                </td>
-            </tr>`;
-            document.querySelector('#linesTable tbody').insertAdjacentHTML('beforeend', row);
-            lineIndex++;
-        }
-
-        let currentProductInput = null;
-
-        function openProductModal(input) {
-            currentProductInput = input;
-            $('#productModal').modal('show');
-        }
-
-        function selectProduct(id, name) {
-            let selectedProducts = [];
-            document.querySelectorAll('.product-id').forEach(input => {
-                if (input.value) selectedProducts.push(input.value);
-            });
-
-            if (selectedProducts.includes(String(id))) {
-                alert('This product is already added. Please change the quantity instead.');
-                return;
-            }
-
-            currentProductInput.value = name;
-            currentProductInput.closest('td')
-                .querySelector('.product-id').value = id;
-
-            $('#productModal').modal('hide');
-        }
-    </script>
-@endpush
