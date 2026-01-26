@@ -103,24 +103,25 @@
                     },
                     success: function (data) {
                         $('#supplierTable tbody').append(`
-                                        <tr>
-                                            <td>${data.name}</td>
-                                            <td>${data.email ?? ''}</td>
-                                            <td>${data.phone ?? ''}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-primary select-supplier"
-                                                    data-id="${data.id}" data-name="${data.name}" data-email="${data.email}" data-phone="${data.phone}">
-                                                    Select
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `);
 
-                        // clear inputs
-                        $('#new_supplier_name').val('');
-                        $('#new_supplier_email').val('');
-                        $('#new_supplier_phone').val('');
-                        $('#new_supplier_address').val('');
+
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>${data.email ?? ''}</td>
+                            <td>${data.phone ?? ''}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-primary select-supplier"
+                                    data-id="${data.id}" data-name="${data.name}" data-email="${data.email}" data-phone="${data.phone}">
+                                    Select
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                    // clear inputs
+                    $('#new_supplier_name').val('');
+                    $('#new_supplier_email').val('');
+                    $('#new_supplier_phone').val('');
+                    $('#new_supplier_address').val('');
                     }
                 });
             });
