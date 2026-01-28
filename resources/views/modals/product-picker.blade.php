@@ -8,7 +8,15 @@
             </div>
 
             <div class="modal-body">
-                <table class="table table-hover">
+                {{-- Search --}}
+
+                <div class="mb-2">
+                    <input type="text" id="productSearch" class="form-control" placeholder="Search suppliers...">
+                </div>
+
+                {{-- Table --}}
+
+                <table class="table table-hover" id="productsTable">
                     <thead>
                         <tr>
                             <th>Code</th>
@@ -36,3 +44,18 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+
+            // 🔎 Search filter
+            $('#productSearch').on('keyup', function () {
+                let value = $(this).val().toLowerCase();
+                $('#productsTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+@endpush
