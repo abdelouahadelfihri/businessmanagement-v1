@@ -34,22 +34,50 @@
                                         <td>{{ $order->supplier->name ?? '-' }}</td>
                                         <td>{{ $order->order_date }}</td>
                                         <td>{{ ucfirst($order->status) }}</td>
-                                        <td>
-                                            @if($order->status === 'draft')
-                                                <a href="{{ route('purchasesorders.edit', $order->id) }}"
-                                                    class="btn btn-sm btn-warning">Edit</a>
-                                                <form action="{{ route('purchasesorders.post', $order->id) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success">Post</button>
-                                                </form>
-                                            @elseif($order->status === 'posted')
-                                                <form action="{{ route('purchasesorders.cancel', $order->id) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
-                                                </form>
-                                            @endif
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-1">
+
+                                                @if($order->status === 'draft')
+
+                                                    <!-- Edit -->
+                                                    <a href="{{ route('purchasesorders.edit', $order->id) }}"
+                                                        class="btn btn-sm btn-warning" title="Edit">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+
+                                                    <!-- Post -->
+                                                    <form action="{{ route('purchasesorders.post', $order->id) }}" method="POST"
+                                                        style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-success" title="Post Order">
+                                                            <i class="bi bi-check-circle"></i>
+                                                        </button>
+                                                    </form>
+
+                                                    <!-- Delete (only allowed in draft) -->
+                                                    <form action="{{ route('purchasesorders.destroy', $order->id) }}" method="POST"
+                                                        style="display:inline;" onsubmit="return confirm('Delete this order?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+
+                                                @elseif($order->status === 'posted')
+
+                                                    <!-- Cancel -->
+                                                    <form action="{{ route('purchasesorders.cancel', $order->id) }}" method="POST"
+                                                        style="display:inline;" onsubmit="return confirm('Cancel this order?');">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Cancel Order">
+                                                            <i class="bi bi-x-circle"></i>
+                                                        </button>
+                                                    </form>
+
+                                                @endif
+
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
