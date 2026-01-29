@@ -21,12 +21,12 @@
                             class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">PR-Number</th>
-                                    <th scope="col">Supplier</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col" class="text-center" style="width: 180px;">Action</th>
+                                    <th>#</th>
+                                    <th>PR-Number</th>
+                                    <th>Supplier</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th class="text-center" style="width: 180px;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -40,8 +40,8 @@
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
-                                                <a href="{{ route('purchasesrequests.edit', $req->id) }}" class="btn btn-sm btn-warning"
-                                                    title="Edit">
+                                                <a href="{{ route('purchasesrequests.edit', $req->id) }}"
+                                                    class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
 
@@ -66,7 +66,7 @@
 
             <!-- Include Bootstrap Icons CDN if not already in your layout -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-            
+
         @endif
     </div>
 @endsection
