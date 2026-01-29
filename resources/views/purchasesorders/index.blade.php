@@ -20,11 +20,11 @@
                         <table class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">ID</th>
-                                    <th scope="col">Supplier</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col" class="text-center" style="width: 180px;">Actions</th>
+                                    <th>ID</th>
+                                    <th>Supplier</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th class="text-center" style="width: 180px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
