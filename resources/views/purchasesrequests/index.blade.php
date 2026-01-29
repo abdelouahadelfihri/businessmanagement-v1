@@ -39,21 +39,49 @@
                                         <td>{{ $req->status }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
-                                                <!-- Edit button -->
-                                                <a href="{{ route('purchasesrequests.edit', $req->id) }}"
-                                                    class="btn btn-sm btn-warning" title="Edit">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </a>
 
-                                                <!-- Delete button -->
-                                                <form action="{{ route('purchasesrequests.destroy', $req->id) }}" method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this request?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                                        <i class="bi bi-trash"></i> Delete
-                                                    </button>
-                                                </form>
+                                                @if($req->status === 'draft')
+
+                                                    <!-- Edit button -->
+                                                    <a href="{{ route('purchasesrequests.edit', $req->id) }}"
+                                                        class="btn btn-sm btn-warning" title="Edit Request">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+
+                                                    <!-- Delete button -->
+                                                    <form action="{{ route('purchasesrequests.destroy', $req->id) }}" method="POST"
+                                                        style="display:inline;"
+                                                        onsubmit="return confirm('Are you sure you want to delete this request?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete Request">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+
+                                                @elseif($req->status === 'approved')
+
+                                                    <!-- View only (optional) -->
+                                                    <a href="{{ route('purchasesrequests.show', $req->id) }}"
+                                                        class="btn btn-sm btn-info" title="View Request">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+
+                                                @elseif($req->status === 'rejected')
+
+                                                    <!-- Allow delete only -->
+                                                    <form action="{{ route('purchasesrequests.destroy', $req->id) }}" method="POST"
+                                                        style="display:inline;"
+                                                        onsubmit="return confirm('Are you sure you want to delete this rejected request?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete Request">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+
+                                                @endif
+
                                             </div>
                                         </td>
                                     </tr>
