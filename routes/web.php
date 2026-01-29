@@ -47,7 +47,6 @@ Route::middleware(['web'])->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('categories', CategoryController::class);
-    Route::resource('inventories', InventoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('units', UnitController::class);
     Route::resource('warehouses', WarehouseController::class);
