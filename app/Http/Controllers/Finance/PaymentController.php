@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Payment;
-use App\Models\SalesInvoice;
-use App\Models\SupplierInvoice;
+use App\Models\Sales\SaleInvoice;
+use App\Models\Purchases\PurchaseInvoice;
 
 class PaymentController extends Controller
 {
@@ -20,8 +20,8 @@ class PaymentController extends Controller
     // ✅ SHOW CREATE FORM
     public function create()
     {
-        $salesInvoices = SalesInvoice::all();
-        $supplierInvoices = SupplierInvoice::all();
+        $salesInvoices = SaleInvoice::all();
+        $supplierInvoices = PurchaseInvoice::all();
 
         return view('payments.create', compact('salesInvoices', 'supplierInvoices'));
     }
@@ -47,8 +47,8 @@ class PaymentController extends Controller
     // ✅ SHOW EDIT FORM
     public function edit(Payment $payment)
     {
-        $salesInvoices = SalesInvoice::all();
-        $supplierInvoices = SupplierInvoice::all();
+        $salesInvoices = SaleInvoice::all();
+        $supplierInvoices = PurchaseInvoice::all();
 
         return view('payments.edit', compact('payment', 'salesInvoices', 'supplierInvoices'));
     }
