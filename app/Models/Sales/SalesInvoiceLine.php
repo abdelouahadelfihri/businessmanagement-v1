@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MasterData\Product;
+use App\Models\Sales\SaleInvoice;
+
 
 class SalesInvoiceLine extends Model
 {
@@ -17,7 +20,7 @@ class SalesInvoiceLine extends Model
 
     public function invoice()
     {
-        return $this->belongsTo(SalesInvoice::class, 'invoice_id');
+        return $this->belongsTo(SaleInvoice::class, 'invoice_id');
     }
 
     public function product()
