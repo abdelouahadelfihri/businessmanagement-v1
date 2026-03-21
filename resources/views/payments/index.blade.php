@@ -6,7 +6,7 @@
 
         <div class="mb-3">
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('locations.create') }}">
+                href="{{ route('payments.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a Payment
             </a>
         </div>
@@ -22,7 +22,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Type</th>
-                                    <th>Invoice ID</th>
+                                    <th>Invoice</th>
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Method</th>
@@ -32,31 +32,58 @@
                             <tbody>
                                 @foreach($payments as $payment)
                                     <tr>
-                                        <td>{{ $payment->id }}</td>
-                                        <td>{{ class_basename($payment->payable_type) }}</td>
-                                        <td>{{ $payment->payable_id }}</td>
+                                        <th>{{ $payment->id }}</th>
+
+                                        <!-- Type -->
+                                        <td>
+                                            @if($payment->payable_type == 'App\Models\SalesInvoice')
+                                                <span class="badge bg-success">Sales</span>
+                                            @else
+                                                <span class="badge bg-info">Purchase</span>
+                                            @endif
+                                        </td>
+
+                                        <!-- Invoice -->
+                                        <td>
+                                            @if($payment->payable)
+                                                #{{ $payment->payable->invoice_number ?? $payment->payable_id }}
+                                            @else
+                                                {{ $payment->payable_id }}
+                                            @endif
+                                        </td>
+
+                                        <!-- Date -->
                                         <td>{{ $payment->payment_date }}</td>
-                                        <td>{{ $payment->amount }}</td>
+
+                                        <!-- Amount -->
+                                        <td>{{ number_format($payment->amount, 2) }}</td>
+
+                                        <!-- Method -->
                                         <td>{{ $payment->payment_method }}</td>
+
+                                        <!-- Actions -->
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
-                                                <!-- Edit button -->
-                                                <a href="{{ route('locations.edit', $location) }}" class="btn btn-sm btn-warning"
+
+                                                <!-- Edit -->
+                                                <a href="{{ route('payments.edit', $payment) }}" class="btn btn-sm btn-warning"
                                                     title="Edit">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
 
-                                                <!-- Delete button -->
-                                                <form action="{{ route('locations.destroy', $location) }}" method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this request?');">
+                                                <!-- Delete -->
+                                                <form action="{{ route('payments.destroy', $payment) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this payment?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger" title="Delete">
                                                         <i class="bi bi-trash"></i> Delete
                                                     </button>
                                                 </form>
+
                                             </div>
                                         </td>
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -65,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- Include Bootstrap Icons CDN if not already in your layout -->
+            <!-- Bootstrap Icons -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
         @endif
