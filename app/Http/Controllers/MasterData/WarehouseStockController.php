@@ -13,6 +13,6 @@ class WarehouseStockController extends Controller
             ->orderBy('product_id')
             ->paginate(50);
 
-        return view('warehouse_stocks.index', compact('stocks'));
+        return view('warehousestocks.index', compact('stocks'));
     }
 }
