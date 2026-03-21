@@ -29,4 +29,9 @@ class SaleInvoice extends Model
     {
         return $this->belongsTo(\App\Models\Sales\SaleOrder::class);
     }
+
+    public function lines()
+    {
+        return $this->hasMany(SalesInvoiceLine::class, 'invoice_id');
+    }
 }
