@@ -4,8 +4,8 @@
     <div class="container mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Create Location</h1>
-            <a href="{{ route('locations.index') }}" class="btn btn-secondary">
+            <h1>Create Payment</h1>
+            <a href="{{ route('payments.index') }}" class="btn btn-secondary">
                 Back
             </a>
         </div>
@@ -13,36 +13,100 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
-                <form action="{{ route('locations.store') }}" method="POST">
+                <form action="{{ route('payments.store') }}" method="POST">
                     @csrf
 
-                    <!-- Name -->
+                    <!-- Invoice Type -->
                     <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                            value="{{ old('name') }}" required>
-                        @error('name')
+                        <label class="form-label">Invoice Type</label>
+                        <select name="payable_type" class="form-control @error('payable_type') is-invalid @enderror"
+                            required>
+                            <option value="">-- Select Type --</option>
+                            <option value="App\Models\SalesInvoice">Sales Invoice</option>
+                            <option value="App\Models\SupplierInvoice">Supplier Invoice</option>
+                        </select>
+                        @error('payable_type')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Address -->
+                    <!-- Invoice -->
                     <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
-                            value="{{ old('address') }}">
-                        @error('address')
+                        <label class="form-label">Invoice</label>
+                        <select name="payable_id" class="form-control @error('payable_id') is-invalid @enderror" required>
+                            <option value="">-- Select Invoice --</option>
+
+                            <optgroup label="Sales Invoices">
+                                @foreach($salesInvoices as $invoice)
+                                    <option value="{{ $invoice->id }}">
+                                        #{{ $invoice->invoice_number }}
+                                    </option>
+                                @endforeach
+                            </optgroup>
+
+                            <optgroup label="Supplier Invoices">
+                                @foreach($supplierInvoices as $invoice)
+                                    <option value="{{ $invoice->id }}">
+                                        #{{ $invoice->invoice_number }}
+                                    </option>
+                                @endforeach
+                            </optgroup>
+
+                        </select>
+                        @error('payable_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Payment Date -->
+                    <div class="mb-3">
+                        <label class="form-label">Payment Date</label>
+                        <input type="date" name="payment_date"
+                            class="form-control @error('payment_date') is-invalid @enderror"
+                            value="{{ old('payment_date') }}" required>
+                        @error('payment_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="number" step="0.01" name="amount"
+                            class="form-control @error('amount') is-invalid @enderror" value="{{ old('amount') }}" required>
+                        @error('amount')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <input type="text" name="payment_method"
+                            class="form-control @error('payment_method') is-invalid @enderror"
+                            value="{{ old('payment_method') }}">
+                        @error('payment_method')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Reference -->
+                    <div class="mb-3">
+                        <label class="form-label">Reference</label>
+                        <input type="text" name="reference" class="form-control @error('reference') is-invalid @enderror"
+                            value="{{ old('reference') }}">
+                        @error('reference')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <!-- Actions -->
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('locations.index') }}" class="btn btn-outline-secondary me-2">
+                        <a href="{{ route('payments.index') }}" class="btn btn-outline-secondary me-2">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Save Location
+                            Save Payment
                         </button>
                     </div>
 
@@ -50,6 +114,5 @@
 
             </div>
         </div>
-
     </div>
 @endsection
