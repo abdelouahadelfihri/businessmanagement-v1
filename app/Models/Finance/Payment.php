@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Finance;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,12 +18,7 @@ class Payment extends Model
         'reference',
     ];
 
-    /**
-     * Polymorphic relation
-     * A payment belongs to either:
-     * - SalesInvoice
-     * - SupplierInvoice
-     */
+    // Polymorphic relation
     public function payable()
     {
         return $this->morphTo();
