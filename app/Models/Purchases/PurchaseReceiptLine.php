@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Purchases;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Purchases\PurchaseReceipt;
+use App\Models\MasterData\Product;
 
-class GoodsReceiptLine extends Model
+class PurchaseReceiptLine extends Model
 {
     protected $fillable = [
         'receipt_id',
@@ -14,12 +16,11 @@ class GoodsReceiptLine extends Model
 
     public function receipt()
     {
-        return $this->belongsTo(GoodsReceipt::class, 'receipt_id');
+        return $this->belongsTo(PurchaseReceipt::class, 'receipt_id');
     }
 
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
-
 }
