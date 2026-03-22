@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Purchases;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Purchases\PurchaseOrder;
+use App\Models\MasterData\Product;
 
 class PurchaseOrderLine extends Model
 {
@@ -23,5 +25,4 @@ class PurchaseOrderLine extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
 }

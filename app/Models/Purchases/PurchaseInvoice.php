@@ -40,4 +40,5 @@ class PurchaseInvoice extends Model
     {
         return $this->belongsTo(\App\Models\MasterData\Supplier::class, 'supplier_id');
     }
+
 }
