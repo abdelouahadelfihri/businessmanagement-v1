@@ -3,8 +3,8 @@
 @section('content')
     <div class="container mt-4">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Edit Purchase Order #{{ $order->id }}</h3>
+        <div class="d-flex justify-content-between mb-3">
+            <h3>Edit Purchase Order #{{ $order->po_number }}</h3>
             <a href="{{ route('purchasesorders.index') }}" class="btn btn-secondary">Back</a>
         </div>
 
@@ -17,12 +17,13 @@
 
                     {{-- HEADER --}}
                     <div class="row mb-3">
+
+                        {{-- Supplier --}}
                         <div class="col-md-4">
                             <label>Supplier</label>
                             <div class="input-group">
-                                <input type="hidden" name="supplier_id" id="supplier_id" value="{{ $order->supplier_id }}">
-                                <input type="text" id="supplier_name" class="form-control"
-                                    value="{{ $order->supplier->name }}" readonly>
+                                <input type="hidden" name="supplier_id" value="{{ $order->supplier_id }}">
+                                <input type="text" class="form-control" value="{{ $order->supplier->name }}" readonly>
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
                                     data-bs-target="#supplierModal">
                                     Select
@@ -30,11 +31,23 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        {{-- Date --}}
+                        <div class="col-md-3">
                             <label>Order Date</label>
-                            <input type="date" name="order_date" class="form-control" value="{{ $order->order_date }}"
+                            <input type="date" name="order_date" value="{{ $order->order_date }}" class="form-control"
                                 required>
                         </div>
+
+                        {{-- Status --}}
+                        <div class="col-md-3">
+                            <label>Status</label>
+                            <select name="status" class="form-control">
+                                <option value="draft" {{ $order->status == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Confirmed
+                                </option>
+                            </select>
+                        </div>
+
                     </div>
 
                     {{-- ADD PRODUCT --}}
@@ -61,17 +74,15 @@
                                             value="{{ $line->product_id }}">
                                     </td>
                                     <td>
-                                        <input type="number" name="lines[{{ $i }}][quantity]" class="form-control" min="1"
-                                            value="{{ $line->quantity }}" required>
+                                        <input type="number" name="lines[{{ $i }}][quantity]" value="{{ $line->quantity }}"
+                                            class="form-control" min="1">
                                     </td>
                                     <td>
-                                        <input type="number" name="lines[{{ $i }}][unit_price]" class="form-control" step="0.01"
-                                            value="{{ $line->unit_price }}" required>
+                                        <input type="number" name="lines[{{ $i }}][unit_price]" value="{{ $line->unit_price }}"
+                                            class="form-control" step="0.01">
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-danger btn-sm remove-line">
-                                            ×
-                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm remove-line">×</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -79,13 +90,8 @@
                     </table>
 
                     {{-- ACTIONS --}}
-                    <div class="d-flex justify-content-end">
-                        <a href="{{ route('purchasesorders.index') }}" class="btn btn-outline-secondary me-2">
-                            Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            Update
-                        </button>
+                    <div class="text-end">
+                        <button class="btn btn-primary">Update</button>
                     </div>
 
                 </form>
@@ -100,7 +106,7 @@
 
 @push('scripts')
     <script>
-        let lineIndex = {{ isset($order) ? $order->lines->count() : 0 }};
+        let lineIndex = 0;
 
         // Open product modal
         $('#add-line').on('click', function () {
@@ -126,37 +132,37 @@
             }
 
             const row = `
-                    <tr>
-                        <td>
-                            ${productName}
-                            <input type="hidden"
-                                   name="lines[${lineIndex}][product_id]"
-                                   class="product-id"
-                                   value="${productId}">
-                        </td>
-                        <td>
-                            <input type="number"
-                                   name="lines[${lineIndex}][quantity]"
-                                   class="form-control"
-                                   min="1"
-                                   value="1"
-                                   required>
-                        </td>
-                        <td>
-                            <input type="number"
-                                   name="lines[${lineIndex}][unit_price]"
-                                   class="form-control"
-                                   step="0.01"
-                                   required>
-                        </td>
-                        <td>
-                            <button type="button"
-                                    class="btn btn-danger btn-sm remove-line">
-                                ×
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td>
+                        ${productName}
+                        <input type="hidden"
+                               name="lines[${lineIndex}][product_id]"
+                               class="product-id"
+                               value="${productId}">
+                    </td>
+                    <td>
+                        <input type="number"
+                               name="lines[${lineIndex}][quantity]"
+                               class="form-control"
+                               min="1"
+                               value="1"
+                               required>
+                    </td>
+                    <td>
+                        <input type="number"
+                               name="lines[${lineIndex}][unit_price]"
+                               class="form-control"
+                               step="0.01"
+                               required>
+                    </td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-danger btn-sm remove-line">
+                            ×
+                        </button>
+                    </td>
+                </tr>
+            `;
 
             $('#lines-table tbody').append(row);
             lineIndex++;

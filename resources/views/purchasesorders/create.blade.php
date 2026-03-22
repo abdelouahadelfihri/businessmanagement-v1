@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mt-4">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between mb-3">
             <h3>Create Purchase Order</h3>
             <a href="{{ route('purchasesorders.index') }}" class="btn btn-secondary">Back</a>
         </div>
@@ -16,6 +16,8 @@
 
                     {{-- HEADER --}}
                     <div class="row mb-3">
+
+                        {{-- Supplier --}}
                         <div class="col-md-4">
                             <label>Supplier</label>
                             <div class="input-group">
@@ -28,10 +30,21 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        {{-- Order Date --}}
+                        <div class="col-md-3">
                             <label>Order Date</label>
                             <input type="date" name="order_date" class="form-control" required>
                         </div>
+
+                        {{-- Status --}}
+                        <div class="col-md-3">
+                            <label>Status</label>
+                            <select name="status" class="form-control">
+                                <option value="draft">Draft</option>
+                                <option value="confirmed">Confirmed</option>
+                            </select>
+                        </div>
+
                     </div>
 
                     {{-- ADD PRODUCT --}}
@@ -53,13 +66,8 @@
                     </table>
 
                     {{-- ACTIONS --}}
-                    <div class="d-flex justify-content-end">
-                        <a href="{{ route('purchasesorders.index') }}" class="btn btn-outline-secondary me-2">
-                            Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            Save
-                        </button>
+                    <div class="text-end">
+                        <button class="btn btn-primary">Save</button>
                     </div>
 
                 </form>
@@ -71,9 +79,10 @@
     @include('modals.product-picker')
     @include('modals.supplier-picker')
 @endsection
+
 @push('scripts')
     <script>
-        let lineIndex = {{ isset($order) ? $order->lines->count() : 0 }};
+        let lineIndex = 0;
 
         // Open product modal
         $('#add-line').on('click', function () {
