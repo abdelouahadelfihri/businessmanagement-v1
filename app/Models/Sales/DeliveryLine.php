@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MasterData\Product;
+use App\Models\Sales\SaleDelivery;
 
 class DeliveryLine extends Model
 {
@@ -14,7 +16,7 @@ class DeliveryLine extends Model
 
     public function delivery()
     {
-        return $this->belongsTo(Delivery::class);
+        return $this->belongsTo(SaleDelivery::class);
     }
 
     public function product()
