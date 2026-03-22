@@ -98,3 +98,49 @@
 
     @include('modals.product-picker')
 @endsection
+
+@push('scripts')
+    <script>
+
+        let lineIndex = {{ isset($source) ? count($source->lines) : 0 }};
+
+        $('#add-line').click(function () {
+            $('#productModal').modal('show');
+        });
+
+        $(document).on('click', '.select-product', function () {
+
+            let id = $(this).data('id');
+            let name = $(this).data('name');
+
+            let row = `
+        <tr>
+            <td>
+                ${name}
+                <input type="hidden" name="lines[${lineIndex}][product_id]" class="product-id" value="${id}">
+            </td>
+            <td>
+                <input type="number" name="lines[${lineIndex}][quantity]" class="form-control" value="1">
+            </td>
+
+            ${window.withPrice ? `
+            <td>
+                <input type="number" name="lines[${lineIndex}][unit_price]" class="form-control">
+            </td>` : ''}
+
+            <td>
+                <button type="button" class="remove-line btn btn-danger">×</button>
+            </td>
+        </tr>
+        `;
+
+            $('#lines-table tbody').append(row);
+            lineIndex++;
+        });
+
+        $(document).on('click', '.remove-line', function () {
+            $(this).closest('tr').remove();
+        });
+
+    </script>
+@endpush
