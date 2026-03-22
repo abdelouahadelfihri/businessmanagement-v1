@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Purchases;
 
 use Illuminate\Database\Eloquent\Model;
-
-class SupplierInvoiceLine extends Model
+use App\Models\Purchases\PurchaseInvoice;
+use App\Models\MasterData\Product;
+class PurchaseInvoiceLine extends Model
 {
     protected $fillable = [
         'invoice_id',
@@ -16,7 +17,7 @@ class SupplierInvoiceLine extends Model
 
     public function invoice()
     {
-        return $this->belongsTo(SupplierInvoice::class, 'invoice_id');
+        return $this->belongsTo(PurchaseInvoice::class, 'invoice_id');
     }
 
     public function product()
