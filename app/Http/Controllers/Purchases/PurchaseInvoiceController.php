@@ -1,100 +1,87 @@
 <?php
 
-namespace App\Http\Controllers\Purchases;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseOrder;
-use Illuminate\Http\Request;
 
 class PurchaseInvoiceController extends Controller
 {
-    public function index(Request $request)
-    {
-        $invoices = PurchaseInvoice::with('purchaseOrder.supplier')->paginate(12);
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
-        return view('purchaseinvoices.index', compact('invoices', 'selectFor', 'returnUrl'));
-    }
-
     public function create(Request $request)
     {
-        if (!$request->hasAny(['invoice_number', 'date', 'total', 'paid', 'selected_order_id'])) {
-            session()->forget('purchase_invoice_form');
+        $source = null;
+
+        if ($request->source_type == 'purchase_order') {
+            $source = PurchaseOrder::with('lines.product')->find($request->source_id);
         }
 
-        $form = array_merge(
-            session('purchase_invoice_form', []),
-            $request->only(['invoice_number', 'date', 'total', 'paid', 'selected_order_id'])
-        );
-        session(['purchase_invoice_form' => $form]);
-
-        $selectedOrder = $form['selected_order_id'] ?? null ? PurchaseOrder::with('supplier')->find($form['selected_order_id']) : null;
-
-        return view('purchaseinvoices.create', compact('form', 'selectedOrder'));
+        return view('documents.create', [
+            'route' => route('purchase-invoices.store'),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => true,
+            'dateField' => 'invoice_date',
+            'title' => 'Create Purchase Invoice',
+            'source' => $source
+        ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'order_id' => 'required|exists:purchase_orders,id',
-            'invoice_number' => 'required|string',
-            'date' => 'required|date',
-            'total' => 'nullable|numeric',
-            'paid' => 'nullable|numeric'
+            'supplier_id' => 'required',
+            'invoice_date' => 'required|date',
+            'status' => 'required',
+            'lines' => 'required|array|min:1',
         ]);
 
-        PurchaseInvoice::create([
-            'purchase_order_id' => $data['order_id'],
-            'supplier_id' => PurchaseOrder::find($data['order_id'])->supplier_id,
-            'invoice_number' => $data['invoice_number'],
-            'date' => $data['date'],
-            'total' => $data['total'] ?? 0,
-            'paid' => $data['paid'] ?? 0
-        ]);
+        $model = PurchaseInvoice::create($data);
 
-        session()->forget('purchase_invoice_form');
-        return redirect()->route('purchaseinvoices.index')->with('success', 'Purchase invoice created successfully.');
+        $total = 0;
+
+        foreach ($request->lines as $line) {
+            $total += $line['quantity'] * $line['unit_price'];
+            $model->lines()->create($line);
+        }
+
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('purchase-invoices.index');
     }
 
-    public function edit(PurchaseInvoice $purchaseinvoice)
+    public function edit($id)
     {
-        $form = [
-            'invoice_number' => $purchaseinvoice->invoice_number,
-            'date' => $purchaseinvoice->date,
-            'total' => $purchaseinvoice->total,
-            'paid' => $purchaseinvoice->paid,
-            'selected_order_id' => $purchaseinvoice->purchase_order_id
-        ];
-        $selectedOrder = $purchaseinvoice->purchaseOrder()->with('supplier')->first();
-        return view('purchaseinvoices.edit', compact('purchaseinvoice', 'form', 'selectedOrder'));
+        $model = PurchaseInvoice::with('lines.product', 'supplier')->findOrFail($id);
+
+        return view('documents.edit', [
+            'model' => $model,
+            'route' => route('purchase-invoices.update', $id),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => true,
+            'dateField' => 'invoice_date',
+            'title' => 'Edit Purchase Invoice'
+        ]);
     }
 
-    public function update(Request $request, PurchaseInvoice $purchaseinvoice)
+    public function update(Request $request, $id)
     {
-        $data = $request->validate([
-            'order_id' => 'required|exists:purchase_orders,id',
-            'invoice_number' => 'required|string',
-            'date' => 'required|date',
-            'total' => 'nullable|numeric',
-            'paid' => 'nullable|numeric'
-        ]);
+        $model = PurchaseInvoice::findOrFail($id);
 
-        $purchaseinvoice->update([
-            'purchase_order_id' => $data['order_id'],
-            'supplier_id' => PurchaseOrder::find($data['order_id'])->supplier_id,
-            'invoice_number' => $data['invoice_number'],
-            'date' => $data['date'],
-            'total' => $data['total'] ?? 0,
-            'paid' => $data['paid'] ?? 0
-        ]);
+        $model->update($request->only('supplier_id', 'invoice_date', 'status'));
 
-        return redirect()->route('purchaseinvoices.index')->with('success', 'Purchase invoice updated successfully.');
-    }
+        $model->lines()->delete();
 
-    public function destroy(PurchaseInvoice $purchaseinvoice)
-    {
-        $purchaseinvoice->delete();
-        return redirect()->route('purchaseinvoices.index')->with('success', 'Purchase invoice deleted successfully.');
+        $total = 0;
+
+        foreach ($request->lines as $line) {
+            $total += $line['quantity'] * $line['unit_price'];
+            $model->lines()->create($line);
+        }
+
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('purchase-invoices.index');
     }
 }
