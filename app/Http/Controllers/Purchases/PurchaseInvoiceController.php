@@ -29,14 +29,7 @@ class PurchaseInvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'supplier_id' => 'required',
-            'invoice_date' => 'required|date',
-            'status' => 'required',
-            'lines' => 'required|array|min:1',
-        ]);
-
-        $model = PurchaseInvoice::create($data);
+        $model = PurchaseInvoice::create($request->only('supplier_id', 'invoice_date', 'status'));
 
         $total = 0;
 
