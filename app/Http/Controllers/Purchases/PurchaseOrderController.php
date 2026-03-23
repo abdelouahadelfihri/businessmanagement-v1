@@ -29,31 +29,16 @@ class PurchaseOrderController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'order_date' => 'required|date',
-            'status' => 'required',
-            'lines' => 'required|array|min:1',
-            'lines.*.product_id' => 'required|exists:products,id',
-            'lines.*.quantity' => 'required|numeric|min:1',
-            'lines.*.unit_price' => 'required|numeric|min:0',
-        ]);
-
-        $po = PurchaseOrder::create([
-            'supplier_id' => $data['supplier_id'],
-            'order_date' => $data['order_date'],
-            'status' => $data['status'],
-        ]);
+        $model = PurchaseOrder::create($request->only('supplier_id', 'order_date', 'status'));
 
         $total = 0;
 
-        foreach ($data['lines'] as $line) {
+        foreach ($request->lines as $line) {
             $total += $line['quantity'] * $line['unit_price'];
-
-            $po->lines()->create($line);
+            $model->lines()->create($line);
         }
 
-        $po->update(['total_amount' => $total]);
+        $model->update(['total_amount' => $total]);
 
         return redirect()->route('purchase-orders.index');
     }
@@ -77,21 +62,14 @@ class PurchaseOrderController extends Controller
     {
         $model = PurchaseOrder::findOrFail($id);
 
-        $data = $request->validate([
-            'supplier_id' => 'required',
-            'order_date' => 'required|date',
-            'status' => 'required',
-            'lines' => 'required|array|min:1',
-        ]);
-
-        $model->update($data);
+        $model->update($request->only('supplier_id', 'order_date', 'status'));
 
         $model->lines()->delete();
 
         $total = 0;
 
         foreach ($request->lines as $line) {
-            $total += $line['quantity'] * ($line['unit_price'] ?? 0);
+            $total += $line['quantity'] * $line['unit_price'];
             $model->lines()->create($line);
         }
 
