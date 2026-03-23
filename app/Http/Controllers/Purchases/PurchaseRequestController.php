@@ -1,76 +1,62 @@
 <?php
-namespace App\Http\Controllers\Purchases;
 
-use App\Http\Controllers\Controller;
-use App\Models\Purchases\PurchaseRequest;
+namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Purchases\PurchaseRequest;
+
 class PurchaseRequestController extends Controller
 {
-    public function index()
-    {
-        $requests = PurchaseRequest::with('supplier')->get();
-        return view('purchasesrequests.index', compact('requests'));
-    }
     public function create()
     {
-        return view('purchasesrequests.create'); // ✅ FIXED
+        return view('documents.create', [
+            'route' => route('purchase-requests.store'),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => false,
+            'dateField' => 'request_date',
+            'title' => 'Create Purchase Request'
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'date' => 'required|date',
-            'status' => 'required|in:draft,approved,cancelled',
-            'description' => 'nullable|string',
-        ]);
+        $model = PurchaseRequest::create($request->only('supplier_id', 'request_date', 'status'));
 
-        PurchaseRequest::create($request->only([
-            'supplier_id',
-            'date',
-            'status',
-            'description',
-        ]));
-
-        return redirect()
-            ->route('purchasesrequests.index') // ✅ FIXED
-            ->with('success', 'Purchase Request Created');
-    }
-    public function edit(PurchaseRequest $purchaseRequest)
-    {
-        return view('purchasesrequests.edit', compact('purchaseRequest'));
-    }
-    public function update(Request $request, PurchaseRequest $purchaseRequest)
-    {
-        $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'date' => 'required|date',
-            'status' => 'required|in:draft,approved,cancelled',
-            'description' => 'nullable|string',
-        ]);
-
-        $purchaseRequest->update($request->only([
-            'supplier_id',
-            'date',
-            'status',
-            'description',
-        ]));
-
-        return redirect()->route('purchasesrequests.index');
-
-    }
-    public function destroy(PurchaseRequest $purchaseRequest)
-    {
-        $purchaseRequest->delete();
-
-        if (PurchaseRequest::count() === 0) {
-            DB::statement('ALTER TABLE purchase_requests AUTO_INCREMENT = 1');
+        foreach ($request->lines ?? [] as $line) {
+            $model->lines()->create($line);
         }
 
-        return redirect()
-            ->route('purchasesrequests.index')
-            ->with('success', 'Purchase request deleted successfully.');
+        return redirect()->route('purchase-requests.index');
     }
 
+    public function edit($id)
+    {
+        $model = PurchaseRequest::with('lines.product', 'supplier')->findOrFail($id);
+
+        return view('documents.edit', [
+            'model' => $model,
+            'route' => route('purchase-requests.update', $id),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => false,
+            'dateField' => 'request_date',
+            'title' => 'Edit Purchase Request'
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $model = PurchaseRequest::findOrFail($id);
+
+        $model->update($request->only('supplier_id', 'request_date', 'status'));
+
+        $model->lines()->delete();
+
+        foreach ($request->lines ?? [] as $line) {
+            $model->lines()->create($line);
+        }
+
+        return redirect()->route('purchase-requests.index');
+    }
 }
