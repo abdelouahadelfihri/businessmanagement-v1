@@ -1,76 +1,83 @@
 <?php
 
-namespace App\Http\Controllers\Purchases;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseOrder;
-use App\Models\MasterData\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Services\StockService;
+
 class PurchaseReceiptController extends Controller
 {
-    public function index()
+    public function create(Request $request)
     {
-        $receipts = PurchaseReceipt::latest()->paginate(15);
-        return view('purchasereceipts.index', compact('receipts'));
+        $source = null;
+
+        // Optionally copy lines from Purchase Order
+        if ($request->source_type == 'purchase_order') {
+            $source = PurchaseOrder::with('lines.product')->find($request->source_id);
+        }
+
+        return view('documents.create', [
+            'route' => route('purchase-receipts.store'),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => true,
+            'dateField' => 'receipt_date',
+            'title' => 'Create Purchase Receipt',
+            'source' => $source
+        ]);
     }
-    public function create()
-    {
-        return view('purchasereceipts.create', ['purchaseOrders' => PurchaseOrder::with('lines.product')->get(), 'products' => Product::all()]);
-    }
+
     public function store(Request $request)
     {
-        DB::transaction(function () use ($request) {
-            $receipt = PurchaseReceipt::create([
-                'warehouse_id' => $request->warehouse_id,
-                'status' => 'draft'
-            ]);
+        $model = PurchaseReceipt::create($request->only('supplier_id', 'receipt_date', 'status'));
 
-            foreach ($request->lines as $line) {
-                $receipt->lines()->create($line);
-            }
-        });
+        $total = 0;
+
+        foreach ($request->lines as $line) {
+            $total += ($line['quantity'] ?? 0) * ($line['unit_price'] ?? 0);
+            $model->lines()->create($line);
+        }
+
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('purchase-receipts.index');
     }
 
-    public function post(PurchaseReceipt $receipt, StockService $stock)
+    public function edit($id)
     {
-        abort_if($receipt->status !== 'draft', 400);
+        $model = PurchaseReceipt::with('lines.product', 'supplier')->findOrFail($id);
 
-        DB::transaction(function () use ($receipt, $stock) {
-            foreach ($receipt->lines as $line) {
-                $stock->move(
-                    $line->product_id,
-                    $receipt->warehouse_id,
-                    $line->quantity,
-                    'in',
-                    'purchase_receipt',
-                    $receipt->id
-                );
-            }
-
-            $receipt->update(['status' => 'posted']);
-        });
+        return view('documents.edit', [
+            'model' => $model,
+            'route' => route('purchase-receipts.update', $id),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => true,
+            'dateField' => 'receipt_date',
+            'title' => 'Edit Purchase Receipt'
+        ]);
     }
 
-    public function cancel(PurchaseReceipt $receipt, StockService $stock)
+    public function update(Request $request, $id)
     {
-        abort_if($receipt->status !== 'posted', 400);
+        $model = PurchaseReceipt::findOrFail($id);
 
-        DB::transaction(function () use ($receipt, $stock) {
-            foreach ($receipt->lines as $line) {
-                $stock->move(
-                    $line->product_id,
-                    $receipt->warehouse_id,
-                    $line->quantity,
-                    'out',
-                    'purchase_receipt_cancel',
-                    $receipt->id
-                );
-            }
+        $model->update($request->only('supplier_id', 'receipt_date', 'status'));
 
-            $receipt->update(['status' => 'cancelled']);
-        });
+        $model->lines()->delete();
+
+        $total = 0;
+
+        foreach ($request->lines as $line) {
+            $total += ($line['quantity'] ?? 0) * ($line['unit_price'] ?? 0);
+            $model->lines()->create($line);
+        }
+
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('purchase-receipts.index');
     }
 }
+
+// Done
