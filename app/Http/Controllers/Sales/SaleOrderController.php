@@ -1,64 +1,80 @@
 <?php
-namespace App\Http\Controllers\Sales;
+
+namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Sales\SaleOrder;
+use App\Models\Purchases\PurchaseOrder;
+use App\Models\Purchases\PurchaseRequest;
 
-class SaleOrderController extends Controller
+class PurchaseOrderController extends Controller
 {
-    public function index(Request $request)
-    {
-        $salesOrders = SaleOrder::paginate(12); // paginate for big lists
-
-        // selection mode params (if opened from PO)
-        $selectFor = $request->query('select_for');    // e.g. 'purchase-order'
-        $returnUrl = $request->query('return_url');    // e.g. /purchase-orders/create
-
-        return view('salesordersindex', compact('salesOrders','selectFor','returnUrl'));
-    }
-
     public function create(Request $request)
     {
-        // pass along selection params so create view can return to PO after saving
-        $selectFor = $request->query('select_for');
-        $returnUrl = $request->query('return_url');
+        $source = null;
 
-        return view('salesorderscreate', compact('selectFor','returnUrl'));
+        if ($request->source_type == 'purchase_request') {
+            $source = PurchaseRequest::with('lines.product')->find($request->source_id);
+        }
+
+        return view('documents.create', [
+            'route' => route('purchase-orders.store'),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => true,
+            'dateField' => 'order_date',
+            'title' => 'Create Purchase Order',
+            'source' => $source
+        ]);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-        ]);
+        $model = PurchaseOrder::create($request->only('supplier_id', 'order_date', 'status'));
 
-        $saleOrder = SaleOrder::create($data);
+        $total = 0;
 
-        // If created from a selection flow, redirect back to caller with new id
-        if ($request->filled('select_for') && $request->filled('return_url')) {
-            // append query param and redirect to return_url
-            $return = $request->input('return_url') . '?selected_sale_order_id=' . $saleOrder->id;
-            return redirect($return);
+        foreach ($request->lines as $line) {
+            $total += $line['quantity'] * $line['unit_price'];
+            $model->lines()->create($line);
         }
 
-        return redirect()->route('salesordersindex')->with('success','SaleOrder created.');
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('purchase-orders.index');
     }
 
-    public function edit(SaleOrder $saleOrder)
+    public function edit($id)
     {
-        return view('salesorders.edit', compact('saleOrder'));
-    }
+        $model = PurchaseOrder::with('lines.product', 'supplier')->findOrFail($id);
 
-    public function update(Request $request, SaleOrder $saleOrder)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+        return view('documents.edit', [
+            'model' => $model,
+            'route' => route('purchase-orders.update', $id),
+            'partyLabel' => 'Supplier',
+            'partyField' => 'supplier_id',
+            'withPrice' => true,
+            'dateField' => 'order_date',
+            'title' => 'Edit Purchase Order'
         ]);
+    }
 
-        $saleOrder->update($data);
+    public function update(Request $request, $id)
+    {
+        $model = PurchaseOrder::findOrFail($id);
 
-        return redirect()->route('salesorders.index')->with('success','SaleOrder updated.');
+        $model->update($request->only('supplier_id', 'order_date', 'status'));
+
+        $model->lines()->delete();
+
+        $total = 0;
+
+        foreach ($request->lines as $line) {
+            $total += $line['quantity'] * $line['unit_price'];
+            $model->lines()->create($line);
+        }
+
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('purchase-orders.index');
     }
 }

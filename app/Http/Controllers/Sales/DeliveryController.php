@@ -1,116 +1,70 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Sales\SaleDelivery;
-use App\Services\StockService;
 use Illuminate\Http\Request;
-use App\Models\MasterData\WarehouseStock;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use App\Models\SalesDelivery;
+use App\Models\SalesOrder;
 
 class DeliveryController extends Controller
 {
-    public function index()
+    public function create(Request $request)
     {
-        return SaleDelivery::with('salesOrder')->get();
-    }
-
-    public function post(SaleDelivery $delivery, StockService $stock)
-    {
-        abort_if($delivery->status !== 'draft', 400);
-
-        foreach ($delivery->lines as $line) {
-            $available = WarehouseStock::where('warehouse_id', $delivery->warehouse_id)
-                ->where('product_id', $line->product_id)
-                ->value('quantity') ?? 0;
-
-            if ($available < $line->quantity) {
-                throw ValidationException::withMessages([
-                    'stock' => 'Insufficient stock'
-                ]);
-            }
+        $source = null;
+        if ($request->source_type == 'sales_order') {
+            $source = SalesOrder::with('lines.product')->find($request->source_id);
         }
 
-        DB::transaction(function () use ($delivery, $stock) {
-            foreach ($delivery->lines as $line) {
-                $stock->move(
-                    $line->product_id,
-                    $delivery->warehouse_id,
-                    $line->quantity,
-                    'out',
-                    'sale_delivery',
-                    $delivery->id
-                );
-            }
-
-            $delivery->update(['status' => 'posted']);
-        });
-    }
-
-    public function cancel(SaleDelivery $delivery, StockService $stock)
-    {
-        abort_if($delivery->status !== 'posted', 400);
-
-        DB::transaction(function () use ($delivery, $stock) {
-            foreach ($delivery->lines as $line) {
-                $stock->move(
-                    $line->product_id,
-                    $delivery->warehouse_id,
-                    $line->quantity,
-                    'in',
-                    'sale_delivery_cancel',
-                    $delivery->id
-                );
-            }
-
-            $delivery->update(['status' => 'cancelled']);
-        });
+        return view('documents.create', [
+            'route' => route('sales-deliveries.store'),
+            'partyLabel' => 'Customer',
+            'partyField' => 'customer_id',
+            'withPrice' => false, // Delivery usually does not include prices
+            'dateField' => 'delivery_date',
+            'title' => 'Create Sales Delivery',
+            'source' => $source
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'sales_order_id' => 'required|exists:sales_orders,id',
-            'delivery_number' => 'required|string|unique:deliveries,delivery_number',
-            'date' => 'required|date',
-            'status' => 'nullable|string',
-            'total' => 'required|numeric'
-        ]);
+        $model = SalesDelivery::create($request->only('customer_id', 'delivery_date', 'status'));
 
-        $delivery = SaleDelivery::create($validated);
+        foreach ($request->lines as $line) {
+            $model->lines()->create($line);
+        }
 
-        return response()->json($delivery, 201);
+        return redirect()->route('sales-deliveries.index');
     }
 
-    public function show($id)
+    public function edit($id)
     {
-        return SaleDelivery::with('salesOrder')->findOrFail($id);
+        $model = SalesDelivery::with('lines.product', 'customer')->findOrFail($id);
+
+        return view('documents.edit', [
+            'model' => $model,
+            'route' => route('sales-deliveries.update', $id),
+            'partyLabel' => 'Customer',
+            'partyField' => 'customer_id',
+            'withPrice' => false, // Delivery usually does not include prices
+            'dateField' => 'delivery_date',
+            'title' => 'Edit Sales Delivery'
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        $delivery = SaleDelivery::findOrFail($id);
+        $model = SalesDelivery::findOrFail($id);
 
-        $validated = $request->validate([
-            'sales_order_id' => 'sometimes|exists:sales_orders,id',
-            'delivery_number' => 'sometimes|string|unique:deliveries,delivery_number,' . $id,
-            'date' => 'sometimes|date',
-            'status' => 'sometimes|string',
-            'total' => 'sometimes|numeric'
-        ]);
+        $model->update($request->only('customer_id', 'delivery_date', 'status'));
 
-        $delivery->update($validated);
+        $model->lines()->delete();
 
-        return response()->json($delivery);
-    }
+        foreach ($request->lines as $line) {
+            $model->lines()->create($line);
+        }
 
-    public function destroy($id)
-    {
-        $delivery = SaleDelivery::findOrFail($id);
-        $delivery->delete();
-
-        return response()->json(['message' => 'Deleted successfully']);
+        return redirect()->route('sales-deliveries.index');
     }
 }
+// Done
