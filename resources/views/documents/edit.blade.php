@@ -113,35 +113,35 @@
             let name = $(this).data('name');
 
             let row = `
-            <tr>
-                <td>
-                    ${name}
-                    <input type="hidden"
-                           name="lines[${lineIndex}][product_id]"
-                           class="product-id"
-                           value="${id}">
-                </td>
+                <tr>
+                    <td>
+                        ${name}
+                        <input type="hidden"
+                               name="lines[${lineIndex}][product_id]"
+                               class="product-id"
+                               value="${id}">
+                    </td>
 
-                <td>
-                    <input type="number"
-                           name="lines[${lineIndex}][quantity]"
-                           class="form-control" value="1">
-                </td>
-
-                @if($withPrice)
                     <td>
                         <input type="number"
-                               name="lines[${lineIndex}][unit_price]"
-                               class="form-control">
+                               name="lines[${lineIndex}][quantity]"
+                               class="form-control" value="1">
                     </td>
-                @endif
 
-                <td>
-                    <button type="button"
-                            class="btn btn-danger btn-sm remove-line">×</button>
-                </td>
-            </tr>
-        `;
+                    @if($withPrice)
+                        <td>
+                            <input type="number"
+                                   name="lines[${lineIndex}][unit_price]"
+                                   class="form-control">
+                        </td>
+                    @endif
+
+                    <td>
+                        <button type="button"
+                                class="btn btn-danger btn-sm remove-line">×</button>
+                    </td>
+                </tr>
+            `;
 
             $('#lines-table tbody').append(row);
             lineIndex++;
@@ -153,3 +153,6 @@
 
     </script>
 @endpush
+<?php
+// Done
+?>
