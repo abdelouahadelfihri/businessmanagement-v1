@@ -3,33 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Purchases\PurchaseOrder;
-use App\Models\Purchases\PurchaseRequest;
+use App\Models\Sales\SaleOrder;
+use App\Models\Sales\SaleQuotation;
 
-class PurchaseOrderController extends Controller
+class SalesOrderController extends Controller
 {
     public function create(Request $request)
     {
         $source = null;
-
-        if ($request->source_type == 'purchase_request') {
-            $source = PurchaseRequest::with('lines.product')->find($request->source_id);
+        if ($request->source_type == 'sales_quote') {
+            $source = SaleQuotation::with('lines.product')->find($request->source_id);
         }
 
         return view('documents.create', [
-            'route' => route('purchase-orders.store'),
-            'partyLabel' => 'Supplier',
-            'partyField' => 'supplier_id',
+            'route' => route('sales-orders.store'),
+            'partyLabel' => 'Customer',
+            'partyField' => 'customer_id',
             'withPrice' => true,
             'dateField' => 'order_date',
-            'title' => 'Create Purchase Order',
+            'title' => 'Create Sales Order',
             'source' => $source
         ]);
     }
 
     public function store(Request $request)
     {
-        $model = PurchaseOrder::create($request->only('supplier_id', 'order_date', 'status'));
+        $model = SaleOrder::create($request->only('customer_id', 'order_date', 'status'));
 
         $total = 0;
 
@@ -40,34 +39,33 @@ class PurchaseOrderController extends Controller
 
         $model->update(['total_amount' => $total]);
 
-        return redirect()->route('purchase-orders.index');
+        return redirect()->route('sales-orders.index');
     }
 
     public function edit($id)
     {
-        $model = PurchaseOrder::with('lines.product', 'supplier')->findOrFail($id);
+        $model = SaleOrder::with('lines.product', 'customer')->findOrFail($id);
 
         return view('documents.edit', [
             'model' => $model,
-            'route' => route('purchase-orders.update', $id),
-            'partyLabel' => 'Supplier',
-            'partyField' => 'supplier_id',
+            'route' => route('sales-orders.update', $id),
+            'partyLabel' => 'Customer',
+            'partyField' => 'customer_id',
             'withPrice' => true,
             'dateField' => 'order_date',
-            'title' => 'Edit Purchase Order'
+            'title' => 'Edit Sales Order'
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        $model = PurchaseOrder::findOrFail($id);
+        $model = SaleOrder::findOrFail($id);
 
-        $model->update($request->only('supplier_id', 'order_date', 'status'));
+        $model->update($request->only('customer_id', 'order_date', 'status'));
 
         $model->lines()->delete();
 
         $total = 0;
-
         foreach ($request->lines as $line) {
             $total += $line['quantity'] * $line['unit_price'];
             $model->lines()->create($line);
@@ -75,6 +73,8 @@ class PurchaseOrderController extends Controller
 
         $model->update(['total_amount' => $total]);
 
-        return redirect()->route('purchase-orders.index');
+        return redirect()->route('sales-orders.index');
     }
 }
+
+// Done
