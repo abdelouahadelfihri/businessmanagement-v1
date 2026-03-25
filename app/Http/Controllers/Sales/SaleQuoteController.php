@@ -9,64 +9,100 @@ class SaleQuoteController extends Controller
 {
     public function create()
     {
-        return view('documents.create', [
+        return view('sales_quotes.create', [
             'route' => route('sales-quotes.store'),
             'partyLabel' => 'Customer',
             'partyField' => 'customer_id',
             'withPrice' => true,
-            'dateField' => 'quote_date',
-            'title' => 'Create Sales Quote'
         ]);
     }
 
     public function store(Request $request)
     {
-        $model = SaleQuotation::create($request->only('customer_id', 'quote_date', 'status'));
+        $data = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'date' => 'required|date',
+            'status' => 'required',
+            'lines' => 'nullable|array',
+            'lines.*.product_id' => 'required_with:lines|exists:products,id',
+            'lines.*.quantity' => 'required_with:lines|numeric|min:1',
+            'lines.*.unit_price' => 'required_with:lines|numeric|min:0',
+        ]);
+
+        $quote = SaleQuotation::create([
+            'customer_id' => $data['customer_id'],
+            'date' => $data['date'],
+            'status' => $data['status'],
+        ]);
 
         $total = 0;
-
-        foreach ($request->lines ?? [] as $line) {
-            $total += $line['quantity'] * $line['unit_price'];
-            $model->lines()->create($line);
+        if (isset($data['lines'])) {
+            foreach ($data['lines'] as $line) {
+                $total += $line['quantity'] * $line['unit_price'];
+                $quote->lines()->create([
+                    'product_id' => $line['product_id'],
+                    'quantity' => $line['quantity'],
+                    'unit_price' => $line['unit_price'],
+                ]);
+            }
         }
 
-        $model->update(['total_amount' => $total]);
+        $quote->update(['total_amount' => $total]);
 
-        return redirect()->route('sales-quotes.index');
+        return redirect()->route('sales-quotes.index')->with('success', 'Sales Quote created.');
     }
 
     public function edit($id)
     {
-        $model = SaleQuotation::with('lines.product', 'customer')->findOrFail($id);
+        $quote = SaleQuotation::with('lines.product')->findOrFail($id);
 
-        return view('documents.edit', [
-            'model' => $model,
+        return view('sales_quotes.edit', [
+            'model' => $quote,
             'route' => route('sales-quotes.update', $id),
             'partyLabel' => 'Customer',
             'partyField' => 'customer_id',
             'withPrice' => true,
-            'dateField' => 'quote_date',
-            'title' => 'Edit Sales Quote'
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        $model = SaleQuotation::findOrFail($id);
+        $quote = SaleQuotation::findOrFail($id);
 
-        $model->update($request->only('customer_id', 'quote_date', 'status'));
+        $data = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'date' => 'required|date',
+            'status' => 'required',
+            'lines' => 'nullable|array',
+            'lines.*.product_id' => 'required_with:lines|exists:products,id',
+            'lines.*.quantity' => 'required_with:lines|numeric|min:1',
+            'lines.*.unit_price' => 'required_with:lines|numeric|min:0',
+        ]);
 
-        $model->lines()->delete();
+        $quote->update([
+            'customer_id' => $data['customer_id'],
+            'date' => $data['date'],
+            'status' => $data['status'],
+        ]);
+
+        $quote->lines()->delete();
 
         $total = 0;
-
-        foreach ($request->lines ?? [] as $line) {
-            $total += $line['quantity'] * $line['unit_price'];
-            $model->lines()->create($line);
+        if (isset($data['lines'])) {
+            foreach ($data['lines'] as $line) {
+                $total += $line['quantity'] * $line['unit_price'];
+                $quote->lines()->create([
+                    'product_id' => $line['product_id'],
+                    'quantity' => $line['quantity'],
+                    'unit_price' => $line['unit_price'],
+                ]);
+            }
         }
 
-        $model->update(['total_amount' => $total]);
+        $quote->update(['total_amount' => $total]);
 
-        return redirect()->route('sales-quotes.index');
+        return redirect()->route('sales-quotes.index')->with('success', 'Sales Quote updated.');
     }
 }
+
+// Done
