@@ -49,3 +49,5 @@ class Product extends Model
             ->value('stock');
     }
 }
+
+// Done
