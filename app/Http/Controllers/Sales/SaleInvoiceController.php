@@ -1,65 +1,79 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Sales\SalesInvoice;
 use Illuminate\Http\Request;
+use App\Models\Sales\SaleInvoice;
+use App\Models\Sales\SaleOrder;
 
-class SaleInvoiceController extends Controller
+class SalesInvoiceController extends Controller
 {
-    public function index()
+    public function create(Request $request)
     {
-        return SalesInvoice::with(['customer', 'salesOrder'])->get();
+        $source = null;
+        if ($request->source_type == 'sales_order') {
+            $source = SaleOrder::with('lines.product')->find($request->source_id);
+        }
+
+        return view('documents.create', [
+            'route' => route('sales-invoices.store'),
+            'partyLabel' => 'Customer',
+            'partyField' => 'customer_id',
+            'withPrice' => true,
+            'dateField' => 'invoice_date',
+            'title' => 'Create Sales Invoice',
+            'source' => $source
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'sales_order_id' => 'required|exists:sales_orders,id',
-            'customer_id' => 'required|exists:customers,id',
-            'invoice_number' => 'required|unique:sales_invoices,invoice_number',
-            'date' => 'required|date',
-            'subtotal' => 'required|numeric',
-            'tax' => 'required|numeric',
-            'total' => 'required|numeric',
-            'status' => 'nullable|string',
-        ]);
+        $model = SaleInvoice::create($request->only('customer_id', 'invoice_date', 'status'));
 
-        $invoice = SalesInvoice::create($validated);
-        return response()->json($invoice, 201);
+        $total = 0;
+        foreach ($request->lines as $line) {
+            $total += $line['quantity'] * $line['unit_price'];
+            $model->lines()->create($line);
+        }
+
+        $model->update(['total_amount' => $total]);
+
+        return redirect()->route('sales-invoices.index');
     }
 
-    public function show($id)
+    public function edit($id)
     {
-        return SalesInvoice::with(['customer', 'salesOrder'])->findOrFail($id);
+        $model = SaleInvoice::with('lines.product', 'customer')->findOrFail($id);
+
+        return view('documents.edit', [
+            'model' => $model,
+            'route' => route('sales-invoices.update', $id),
+            'partyLabel' => 'Customer',
+            'partyField' => 'customer_id',
+            'withPrice' => true,
+            'dateField' => 'invoice_date',
+            'title' => 'Edit Sales Invoice'
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        $invoice = SalesInvoice::findOrFail($id);
+        $model = SaleInvoice::findOrFail($id);
 
-        $validated = $request->validate([
-            'sales_order_id' => 'sometimes|exists:sales_orders,id',
-            'customer_id' => 'sometimes|exists:customers,id',
-            'invoice_number' => 'sometimes|unique:sales_invoices,invoice_number,' . $id,
-            'date' => 'sometimes|date',
-            'subtotal' => 'sometimes|numeric',
-            'tax' => 'sometimes|numeric',
-            'total' => 'sometimes|numeric',
-            'status' => 'nullable|string',
-        ]);
+        $model->update($request->only('customer_id', 'invoice_date', 'status'));
 
-        $invoice->update($validated);
+        $model->lines()->delete();
 
-        return response()->json($invoice);
-    }
+        $total = 0;
+        foreach ($request->lines as $line) {
+            $total += $line['quantity'] * $line['unit_price'];
+            $model->lines()->create($line);
+        }
 
-    public function destroy($id)
-    {
-        $invoice = SalesInvoice::findOrFail($id);
-        $invoice->delete();
+        $model->update(['total_amount' => $total]);
 
-        return response()->json(['message' => 'Deleted successfully']);
+        return redirect()->route('sales-invoices.index');
     }
 }
+
+// Done
