@@ -30,6 +30,25 @@ class SaleDeliveryController extends Controller
 
     public function store(Request $request)
     {
+        // CHECK STOCK
+        foreach ($request->lines as $line) {
+
+            $stock = StockMovement::where('product_id', $line['product_id'])
+                ->selectRaw("
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN type = 'in' THEN quantity
+                            ELSE -quantity
+                        END
+                    ),0) as stock
+                ")
+                ->value('stock');
+
+            if ($stock < $line['quantity']) {
+                return back()->with('error', 'Not enough stock');
+            }
+        }
+
         $model = SaleDelivery::create(
             $request->only('customer_id', 'delivery_date', 'status')
         );
@@ -38,13 +57,15 @@ class SaleDeliveryController extends Controller
 
             $model->lines()->create($line);
 
-            // STOCK OUT
             StockMovement::create([
                 'product_id' => $line['product_id'],
-                'quantity' => $line['quantity'],
+                'warehouse_id' => 1,
                 'type' => 'out',
-                'reference_type' => 'sales_delivery',
-                'reference_id' => $model->id,
+                'quantity' => $line['quantity'],
+                'reason' => 'sales_delivery',
+                'date' => now(),
+                'source_type' => SaleDelivery::class,
+                'source_id' => $model->id,
             ]);
         }
 
@@ -70,11 +91,30 @@ class SaleDeliveryController extends Controller
     {
         $model = SaleDelivery::findOrFail($id);
 
+        // CHECK STOCK AGAIN
+        foreach ($request->lines as $line) {
+
+            $stock = StockMovement::where('product_id', $line['product_id'])
+                ->selectRaw("
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN type = 'in' THEN quantity
+                            ELSE -quantity
+                        END
+                    ),0) as stock
+                ")
+                ->value('stock');
+
+            if ($stock < $line['quantity']) {
+                return back()->with('error', 'Not enough stock');
+            }
+        }
+
         $model->update($request->only('customer_id', 'delivery_date', 'status'));
 
         // DELETE OLD STOCK
-        StockMovement::where('reference_type', 'sales_delivery')
-            ->where('reference_id', $model->id)
+        StockMovement::where('source_type', SaleDelivery::class)
+            ->where('source_id', $model->id)
             ->delete();
 
         $model->lines()->delete();
@@ -83,13 +123,15 @@ class SaleDeliveryController extends Controller
 
             $model->lines()->create($line);
 
-            // RECREATE STOCK OUT
             StockMovement::create([
                 'product_id' => $line['product_id'],
-                'quantity' => $line['quantity'],
+                'warehouse_id' => 1,
                 'type' => 'out',
-                'reference_type' => 'sales_delivery',
-                'reference_id' => $model->id,
+                'quantity' => $line['quantity'],
+                'reason' => 'sales_delivery',
+                'date' => now(),
+                'source_type' => SaleDelivery::class,
+                'source_id' => $model->id,
             ]);
         }
 
