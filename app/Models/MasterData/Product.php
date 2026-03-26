@@ -32,4 +32,18 @@ class Product extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+
+    public function getCurrentStockAttribute()
+    {
+        return \App\Models\MasterData\StockMovement::where('product_id', $this->id)
+            ->selectRaw("
+            COALESCE(SUM(
+                CASE 
+                    WHEN type = 'in' THEN quantity
+                    WHEN type = 'out' THEN -quantity
+                END
+            ),0) as stock
+        ")
+            ->value('stock');
+    }
 }
