@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseOrder;
+use App\Models\MasterData\StockMovement;
 
 class PurchaseReceiptController extends Controller
 {
@@ -12,7 +13,6 @@ class PurchaseReceiptController extends Controller
     {
         $source = null;
 
-        // Optionally copy lines from Purchase Order
         if ($request->source_type == 'purchase_order') {
             $source = PurchaseOrder::with('lines.product')->find($request->source_id);
         }
@@ -30,16 +30,23 @@ class PurchaseReceiptController extends Controller
 
     public function store(Request $request)
     {
-        $model = PurchaseReceipt::create($request->only('supplier_id', 'receipt_date', 'status'));
-
-        $total = 0;
+        $model = PurchaseReceipt::create(
+            $request->only('supplier_id', 'receipt_date', 'status')
+        );
 
         foreach ($request->lines as $line) {
-            $total += ($line['quantity'] ?? 0) * ($line['unit_price'] ?? 0);
-            $model->lines()->create($line);
-        }
 
-        $model->update(['total_amount' => $total]);
+            $model->lines()->create($line);
+
+            // STOCK IN
+            StockMovement::create([
+                'product_id' => $line['product_id'],
+                'quantity' => $line['quantity'],
+                'type' => 'in',
+                'reference_type' => 'purchase_receipt',
+                'reference_id' => $model->id,
+            ]);
+        }
 
         return redirect()->route('purchase-receipts.index');
     }
@@ -65,16 +72,26 @@ class PurchaseReceiptController extends Controller
 
         $model->update($request->only('supplier_id', 'receipt_date', 'status'));
 
+        // DELETE OLD STOCK
+        StockMovement::where('reference_type', 'purchase_receipt')
+            ->where('reference_id', $model->id)
+            ->delete();
+
         $model->lines()->delete();
 
-        $total = 0;
-
         foreach ($request->lines as $line) {
-            $total += ($line['quantity'] ?? 0) * ($line['unit_price'] ?? 0);
-            $model->lines()->create($line);
-        }
 
-        $model->update(['total_amount' => $total]);
+            $model->lines()->create($line);
+
+            // RECREATE STOCK IN
+            StockMovement::create([
+                'product_id' => $line['product_id'],
+                'quantity' => $line['quantity'],
+                'type' => 'in',
+                'reference_type' => 'purchase_receipt',
+                'reference_id' => $model->id,
+            ]);
+        }
 
         return redirect()->route('purchase-receipts.index');
     }
