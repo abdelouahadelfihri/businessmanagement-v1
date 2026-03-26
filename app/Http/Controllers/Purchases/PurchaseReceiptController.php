@@ -38,13 +38,15 @@ class PurchaseReceiptController extends Controller
 
             $model->lines()->create($line);
 
-            // STOCK IN
             StockMovement::create([
                 'product_id' => $line['product_id'],
-                'quantity' => $line['quantity'],
+                'warehouse_id' => 1, // TODO: dynamic later
                 'type' => 'in',
-                'reference_type' => 'purchase_receipt',
-                'reference_id' => $model->id,
+                'quantity' => $line['quantity'],
+                'reason' => 'purchase_receipt',
+                'date' => now(),
+                'source_type' => PurchaseReceipt::class,
+                'source_id' => $model->id,
             ]);
         }
 
@@ -73,8 +75,8 @@ class PurchaseReceiptController extends Controller
         $model->update($request->only('supplier_id', 'receipt_date', 'status'));
 
         // DELETE OLD STOCK
-        StockMovement::where('reference_type', 'purchase_receipt')
-            ->where('reference_id', $model->id)
+        StockMovement::where('source_type', PurchaseReceipt::class)
+            ->where('source_id', $model->id)
             ->delete();
 
         $model->lines()->delete();
@@ -83,13 +85,15 @@ class PurchaseReceiptController extends Controller
 
             $model->lines()->create($line);
 
-            // RECREATE STOCK IN
             StockMovement::create([
                 'product_id' => $line['product_id'],
-                'quantity' => $line['quantity'],
+                'warehouse_id' => 1,
                 'type' => 'in',
-                'reference_type' => 'purchase_receipt',
-                'reference_id' => $model->id,
+                'quantity' => $line['quantity'],
+                'reason' => 'purchase_receipt',
+                'date' => now(),
+                'source_type' => PurchaseReceipt::class,
+                'source_id' => $model->id,
             ]);
         }
 
