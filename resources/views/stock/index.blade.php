@@ -1,4 +1,5 @@
 {{-- resources/views/stock/index.blade.php --}}
+{{-- Done --}}
 
 @extends('layouts.app')
 

@@ -33,21 +33,17 @@ class Product extends Model
         return $this->belongsTo(Unit::class);
     }
 
-    // App\Models\MasterData\Product.php
+    public function warehouseStocks()
+    {
+        return $this->hasMany(WarehouseStock::class);
+    }
 
     public function getCurrentStockAttribute()
     {
-        return \App\Models\MasterData\StockMovement::where('product_id', $this->id)
-            ->selectRaw("
-            COALESCE(SUM(
-                CASE 
-                    WHEN type = 'in' THEN quantity
-                    ELSE -quantity
-                END
-            ),0) as stock
-        ")
-            ->value('stock');
+        return $this->warehouseStocks()->sum('quantity');
     }
 }
+
+
 
 // Done
