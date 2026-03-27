@@ -8,17 +8,12 @@
 
         <h3>Stock Overview</h3>
 
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Product</th>
-                    <th width="150">Stock</th>
+                    <th>Total</th>
+                    <th>Details</th>
                 </tr>
             </thead>
 
@@ -27,6 +22,13 @@
                     <tr>
                         <td>{{ $product->name }}</td>
                         <td><strong>{{ $product->current_stock }}</strong></td>
+                        <td>
+                            @foreach($product->warehouseStocks as $stock)
+                                <div>
+                                    {{ $stock->warehouse->name }} : {{ $stock->quantity }}
+                                </div>
+                            @endforeach
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
