@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Sales\SaleDelivery;
 use App\Models\Sales\SaleOrder;
 use App\Models\MasterData\StockMovement;
-
+use App\Models\MasterData\WarehouseStock;
 class SaleDeliveryController extends Controller
 {
     public function create(Request $request)
@@ -30,19 +30,11 @@ class SaleDeliveryController extends Controller
 
     public function store(Request $request)
     {
-        // CHECK STOCK
         foreach ($request->lines as $line) {
 
-            $stock = StockMovement::where('product_id', $line['product_id'])
-                ->selectRaw("
-                    COALESCE(SUM(
-                        CASE 
-                            WHEN type = 'in' THEN quantity
-                            ELSE -quantity
-                        END
-                    ),0) as stock
-                ")
-                ->value('stock');
+            $stock = WarehouseStock::where('product_id', $line['product_id'])
+                ->where('warehouse_id', 1)
+                ->value('quantity') ?? 0;
 
             if ($stock < $line['quantity']) {
                 return back()->with('error', 'Not enough stock');
@@ -67,6 +59,8 @@ class SaleDeliveryController extends Controller
                 'source_type' => SaleDelivery::class,
                 'source_id' => $model->id,
             ]);
+
+            $this->updateStock($line['product_id'], 1, $line['quantity'], 'out');
         }
 
         return redirect()->route('sales-deliveries.index');
@@ -91,28 +85,11 @@ class SaleDeliveryController extends Controller
     {
         $model = SaleDelivery::findOrFail($id);
 
-        // CHECK STOCK AGAIN
-        foreach ($request->lines as $line) {
-
-            $stock = StockMovement::where('product_id', $line['product_id'])
-                ->selectRaw("
-                    COALESCE(SUM(
-                        CASE 
-                            WHEN type = 'in' THEN quantity
-                            ELSE -quantity
-                        END
-                    ),0) as stock
-                ")
-                ->value('stock');
-
-            if ($stock < $line['quantity']) {
-                return back()->with('error', 'Not enough stock');
-            }
+        // reverse old stock
+        foreach ($model->lines as $line) {
+            $this->updateStock($line->product_id, 1, $line->quantity, 'in');
         }
 
-        $model->update($request->only('customer_id', 'delivery_date', 'status'));
-
-        // DELETE OLD STOCK
         StockMovement::where('source_type', SaleDelivery::class)
             ->where('source_id', $model->id)
             ->delete();
@@ -133,6 +110,8 @@ class SaleDeliveryController extends Controller
                 'source_type' => SaleDelivery::class,
                 'source_id' => $model->id,
             ]);
+
+            $this->updateStock($line['product_id'], 1, $line['quantity'], 'out');
         }
 
         return redirect()->route('sales-deliveries.index');
