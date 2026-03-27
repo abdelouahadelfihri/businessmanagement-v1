@@ -4,7 +4,7 @@ namespace App\Http\Controllers\MasterData;
 
 use App\Models\MasterData\Product;
 use App\Http\Controllers\Controller;
-class StockMovementController extends Controller
+class StockController extends Controller
 {
     public function index()
     {
