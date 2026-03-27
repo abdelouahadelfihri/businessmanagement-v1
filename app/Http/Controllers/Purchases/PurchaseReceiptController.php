@@ -76,9 +76,12 @@ class PurchaseReceiptController extends Controller
     {
         $model = PurchaseReceipt::findOrFail($id);
 
-        $model->update($request->only('supplier_id', 'receipt_date', 'status'));
+        // 🔥 reverse old stock first
+        foreach ($model->lines as $line) {
+            $this->updateStock($line->product_id, 1, $line->quantity, 'out');
+        }
 
-        // DELETE OLD STOCK
+        // delete movements
         StockMovement::where('source_type', PurchaseReceipt::class)
             ->where('source_id', $model->id)
             ->delete();
@@ -99,6 +102,8 @@ class PurchaseReceiptController extends Controller
                 'source_type' => PurchaseReceipt::class,
                 'source_id' => $model->id,
             ]);
+
+            $this->updateStock($line['product_id'], 1, $line['quantity'], 'in');
         }
 
         return redirect()->route('purchase-receipts.index');
