@@ -38,9 +38,10 @@ class PurchaseReceiptController extends Controller
 
             $model->lines()->create($line);
 
+            // STOCK MOVEMENT
             StockMovement::create([
                 'product_id' => $line['product_id'],
-                'warehouse_id' => 1, // TODO: dynamic later
+                'warehouse_id' => 1,
                 'type' => 'in',
                 'quantity' => $line['quantity'],
                 'reason' => 'purchase_receipt',
@@ -48,6 +49,9 @@ class PurchaseReceiptController extends Controller
                 'source_type' => PurchaseReceipt::class,
                 'source_id' => $model->id,
             ]);
+
+            // UPDATE STOCK
+            $this->updateStock($line['product_id'], 1, $line['quantity'], 'in');
         }
 
         return redirect()->route('purchase-receipts.index');
