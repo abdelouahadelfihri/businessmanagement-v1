@@ -99,4 +99,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('units/ajax-store', [UnitController::class, 'ajaxStore'])->name('units.ajaxStore');
     Route::post('locations/ajax-store', [UnitController::class, 'ajaxStore'])->name('locations.ajaxStore');
 
+    Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
+    Route::resource('purchase-receipts', PurchaseReceiptController::class);
+    Route::resource('sales-deliveries', SalesDeliveryController::class);
 });
