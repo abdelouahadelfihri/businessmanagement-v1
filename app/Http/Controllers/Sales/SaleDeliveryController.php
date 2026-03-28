@@ -33,6 +33,7 @@ class SaleDeliveryController extends Controller
 
     public function store(Request $request)
     {
+        // 🔴 STEP 1: CHECK STOCK
         foreach ($request->lines as $line) {
 
             $stock = WarehouseStock::where('product_id', $line['product_id'])
@@ -44,14 +45,17 @@ class SaleDeliveryController extends Controller
             }
         }
 
+        // 🟢 STEP 2: CREATE DOCUMENT
         $model = SaleDelivery::create(
             $request->only('customer_id', 'delivery_date', 'status')
         );
 
         foreach ($request->lines as $line) {
 
+            // create line
             $model->lines()->create($line);
 
+            // create movement
             StockMovement::create([
                 'product_id' => $line['product_id'],
                 'warehouse_id' => 1,
@@ -63,7 +67,13 @@ class SaleDeliveryController extends Controller
                 'source_id' => $model->id,
             ]);
 
-            $this->updateStock($line['product_id'], 1, $line['quantity'], 'out');
+            // update stock
+            $this->updateStock(
+                $line['product_id'],
+                1,
+                $line['quantity'],
+                'out'
+            );
         }
 
         return redirect()->route('sales-deliveries.index');
@@ -86,19 +96,45 @@ class SaleDeliveryController extends Controller
 
     public function update(Request $request, $id)
     {
-        $model = SaleDelivery::findOrFail($id);
+        $model = SaleDelivery::with('lines')->findOrFail($id);
 
-        // reverse old stock
+        // 🔴 STEP 1: REVERSE OLD STOCK
         foreach ($model->lines as $line) {
-            $this->updateStock($line->product_id, 1, $line->quantity, 'in');
+
+            $this->updateStock(
+                $line->product_id,
+                1,
+                $line->quantity,
+                'in' // reverse OUT
+            );
         }
 
+        // 🔴 STEP 2: DELETE OLD MOVEMENTS
         StockMovement::where('source_type', SaleDelivery::class)
             ->where('source_id', $model->id)
             ->delete();
 
+        // 🔴 STEP 3: DELETE OLD LINES
         $model->lines()->delete();
 
+        // 🔴 STEP 4: CHECK NEW STOCK
+        foreach ($request->lines as $line) {
+
+            $stock = WarehouseStock::where('product_id', $line['product_id'])
+                ->where('warehouse_id', 1)
+                ->value('quantity') ?? 0;
+
+            if ($stock < $line['quantity']) {
+                return back()->with('error', 'Not enough stock');
+            }
+        }
+
+        // 🔴 STEP 5: UPDATE HEADER
+        $model->update(
+            $request->only('customer_id', 'delivery_date', 'status')
+        );
+
+        // 🟢 STEP 6: RECREATE
         foreach ($request->lines as $line) {
 
             $model->lines()->create($line);
@@ -114,7 +150,12 @@ class SaleDeliveryController extends Controller
                 'source_id' => $model->id,
             ]);
 
-            $this->updateStock($line['product_id'], 1, $line['quantity'], 'out');
+            $this->updateStock(
+                $line['product_id'],
+                1,
+                $line['quantity'],
+                'out'
+            );
         }
 
         return redirect()->route('sales-deliveries.index');
