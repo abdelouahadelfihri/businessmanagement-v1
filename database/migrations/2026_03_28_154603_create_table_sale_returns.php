@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('sale_returns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_order_id')->constrained('sale_orders');
+            $table->foreignId('sales_order_id')->constrained('sales_orders');
             $table->foreignId('customer_id')->constrained('customers');
             $table->string('return_number')->unique();
             $table->date('date');
