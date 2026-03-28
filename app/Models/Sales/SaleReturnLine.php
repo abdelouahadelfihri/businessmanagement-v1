@@ -10,7 +10,7 @@ class SaleReturnLine extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sales_return_id',
+        'sale_return_id',
         'product_id',
         'quantity',
         'unit_price',
