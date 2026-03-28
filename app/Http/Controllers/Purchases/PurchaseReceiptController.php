@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseOrder;
 use App\Models\MasterData\StockMovement;
+use App\Traits\StockHelper;
 
 class PurchaseReceiptController extends Controller
 {
