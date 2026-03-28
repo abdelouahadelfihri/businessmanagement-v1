@@ -39,9 +39,10 @@ class PurchaseReceiptController extends Controller
 
         foreach ($request->lines as $line) {
 
+            // 1. create line
             $model->lines()->create($line);
 
-            // STOCK MOVEMENT
+            // 2. create stock movement
             StockMovement::create([
                 'product_id' => $line['product_id'],
                 'warehouse_id' => 1,
@@ -53,8 +54,13 @@ class PurchaseReceiptController extends Controller
                 'source_id' => $model->id,
             ]);
 
-            // UPDATE STOCK
-            $this->updateStock($line['product_id'], 1, $line['quantity'], 'in');
+            // 3. update stock
+            $this->updateStock(
+                $line['product_id'],
+                1,
+                $line['quantity'],
+                'in'
+            );
         }
 
         return redirect()->route('purchase-receipts.index');
