@@ -7,8 +7,11 @@ use App\Models\Sales\SaleDelivery;
 use App\Models\Sales\SaleOrder;
 use App\Models\MasterData\StockMovement;
 use App\Models\MasterData\WarehouseStock;
+use App\Traits\StockHelper;
 class SaleDeliveryController extends Controller
 {
+
+    use StockHelper;
     public function create(Request $request)
     {
         $source = null;
