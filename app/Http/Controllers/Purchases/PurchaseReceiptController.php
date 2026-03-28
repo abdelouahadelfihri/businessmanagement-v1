@@ -10,6 +10,8 @@ use App\Traits\StockHelper;
 
 class PurchaseReceiptController extends Controller
 {
+
+    use StockHelper;
     public function create(Request $request)
     {
         $source = null;
