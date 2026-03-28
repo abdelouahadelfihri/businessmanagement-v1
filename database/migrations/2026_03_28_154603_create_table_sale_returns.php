@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->foreignId('customer_id')->constrained('customers');
             $table->string('return_number')->unique();
             $table->date('date');
-            $table->foreignId('warehouse_id')->constrained('warehouses');
+            $table->unsignedInteger('warehouse_id'); // matches warehouses.id
+            $table->foreign('warehouse_id')->references('id')->on('warehouses');
             $table->string('reason')->nullable();
             $table->decimal('subtotal', 12, 2)->default(0);
             $table->decimal('tax', 12, 2)->default(0);
