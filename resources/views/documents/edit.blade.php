@@ -13,6 +13,18 @@
             <div class="row mb-3">
 
                 <div class="col-md-4">
+                    <label>Warehouse</label>
+                    <select name="warehouse_id" class="form-control" required>
+                        <option value="">-- Select Warehouse --</option>
+                        @foreach($warehouses as $warehouse)
+                            <option value="{{ $warehouse->id }}" {{ isset($model) && $model->warehouse_id == $warehouse->id ? 'selected' : '' }}>
+                                {{ $warehouse->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-4">
                     <label>{{ $partyLabel }}</label>
                     <div class="input-group">
                         <input type="hidden" name="{{ $partyField }}" value="{{ $model->$partyField }}">
@@ -113,35 +125,35 @@
             let name = $(this).data('name');
 
             let row = `
-                <tr>
-                    <td>
-                        ${name}
-                        <input type="hidden"
-                               name="lines[${lineIndex}][product_id]"
-                               class="product-id"
-                               value="${id}">
-                    </td>
+                        <tr>
+                            <td>
+                                ${name}
+                                <input type="hidden"
+                                       name="lines[${lineIndex}][product_id]"
+                                       class="product-id"
+                                       value="${id}">
+                            </td>
 
-                    <td>
-                        <input type="number"
-                               name="lines[${lineIndex}][quantity]"
-                               class="form-control" value="1">
-                    </td>
+                            <td>
+                                <input type="number"
+                                       name="lines[${lineIndex}][quantity]"
+                                       class="form-control" value="1">
+                            </td>
 
-                    @if($withPrice)
-                        <td>
-                            <input type="number"
-                                   name="lines[${lineIndex}][unit_price]"
-                                   class="form-control">
-                        </td>
-                    @endif
+                            @if($withPrice)
+                                <td>
+                                    <input type="number"
+                                           name="lines[${lineIndex}][unit_price]"
+                                           class="form-control">
+                                </td>
+                            @endif
 
-                    <td>
-                        <button type="button"
-                                class="btn btn-danger btn-sm remove-line">×</button>
-                    </td>
-                </tr>
-            `;
+                            <td>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm remove-line">×</button>
+                            </td>
+                        </tr>
+                    `;
 
             $('#lines-table tbody').append(row);
             lineIndex++;
