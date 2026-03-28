@@ -10,7 +10,19 @@
 
             {{-- HEADER --}}
             <div class="row mb-3">
-
+                {{-- Warehouse --}}
+                <div class="col-md-4">
+                    <label>Warehouse</label>
+                    <select name="warehouse_id" class="form-control" required>
+                        <option value="">-- Select Warehouse --</option>
+                        @foreach($warehouses as $warehouse)
+                            <option value="{{ $warehouse->id }}"
+                                {{ isset($model) && $model->warehouse_id == $warehouse->id ? 'selected' : '' }}>
+                                {{ $warehouse->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
                 {{-- Supplier / Customer --}}
                 <div class="col-md-4">
                     <label>{{ $partyLabel }}</label>
