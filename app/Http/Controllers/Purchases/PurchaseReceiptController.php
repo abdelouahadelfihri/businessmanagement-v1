@@ -7,7 +7,7 @@ use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseOrder;
 use App\Models\MasterData\StockMovement;
 use App\Traits\StockHelper;
-
+use Illuminate\Support\Facades\DB;
 class PurchaseReceiptController extends Controller
 {
 
@@ -33,35 +33,39 @@ class PurchaseReceiptController extends Controller
 
     public function store(Request $request)
     {
-        $model = PurchaseReceipt::create(
-            $request->only('supplier_id', 'receipt_date', 'status')
-        );
+        DB::transaction(function () use ($request) {
 
-        foreach ($request->lines as $line) {
-
-            // 1. create line
-            $model->lines()->create($line);
-
-            // 2. create stock movement
-            StockMovement::create([
-                'product_id' => $line['product_id'],
-                'warehouse_id' => 1,
-                'type' => 'in',
-                'quantity' => $line['quantity'],
-                'reason' => 'purchase_receipt',
-                'date' => now(),
-                'source_type' => PurchaseReceipt::class,
-                'source_id' => $model->id,
-            ]);
-
-            // 3. update stock
-            $this->updateStock(
-                $line['product_id'],
-                1,
-                $line['quantity'],
-                'in'
+            $model = PurchaseReceipt::create(
+                $request->only('supplier_id', 'receipt_date', 'status')
             );
-        }
+
+            foreach ($request->lines as $line) {
+
+                // line
+                $model->lines()->create($line);
+
+                // movement
+                StockMovement::create([
+                    'product_id' => $line['product_id'],
+                    'warehouse_id' => 1,
+                    'type' => 'in',
+                    'quantity' => $line['quantity'],
+                    'reason' => 'purchase_receipt',
+                    'date' => now(),
+                    'source_type' => PurchaseReceipt::class,
+                    'source_id' => $model->id,
+                ]);
+
+                // stock update
+                $this->updateStock(
+                    $line['product_id'],
+                    1,
+                    $line['quantity'],
+                    'in'
+                );
+            }
+
+        });
 
         return redirect()->route('purchase-receipts.index');
     }
@@ -83,55 +87,58 @@ class PurchaseReceiptController extends Controller
 
     public function update(Request $request, $id)
     {
-        $model = PurchaseReceipt::with('lines')->findOrFail($id);
+        DB::transaction(function () use ($request, $id) {
 
-        // 🔴 STEP 1: REVERSE OLD STOCK
-        foreach ($model->lines as $line) {
+            $model = PurchaseReceipt::with('lines')->findOrFail($id);
 
-            $this->updateStock(
-                $line->product_id,
-                1,
-                $line->quantity,
-                'out' // reverse IN
+            // 🔴 reverse old stock
+            foreach ($model->lines as $line) {
+                $this->updateStock(
+                    $line->product_id,
+                    1,
+                    $line->quantity,
+                    'out'
+                );
+            }
+
+            // delete movements
+            StockMovement::where('source_type', PurchaseReceipt::class)
+                ->where('source_id', $model->id)
+                ->delete();
+
+            // delete lines
+            $model->lines()->delete();
+
+            // update header
+            $model->update(
+                $request->only('supplier_id', 'receipt_date', 'status')
             );
-        }
 
-        // 🔴 STEP 2: DELETE OLD MOVEMENTS
-        StockMovement::where('source_type', PurchaseReceipt::class)
-            ->where('source_id', $model->id)
-            ->delete();
+            // recreate
+            foreach ($request->lines as $line) {
 
-        // 🔴 STEP 3: DELETE OLD LINES
-        $model->lines()->delete();
+                $model->lines()->create($line);
 
-        // 🔴 STEP 4: UPDATE HEADER
-        $model->update(
-            $request->only('supplier_id', 'receipt_date', 'status')
-        );
+                StockMovement::create([
+                    'product_id' => $line['product_id'],
+                    'warehouse_id' => 1,
+                    'type' => 'in',
+                    'quantity' => $line['quantity'],
+                    'reason' => 'purchase_receipt',
+                    'date' => now(),
+                    'source_type' => PurchaseReceipt::class,
+                    'source_id' => $model->id,
+                ]);
 
-        // 🟢 STEP 5: RECREATE EVERYTHING
-        foreach ($request->lines as $line) {
+                $this->updateStock(
+                    $line['product_id'],
+                    1,
+                    $line['quantity'],
+                    'in'
+                );
+            }
 
-            $model->lines()->create($line);
-
-            StockMovement::create([
-                'product_id' => $line['product_id'],
-                'warehouse_id' => 1,
-                'type' => 'in',
-                'quantity' => $line['quantity'],
-                'reason' => 'purchase_receipt',
-                'date' => now(),
-                'source_type' => PurchaseReceipt::class,
-                'source_id' => $model->id,
-            ]);
-
-            $this->updateStock(
-                $line['product_id'],
-                1,
-                $line['quantity'],
-                'in'
-            );
-        }
+        });
 
         return redirect()->route('purchase-receipts.index');
     }
