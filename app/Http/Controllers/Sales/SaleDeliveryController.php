@@ -3,32 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Sales\SaleDelivery;
-use App\Models\Sales\SaleOrder;
 use App\Models\MasterData\StockMovement;
 use App\Models\MasterData\WarehouseStock;
+use App\Models\MasterData\Warehouse;
 use App\Traits\StockHelper;
-use Illuminate\Support\Facades\DB;
+
 class SaleDeliveryController extends Controller
 {
-
     use StockHelper;
-    public function create(Request $request)
-    {
-        $source = null;
 
-        if ($request->source_type == 'sales_order') {
-            $source = SaleOrder::with('lines.product')->find($request->source_id);
-        }
+    public function create()
+    {
+        $warehouses = Warehouse::all();
 
         return view('documents.create', [
             'route' => route('sales-deliveries.store'),
+            'warehouses' => $warehouses,
             'partyLabel' => 'Customer',
             'partyField' => 'customer_id',
             'withPrice' => false,
             'dateField' => 'delivery_date',
             'title' => 'Create Sales Delivery',
-            'source' => $source
         ]);
     }
 
@@ -36,33 +33,31 @@ class SaleDeliveryController extends Controller
     {
         DB::transaction(function () use ($request) {
 
-            // 🔴 STEP 1: CHECK STOCK
+            $warehouseId = $request->warehouse_id;
+
+            // 🔴 check stock in selected warehouse
             foreach ($request->lines as $line) {
 
                 $stock = WarehouseStock::where('product_id', $line['product_id'])
-                    ->where('warehouse_id', 1)
+                    ->where('warehouse_id', $warehouseId)
                     ->value('quantity') ?? 0;
 
                 if ($stock < $line['quantity']) {
-                    throw new \Exception('Not enough stock for product ID: ' . $line['product_id']);
+                    throw new \Exception('Not enough stock');
                 }
             }
 
-            // 🟢 STEP 2: CREATE DOCUMENT
             $model = SaleDelivery::create(
-                $request->only('customer_id', 'delivery_date', 'status')
+                $request->only('customer_id', 'delivery_date', 'status', 'warehouse_id')
             );
 
-            // 🟢 STEP 3: CREATE LINES + MOVEMENTS + UPDATE STOCK
             foreach ($request->lines as $line) {
 
-                // line
                 $model->lines()->create($line);
 
-                // movement
                 StockMovement::create([
                     'product_id' => $line['product_id'],
-                    'warehouse_id' => 1,
+                    'warehouse_id' => $warehouseId,
                     'type' => 'out',
                     'quantity' => $line['quantity'],
                     'reason' => 'sales_delivery',
@@ -71,10 +66,9 @@ class SaleDeliveryController extends Controller
                     'source_id' => $model->id,
                 ]);
 
-                // stock update
                 $this->updateStock(
                     $line['product_id'],
-                    1,
+                    $warehouseId,
                     $line['quantity'],
                     'out'
                 );
@@ -82,17 +76,18 @@ class SaleDeliveryController extends Controller
 
         });
 
-        return redirect()->route('sales-deliveries.index')
-            ->with('success', 'Delivery created successfully');
+        return redirect()->route('sales-deliveries.index');
     }
 
     public function edit($id)
     {
         $model = SaleDelivery::with('lines.product', 'customer')->findOrFail($id);
+        $warehouses = Warehouse::all();
 
         return view('documents.edit', [
             'model' => $model,
             'route' => route('sales-deliveries.update', $id),
+            'warehouses' => $warehouses,
             'partyLabel' => 'Customer',
             'partyField' => 'customer_id',
             'withPrice' => false,
@@ -107,50 +102,49 @@ class SaleDeliveryController extends Controller
 
             $model = SaleDelivery::with('lines')->findOrFail($id);
 
-            // 🔴 STEP 1: REVERSE OLD STOCK
-            foreach ($model->lines as $line) {
+            $newWarehouse = $request->warehouse_id;
+            $oldWarehouse = $model->warehouse_id;
 
+            // 🔴 reverse from OLD warehouse
+            foreach ($model->lines as $line) {
                 $this->updateStock(
                     $line->product_id,
-                    1,
+                    $oldWarehouse,
                     $line->quantity,
-                    'in' // reverse OUT
+                    'in'
                 );
             }
 
-            // 🔴 STEP 2: DELETE OLD MOVEMENTS
             StockMovement::where('source_type', SaleDelivery::class)
                 ->where('source_id', $model->id)
                 ->delete();
 
-            // 🔴 STEP 3: DELETE OLD LINES
             $model->lines()->delete();
 
-            // 🔴 STEP 4: CHECK NEW STOCK
+            // 🔴 check stock in NEW warehouse
             foreach ($request->lines as $line) {
 
                 $stock = WarehouseStock::where('product_id', $line['product_id'])
-                    ->where('warehouse_id', 1)
+                    ->where('warehouse_id', $newWarehouse)
                     ->value('quantity') ?? 0;
 
                 if ($stock < $line['quantity']) {
-                    throw new \Exception('Not enough stock for product ID: ' . $line['product_id']);
+                    throw new \Exception('Not enough stock');
                 }
             }
 
-            // 🔴 STEP 5: UPDATE HEADER
             $model->update(
-                $request->only('customer_id', 'delivery_date', 'status')
+                $request->only('customer_id', 'delivery_date', 'status', 'warehouse_id')
             );
 
-            // 🟢 STEP 6: RECREATE EVERYTHING
+            // 🟢 apply to NEW warehouse
             foreach ($request->lines as $line) {
 
                 $model->lines()->create($line);
 
                 StockMovement::create([
                     'product_id' => $line['product_id'],
-                    'warehouse_id' => 1,
+                    'warehouse_id' => $newWarehouse,
                     'type' => 'out',
                     'quantity' => $line['quantity'],
                     'reason' => 'sales_delivery',
@@ -161,7 +155,7 @@ class SaleDeliveryController extends Controller
 
                 $this->updateStock(
                     $line['product_id'],
-                    1,
+                    $newWarehouse,
                     $line['quantity'],
                     'out'
                 );
@@ -169,9 +163,6 @@ class SaleDeliveryController extends Controller
 
         });
 
-        return redirect()->route('sales-deliveries.index')
-            ->with('success', 'Delivery updated successfully');
+        return redirect()->route('sales-deliveries.index');
     }
 }
-
-// Done
