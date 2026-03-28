@@ -4,19 +4,19 @@ namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MasterData\Product;
-use App\Models\Sales\SaleDelivery;
 
-class DeliveryLine extends Model
+class SaleDeliveryLine extends Model
 {
     protected $fillable = [
-        'delivery_id',
+        'sale_delivery_id',
         'product_id',
         'quantity',
+        'unit_price',
     ];
 
     public function delivery()
     {
-        return $this->belongsTo(SaleDelivery::class);
+        return $this->belongsTo(SaleDelivery::class, 'sale_delivery_id');
     }
 
     public function product()
