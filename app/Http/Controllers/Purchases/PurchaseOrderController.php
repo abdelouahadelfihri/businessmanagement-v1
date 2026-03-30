@@ -18,12 +18,14 @@ class PurchaseOrderController extends Controller
             }
         }
 
-        return view('purchase_orders.create', [
-            'source' => $source,
+        return view('documents.create', [
             'route' => route('purchase-orders.store'),
             'partyLabel' => 'Supplier',
             'partyField' => 'supplier_id',
             'withPrice' => true,
+            'dateField' => 'date',
+            'title' => 'Create Purchase Order',
+            'source' => $source, // optional (nice feature 👍)
         ]);
     }
 
