@@ -69,12 +69,14 @@ class PurchaseOrderController extends Controller
     {
         $document = PurchaseOrder::with('lines.product')->findOrFail($id);
 
-        return view('purchase_orders.edit', [
+        return view('documents.edit', [
             'model' => $document,
             'route' => route('purchase-orders.update', $id),
             'partyLabel' => 'Supplier',
             'partyField' => 'supplier_id',
             'withPrice' => true,
+            'dateField' => 'date',
+            'title' => 'Edit Purchase Order',
         ]);
     }
 
