@@ -15,7 +15,7 @@ class StockMovement extends Model
         'product_id',
         'warehouse_id',
         'source_warehouse_id',
-        'type',
+        'type',!
         'quantity',
         'reason',
         'date',
