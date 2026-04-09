@@ -3,10 +3,11 @@
 @section('content')
     <div class="container mt-4">
 
-        <h1 class="mb-4">Purchase Orders</h1>
+        <h1 class="mb-4">Purchase Invoices</h1>
 
-        <a class="btn btn-primary mb-3" href="{{ route('purchase-orders.create') }}">
-            Create Purchase Order
+        {{-- Create normal invoice --}}
+        <a class="btn btn-primary mb-3" href="{{ route('purchase-invoices.create') }}">
+            Create Invoice
         </a>
 
         <div class="card shadow-sm">
@@ -17,60 +18,73 @@
                         <tr>
                             <th>ID</th>
                             <th>Supplier</th>
-                            <th>Request</th>
-                            <th>Order Date</th>
-                            <th width="150">Actions</th>
+                            <th>Date</th>
+                            <th>Source</th> {{-- 👈 important --}}
+                            <th>Status</th>
+                            <th width="200">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach($orders as $o)
+                        @foreach($invoices as $invoice)
                             <tr>
-                                <td>{{ $o->id }}</td>
-                                <td>{{ $o->supplier->name }}</td>
-                                <td>{{ $o->purchaseRequest->title }}</td>
-                                <td>{{ $o->order_date }}</td>
+                                <td>{{ $invoice->id }}</td>
+
+                                <td>{{ $invoice->supplier->name ?? '' }}</td>
+
+                                <td>{{ $invoice->date }}</td>
+
+                                {{-- SOURCE --}}
+                                <td>
+                                    @if($invoice->source_type === 'purchase_order')
+                                        PO #{{ $invoice->source_id }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-{{ $invoice->status == 'draft' ? 'secondary' : 'success' }}">
+                                        {{ ucfirst($invoice->status) }}
+                                    </span>
+                                </td>
+
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
 
+                                        {{-- EDIT --}}
                                         @if($invoice->status === 'draft')
-
-                                            <!-- Edit -->
                                             <a href="{{ route('purchase-invoices.edit', $invoice->id) }}"
-                                                class="btn btn-sm btn-warning" title="Edit Invoice">
-                                                <i class="bi bi-pencil-square"></i>
+                                                class="btn btn-sm btn-warning">
+                                                Edit
                                             </a>
+                                        @endif
 
-                                            <!-- Post -->
-                                            <form action="{{ route('purchase-invoices.post', $invoice->id) }}" method="POST"
-                                                style="display:inline;">
+                                        {{-- POST --}}
+                                        @if($invoice->status === 'draft')
+                                            <form action="{{ route('purchase-invoices.post', $invoice->id) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-success" title="Post Invoice">
-                                                    <i class="bi bi-check-circle"></i>
-                                                </button>
+                                                <button class="btn btn-sm btn-success">Post</button>
                                             </form>
+                                        @endif
 
-                                            <!-- Delete (draft only) -->
+                                        {{-- DELETE --}}
+                                        @if($invoice->status === 'draft')
                                             <form action="{{ route('purchase-invoices.destroy', $invoice->id) }}" method="POST"
-                                                style="display:inline;" onsubmit="return confirm('Delete this invoice?');">
+                                                onsubmit="return confirm('Delete this invoice?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Invoice">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                <button class="btn btn-sm btn-danger">Delete</button>
                                             </form>
+                                        @endif
 
-                                        @elseif($invoice->status === 'posted')
-
-                                            <!-- Cancel -->
+                                        {{-- CANCEL --}}
+                                        @if($invoice->status === 'posted')
                                             <form action="{{ route('purchase-invoices.cancel', $invoice->id) }}" method="POST"
-                                                style="display:inline;" onsubmit="return confirm('Cancel this invoice?');">
+                                                onsubmit="return confirm('Cancel this invoice?');">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Cancel Invoice">
-                                                    <i class="bi bi-x-circle"></i>
-                                                </button>
+                                                <button class="btn btn-sm btn-danger">Cancel</button>
                                             </form>
-
                                         @endif
 
                                     </div>
@@ -80,11 +94,12 @@
                     </tbody>
 
                 </table>
+
             </div>
         </div>
 
         <div class="mt-3">
-            {{ $orders->links() }}
+            {{ $invoices->links() }}
         </div>
 
     </div>
