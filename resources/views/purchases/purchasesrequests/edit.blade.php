@@ -18,7 +18,7 @@
                     <strong>PR Number:</strong> {{ $purchaseRequest->pr_number }}
                 </div>
 
-                <form action="{{ route('purchasesrequests.update', $purchaseRequest) }}" method="POST">
+                <form action="{{ route('purchasesrequests.update', $purchaseRequest) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -39,13 +39,16 @@
                                 Pick Supplier
                             </button>
                         </div>
+                        @error('supplier_id')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    {{-- PR Number (readonly or editable, depending on your logic) --}}
+                    {{-- Requested By (read-only, informational) --}}
                     <div class="mb-3">
-                        <label class="form-label">PR Number</label>
-                        <input type="text" name="pr_number" class="form-control"
-                            value="{{ old('pr_number', $purchaseRequest->pr_number) }}" readonly>
+                        <label class="form-label">Requested By</label>
+                        <input type="text" class="form-control"
+                            value="{{ optional($purchaseRequest->requestedBy)->name }}" readonly>
                     </div>
 
                     {{-- Description --}}
@@ -55,25 +58,98 @@
                             rows="3">{{ old('description', $purchaseRequest->description) }}</textarea>
                     </div>
 
-                    {{-- Date --}}
-                    <div class="mb-3">
-                        <label class="form-label">Date</label>
-                        <input type="date" name="date" class="form-control"
-                            value="{{ old('date', $purchaseRequest->date) }}" required>
+                    <div class="row">
+                        {{-- Date --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" class="form-control"
+                                value="{{ old('date', optional($purchaseRequest->date)->format('Y-m-d')) }}" required>
+                        </div>
+
+                        {{-- Expected Date --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Expected Date</label>
+                            <input type="date" name="expected_date" class="form-control"
+                                value="{{ old('expected_date', optional($purchaseRequest->expected_date)->format('Y-m-d')) }}">
+                        </div>
                     </div>
 
-                    {{-- Status --}}
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-control">
-                            <option value="pending" {{ $purchaseRequest->status == 'pending' ? 'selected' : '' }}>Pending
-                            </option>
-                            <option value="approved" {{ $purchaseRequest->status == 'approved' ? 'selected' : '' }}>Approved
-                            </option>
-                            <option value="rejected" {{ $purchaseRequest->status == 'rejected' ? 'selected' : '' }}>Rejected
-                            </option>
-                        </select>
+                    <div class="row">
+                        {{-- Priority --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-control" required>
+                                <option value="low" @selected(old('priority', $purchaseRequest->priority) == 'low')>Low</option>
+                                <option value="medium" @selected(old('priority', $purchaseRequest->priority) == 'medium')>Medium</option>
+                                <option value="high" @selected(old('priority', $purchaseRequest->priority) == 'high')>High</option>
+                                <option value="urgent" @selected(old('priority', $purchaseRequest->priority) == 'urgent')>Urgent</option>
+                            </select>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control" required>
+                                <option value="draft" @selected(old('status', $purchaseRequest->status) == 'draft')>Draft</option>
+                                <option value="pending" @selected(old('status', $purchaseRequest->status) == 'pending')>Pending</option>
+                                <option value="approved" @selected(old('status', $purchaseRequest->status) == 'approved')>Approved</option>
+                                <option value="rejected" @selected(old('status', $purchaseRequest->status) == 'rejected')>Rejected</option>
+                                <option value="ordered" @selected(old('status', $purchaseRequest->status) == 'ordered')>Ordered</option>
+                                <option value="completed" @selected(old('status', $purchaseRequest->status) == 'completed')>Completed</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <div class="row">
+                        {{-- Total Amount --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Amount</label>
+                            <input type="number" step="0.01" min="0" name="total_amount" class="form-control"
+                                value="{{ old('total_amount', $purchaseRequest->total_amount) }}">
+                        </div>
+
+                        {{-- Currency --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Currency</label>
+                            <input type="text" name="currency" class="form-control" maxlength="3"
+                                value="{{ old('currency', $purchaseRequest->currency) }}">
+                        </div>
+                    </div>
+
+                    {{-- Notes --}}
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-control" rows="2">{{ old('notes', $purchaseRequest->notes) }}</textarea>
+                    </div>
+
+                    {{-- Attachment --}}
+                    <div class="mb-3">
+                        <label class="form-label">Attachment</label>
+                        @if($purchaseRequest->attachment)
+                            <div class="mb-2">
+                                <a href="{{ Storage::url($purchaseRequest->attachment) }}" target="_blank">
+                                    View current attachment
+                                </a>
+                            </div>
+                        @endif
+                        <input type="file" name="attachment" class="form-control">
+                        <small class="text-muted">Leave empty to keep the current file.</small>
+                    </div>
+
+                    {{-- Rejection Reason (only relevant if status is rejected) --}}
+                    <div class="mb-3">
+                        <label class="form-label">Rejection Reason</label>
+                        <textarea name="rejection_reason" class="form-control"
+                            rows="2">{{ old('rejection_reason', $purchaseRequest->rejection_reason) }}</textarea>
+                    </div>
+
+                    {{-- Approval Info (read-only, informational) --}}
+                    @if($purchaseRequest->approved_by)
+                        <div class="alert alert-secondary">
+                            <strong>Approved/Reviewed by:</strong> {{ optional($purchaseRequest->approvedBy)->name }} <br>
+                            <strong>On:</strong> {{ optional($purchaseRequest->approved_at)->format('Y-m-d H:i') }}
+                        </div>
+                    @endif
 
                     <!-- Actions -->
                     <div class="d-flex justify-content-end">
@@ -88,4 +164,5 @@
             </div>
         </div>
     </div>
+    @include('modals.supplier-picker')
 @endsection

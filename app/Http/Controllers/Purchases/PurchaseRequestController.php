@@ -2,95 +2,161 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Purchases\PurchaseRequest;
+use App\Models\MasterData\Supplier;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PurchaseRequestController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = PurchaseRequest::with(['supplier', 'requestedBy', 'approvedBy']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('pr_number', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $purchaseRequests = $query->latest('date')->paginate(15);
+
+        return view('purchase-requests.index', compact('purchaseRequests'));
+    }
+
     public function create()
     {
-        return view('purchase_requests.create', [
-            'route' => route('purchase-requests.store'),
-            'partyLabel' => 'Supplier',
-            'partyField' => 'supplier_id',
-            'withPrice' => false, // no price for PR
-        ]);
+        $suppliers = Supplier::orderBy('name')->get();
+        return view('purchase-requests.create', compact('suppliers'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'supplier_id' => 'nullable|exists:suppliers,id',
+        $validated = $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'description' => 'nullable|string',
             'date' => 'required|date',
-            'status' => 'required',
-            'lines' => 'nullable|array',
-            'lines.*.product_id' => 'required_with:lines|exists:products,id',
-            'lines.*.quantity' => 'required_with:lines|numeric|min:1',
+            'expected_date' => 'nullable|date|after_or_equal:date',
+            'priority' => 'required|in:low,medium,high,urgent',
+            'total_amount' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|size:3',
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|max:10240', // 10MB
         ]);
 
-        $requestModel = PurchaseRequest::create([
-            'supplier_id' => $data['supplier_id'] ?? null,
-            'date' => $data['date'],
-            'status' => $data['status'],
-        ]);
+        $validated['pr_number'] = $this->generatePrNumber();
+        $validated['requested_by'] = Auth::id();
+        $validated['status'] = 'draft';
 
-        if (isset($data['lines'])) {
-            foreach ($data['lines'] as $line) {
-                $requestModel->lines()->create([
-                    'product_id' => $line['product_id'],
-                    'quantity' => $line['quantity'],
-                ]);
-            }
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('purchase-requests', 'public');
         }
 
-        return redirect()->route('purchase-requests.index')->with('success', 'Purchase Request created.');
+        $purchaseRequest = PurchaseRequest::create($validated);
+
+        return redirect()
+            ->route('purchase-requests.show', $purchaseRequest)
+            ->with('success', 'Purchase request created successfully.');
     }
 
-    public function edit($id)
+    public function show(PurchaseRequest $purchaseRequest)
     {
-        $model = PurchaseRequest::with('lines.product')->findOrFail($id);
-
-        return view('purchase_requests.edit', [
-            'model' => $model,
-            'route' => route('purchase-requests.update', $id),
-            'partyLabel' => 'Supplier',
-            'partyField' => 'supplier_id',
-            'withPrice' => false,
-        ]);
+        $purchaseRequest->load(['supplier', 'requestedBy', 'approvedBy', 'items']);
+        return view('purchase-requests.show', compact('purchaseRequest'));
     }
 
-    public function update(Request $request, $id)
+    public function edit(PurchaseRequest $purchaseRequest)
     {
-        $model = PurchaseRequest::findOrFail($id);
+        $suppliers = Supplier::orderBy('name')->get();
+        return view('purchase-requests.edit', compact('purchaseRequest', 'suppliers'));
+    }
 
-        $data = $request->validate([
-            'supplier_id' => 'nullable|exists:suppliers,id',
+    public function update(Request $request, PurchaseRequest $purchaseRequest)
+    {
+        $validated = $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'description' => 'nullable|string',
             'date' => 'required|date',
-            'status' => 'required',
-            'lines' => 'nullable|array',
-            'lines.*.product_id' => 'required_with:lines|exists:products,id',
-            'lines.*.quantity' => 'required_with:lines|numeric|min:1',
+            'expected_date' => 'nullable|date|after_or_equal:date',
+            'priority' => 'required|in:low,medium,high,urgent',
+            'total_amount' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|size:3',
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|max:10240',
         ]);
 
-        $model->update([
-            'supplier_id' => $data['supplier_id'] ?? null,
-            'date' => $data['date'],
-            'status' => $data['status'],
-        ]);
-
-        $model->lines()->delete();
-
-        if (isset($data['lines'])) {
-            foreach ($data['lines'] as $line) {
-                $model->lines()->create([
-                    'product_id' => $line['product_id'],
-                    'quantity' => $line['quantity'],
-                ]);
+        if ($request->hasFile('attachment')) {
+            if ($purchaseRequest->attachment) {
+                Storage::disk('public')->delete($purchaseRequest->attachment);
             }
+            $validated['attachment'] = $request->file('attachment')->store('purchase-requests', 'public');
         }
 
-        return redirect()->route('purchase-requests.index')->with('success', 'Purchase Request updated.');
+        $purchaseRequest->update($validated);
+
+        return redirect()
+            ->route('purchase-requests.show', $purchaseRequest)
+            ->with('success', 'Purchase request updated successfully.');
+    }
+
+    public function destroy(PurchaseRequest $purchaseRequest)
+    {
+        if ($purchaseRequest->attachment) {
+            Storage::disk('public')->delete($purchaseRequest->attachment);
+        }
+
+        $purchaseRequest->delete();
+
+        return redirect()
+            ->route('purchase-requests.index')
+            ->with('success', 'Purchase request deleted successfully.');
+    }
+
+    public function approve(PurchaseRequest $purchaseRequest)
+    {
+        $purchaseRequest->update([
+            'status' => 'approved',
+            'approved_by' => Auth::id(),
+            'approved_at' => now(),
+            'rejection_reason' => null,
+        ]);
+
+        return back()->with('success', 'Purchase request approved.');
+    }
+
+    public function reject(Request $request, PurchaseRequest $purchaseRequest)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $purchaseRequest->update([
+            'status' => 'rejected',
+            'approved_by' => Auth::id(),
+            'approved_at' => now(),
+            'rejection_reason' => $request->rejection_reason,
+        ]);
+
+        return back()->with('success', 'Purchase request rejected.');
+    }
+
+    private function generatePrNumber(): string
+    {
+        $year = now()->format('Y');
+        $lastPr = PurchaseRequest::whereYear('created_at', $year)->latest('id')->first();
+        $nextNumber = $lastPr ? ((int) substr($lastPr->pr_number, -5)) + 1 : 1;
+
+        return sprintf('PR-%s-%05d', $year, $nextNumber);
     }
 }
-
-//Done

@@ -4,6 +4,8 @@ namespace App\Models\Purchases;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Purchases\PurchaseRequestLine;
+use App\Models\Suppliers\Supplier;
 
 class PurchaseRequest extends Model
 {
@@ -66,6 +68,6 @@ class PurchaseRequest extends Model
             $model->pr_number = 'PR-' . date('Y') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
         });
     }
-    
+
 
 }
