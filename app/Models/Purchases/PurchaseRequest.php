@@ -14,11 +14,48 @@ class PurchaseRequest extends Model
 
     protected $fillable = [
         'supplier_id',
+        'requested_by',      // user who created the request
         'pr_number',
         'description',
         'date',
-        'status',
+        'expected_date',      // when items/services are needed
+        'priority',           // low, medium, high, urgent
+        'status',              // draft, pending, approved, rejected, ordered, completed
+        'total_amount',
+        'currency',
+        'approved_by',
+        'approved_at',
+        'rejection_reason',
+        'notes',
+        'attachment',
     ];
+
+    protected $casts = [
+        'date' => 'date',
+        'expected_date' => 'date',
+        'approved_at' => 'datetime',
+        'total_amount' => 'decimal:2',
+    ];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function requestedBy()
+    {
+        return $this->belongsTo(User::class, 'requested_by');
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function lines()
+    {
+        return $this->hasMany(PurchaseRequestLine::class);
+    }
     protected static function boot()
     {
         parent::boot();
@@ -29,10 +66,6 @@ class PurchaseRequest extends Model
             $model->pr_number = 'PR-' . date('Y') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
         });
     }
-    // Relationship to Supplier
-    public function supplier()
-    {
-        return $this->belongsTo(\App\Models\MasterData\Supplier::class);
-    }
+    
 
 }

@@ -66,6 +66,9 @@ Route::middleware(['web'])->group(function () {
                 'purchasesrequests' => 'purchaseRequest'
             ]);
 
+    Route::post('purchase-requests/{purchaseRequest}/approve', [PurchaseRequestController::class, 'approve'])->name('purchase-requests.approve');
+    Route::post('purchase-requests/{purchaseRequest}/reject', [PurchaseRequestController::class, 'reject'])->name('purchase-requests.reject');
+
     Route::resource('purchasesorders', PurchaseOrderController::class);
     Route::post('purchasesorders/{order}/post', [PurchaseOrderController::class, 'post'])->name('purchasesorders.post');
     Route::post('purchasesorders/{order}/cancel', [PurchaseOrderController::class, 'cancel'])->name('purchasesorders.cancel');
