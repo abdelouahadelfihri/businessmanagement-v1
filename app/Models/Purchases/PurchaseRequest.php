@@ -5,7 +5,8 @@ namespace App\Models\Purchases;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseRequestLine;
-use App\Models\Suppliers\Supplier;
+use App\Models\MasterData\Supplier;
+use App\Models\User;
 
 class PurchaseRequest extends Model
 {
