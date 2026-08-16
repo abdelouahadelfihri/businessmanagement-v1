@@ -33,7 +33,7 @@ class PurchaseRequestController extends Controller
 
         $purchaseRequests = $query->latest('date')->paginate(15);
 
-        return view('purchases.purchases.purchasesrequests.index', compact('purchaseRequests'));
+        return view('purchases.purchasesrequests.index', compact('purchaseRequests'));
     }
 
     public function create()
@@ -153,7 +153,7 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->delete();
 
         return redirect()
-            ->route('purchases.purchases.purchasesrequests.index')
+            ->route('purchases.purchasesrequests.index')
             ->with('success', 'Purchase request deleted successfully.');
     }
 
