@@ -26,7 +26,7 @@ class PurchaseRequestController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('pr_number', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -38,7 +38,9 @@ class PurchaseRequestController extends Controller
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchases.purchasesrequests.create', compact('suppliers'));
+        $products = Product::select('id', 'name', 'price')->orderBy('name')->get();
+
+        return view('purchases.purchase-requests.create', compact('suppliers', 'products'));
     }
 
     public function store(Request $request)
@@ -49,24 +51,36 @@ class PurchaseRequestController extends Controller
             'date' => 'required|date',
             'expected_date' => 'nullable|date|after_or_equal:date',
             'priority' => 'required|in:low,medium,high,urgent',
-            'total_amount' => 'nullable|numeric|min:0',
             'currency' => 'nullable|string|size:3',
             'notes' => 'nullable|string',
-            'attachment' => 'nullable|file|max:10240', // 10MB
+            'attachment' => 'nullable|file|max:10240',
+            'lines' => 'required|array|min:1',
+            'lines.*.product_id' => 'nullable|exists:products,id',
+            'lines.*.description' => 'nullable|string',
+            'lines.*.unit' => 'nullable|string',
+            'lines.*.quantity' => 'required|numeric|min:0.01',
+            'lines.*.unit_price' => 'required|numeric|min:0',
         ]);
 
         $validated['pr_number'] = $this->generatePrNumber();
         $validated['requested_by'] = Auth::id();
-        $validated['status'] = 'draft';
+        $validated['status'] = $request->input('status', 'draft');
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('purchasesrequests', 'public');
+            $validated['attachment'] = $request->file('attachment')->store('purchase-requests', 'public');
         }
+
+        $lines = $validated['lines'];
+        unset($validated['lines']);
 
         $purchaseRequest = PurchaseRequest::create($validated);
 
+        foreach ($lines as $line) {
+            $purchaseRequest->lines()->create($line);
+        }
+
         return redirect()
-            ->route('purchases.purchasesrequests.show', $purchaseRequest)
+            ->route('purchasesrequests.show', $purchaseRequest)
             ->with('success', 'Purchase request created successfully.');
     }
 
