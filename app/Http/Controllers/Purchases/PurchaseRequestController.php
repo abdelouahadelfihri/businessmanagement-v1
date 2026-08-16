@@ -33,7 +33,7 @@ class PurchaseRequestController extends Controller
 
         $purchaseRequests = $query->latest('date')->paginate(15);
 
-        return view('purchases.purchasesrequests.index', compact('purchaseRequests'));
+        return view('purchases.purchases.purchasesrequests.index', compact('purchaseRequests'));
     }
 
     public function create()
@@ -81,20 +81,23 @@ class PurchaseRequestController extends Controller
         }
 
         return redirect()
-            ->route('purchasesrequests.show', $purchaseRequest)
+            ->route('purchases.purchasesrequests.show', $purchaseRequest)
             ->with('success', 'Purchase request created successfully.');
     }
 
     public function show(PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->load(['supplier', 'requestedBy', 'approvedBy', 'lines']);
-        return view('purchases.purchasesrequests.show', compact('purchaseRequest'));
+        return view('purchases.purchases.purchasesrequests.show', compact('purchaseRequest'));
     }
 
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchases.purchasesrequests.edit', compact('purchaseRequest', 'suppliers'));
+        $products = Product::select('id', 'name', 'price')->orderBy('name')->get();
+        $purchaseRequest->load('lines');
+
+        return view('purchases.purchase-requests.edit', compact('purchaseRequest', 'suppliers', 'products'));
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
@@ -105,20 +108,36 @@ class PurchaseRequestController extends Controller
             'date' => 'required|date',
             'expected_date' => 'nullable|date|after_or_equal:date',
             'priority' => 'required|in:low,medium,high,urgent',
-            'total_amount' => 'nullable|numeric|min:0',
+            'status' => 'required|in:draft,pending,approved,rejected,ordered,completed',
             'currency' => 'nullable|string|size:3',
             'notes' => 'nullable|string',
+            'rejection_reason' => 'nullable|string|max:500',
             'attachment' => 'nullable|file|max:10240',
+            'lines' => 'required|array|min:1',
+            'lines.*.product_id' => 'nullable|exists:products,id',
+            'lines.*.description' => 'nullable|string',
+            'lines.*.unit' => 'nullable|string',
+            'lines.*.quantity' => 'required|numeric|min:0.01',
+            'lines.*.unit_price' => 'required|numeric|min:0',
         ]);
 
         if ($request->hasFile('attachment')) {
             if ($purchaseRequest->attachment) {
                 Storage::disk('public')->delete($purchaseRequest->attachment);
             }
-            $validated['attachment'] = $request->file('attachment')->store('purchasesrequests', 'public');
+            $validated['attachment'] = $request->file('attachment')->store('purchase-requests', 'public');
         }
 
+        $lines = $validated['lines'];
+        unset($validated['lines']);
+
         $purchaseRequest->update($validated);
+
+        // Replace all lines: delete old ones, insert submitted ones
+        $purchaseRequest->lines()->delete();
+        foreach ($lines as $line) {
+            $purchaseRequest->lines()->create($line);
+        }
 
         return redirect()
             ->route('purchases.purchasesrequests.show', $purchaseRequest)
@@ -134,7 +153,7 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->delete();
 
         return redirect()
-            ->route('purchases.purchasesrequests.index')
+            ->route('purchases.purchases.purchasesrequests.index')
             ->with('success', 'Purchase request deleted successfully.');
     }
 
