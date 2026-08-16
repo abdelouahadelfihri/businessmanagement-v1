@@ -72,7 +72,7 @@ class PurchaseRequestController extends Controller
 
     public function show(PurchaseRequest $purchaseRequest)
     {
-        $purchaseRequest->load(['supplier', 'requestedBy', 'approvedBy', 'items']);
+        $purchaseRequest->load(['supplier', 'requestedBy', 'approvedBy', 'lines']);
         return view('purchases.purchasesrequests.show', compact('purchaseRequest'));
     }
 
