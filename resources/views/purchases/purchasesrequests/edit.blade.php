@@ -235,7 +235,7 @@
                 let options = '<option value="">-- Free text --</option>';
                 products.forEach(p => {
                     const selected = (selectedId && String(selectedId) === String(p.id)) ? 'selected' : '';
-                    options += `<option value="${p.id}" data-price="${p.price ?? 0}" ${selected}>${p.name}</option>`;
+                    options += `<option value="${p.id}" ${selected}>${p.name}</option>`;
                 });
                 return options;
             }
@@ -251,32 +251,32 @@
                 const unitPrice = line?.unit_price ?? 0;
 
                 tr.innerHTML = `
-                <td>
-                    <select name="lines[${rowIndex}][product_id]" class="form-select product-select">
-                        ${buildProductOptions(productId)}
-                    </select>
-                </td>
-                <td>
-                    <input type="text" name="lines[${rowIndex}][description]" class="form-control" value="${description ?? ''}">
-                </td>
-                <td>
-                    <input type="text" name="lines[${rowIndex}][unit]" class="form-control" placeholder="pcs" value="${unit ?? ''}">
-                </td>
-                <td>
-                    <input type="number" step="0.01" min="0" name="lines[${rowIndex}][quantity]" class="form-control qty-input" value="${quantity}" required>
-                </td>
-                <td>
-                    <input type="number" step="0.01" min="0" name="lines[${rowIndex}][unit_price]" class="form-control price-input" value="${unitPrice}" required>
-                </td>
-                <td>
-                    <input type="text" class="form-control line-total-display" value="0.00" readonly tabindex="-1">
-                </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-line-btn">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
+                    <td>
+                        <select name="lines[${rowIndex}][product_id]" class="form-select product-select">
+                            ${buildProductOptions(productId)}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="lines[${rowIndex}][description]" class="form-control" value="${description ?? ''}">
+                    </td>
+                    <td>
+                        <input type="text" name="lines[${rowIndex}][unit]" class="form-control" placeholder="pcs" value="${unit ?? ''}">
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" min="0" name="lines[${rowIndex}][quantity]" class="form-control qty-input" value="${quantity}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" min="0" name="lines[${rowIndex}][unit_price]" class="form-control price-input" value="${unitPrice}" required>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control line-total-display" value="0.00" readonly tabindex="-1">
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-line-btn">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
 
                 linesBody.appendChild(tr);
                 rowIndex++;

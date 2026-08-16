@@ -39,7 +39,7 @@ class PurchaseRequestController extends Controller
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
-        $products = Product::select('id', 'name', 'price')->orderBy('name')->get();
+        $products = Product::select('id', 'name')->orderBy('name')->get();
 
         return view('purchases.purchase-requests.create', compact('suppliers', 'products'));
     }
@@ -94,7 +94,7 @@ class PurchaseRequestController extends Controller
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        $products = Product::select('id', 'name', 'price')->orderBy('name')->get();
+        $products = Product::select('id', 'name')->orderBy('name')->get();
         $purchaseRequest->load('lines');
 
         return view('purchases.purchase-requests.edit', compact('purchaseRequest', 'suppliers', 'products'));
