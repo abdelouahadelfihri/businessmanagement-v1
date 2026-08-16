@@ -8,7 +8,6 @@ use App\Models\MasterData\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 class PurchaseRequestController extends Controller
 {
@@ -41,7 +40,7 @@ class PurchaseRequestController extends Controller
         $suppliers = Supplier::orderBy('name')->get();
         $products = Product::select('id', 'name')->orderBy('name')->get();
 
-        return view('purchases.purchase-requests.create', compact('suppliers', 'products'));
+        return view('purchases.purchasesrequests.create', compact('suppliers', 'products'));
     }
 
     public function store(Request $request)
