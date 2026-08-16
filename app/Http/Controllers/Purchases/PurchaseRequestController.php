@@ -97,7 +97,7 @@ class PurchaseRequestController extends Controller
         $products = Product::select('id', 'name')->orderBy('name')->get();
         $purchaseRequest->load('lines');
 
-        return view('purchases.purchase-requests.edit', compact('purchaseRequest', 'suppliers', 'products'));
+        return view('purchases.purchasesrequests.edit', compact('purchaseRequest', 'suppliers', 'products'));
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
