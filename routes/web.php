@@ -66,8 +66,8 @@ Route::middleware(['web'])->group(function () {
                 'purchasesrequests' => 'purchaseRequest'
             ]);
 
-    Route::post('purchase-requests/{purchaseRequest}/approve', [PurchaseRequestController::class, 'approve'])->name('purchase-requests.approve');
-    Route::post('purchase-requests/{purchaseRequest}/reject', [PurchaseRequestController::class, 'reject'])->name('purchase-requests.reject');
+    Route::post('purchasesrequests/{purchaseRequest}/approve', [PurchaseRequestController::class, 'approve'])->name('purchasesrequests.approve');
+    Route::post('purchasesrequests/{purchaseRequest}/reject', [PurchaseRequestController::class, 'reject'])->name('purchasesrequests.reject');
 
     Route::resource('purchasesorders', PurchaseOrderController::class);
     Route::post('purchasesorders/{order}/post', [PurchaseOrderController::class, 'post'])->name('purchasesorders.post');
@@ -103,6 +103,4 @@ Route::middleware(['web'])->group(function () {
     Route::post('locations/ajax-store', [UnitController::class, 'ajaxStore'])->name('locations.ajaxStore');
 
     Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
-    Route::resource('purchase-receipts', PurchaseReceiptController::class);
-    Route::resource('sales-deliveries', SalesDeliveryController::class);
 });
