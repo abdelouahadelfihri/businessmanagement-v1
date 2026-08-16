@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Purchases;
 
 use App\Models\Purchases\PurchaseRequest;
 use App\Models\MasterData\Supplier;
+use App\Models\MasterData\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
