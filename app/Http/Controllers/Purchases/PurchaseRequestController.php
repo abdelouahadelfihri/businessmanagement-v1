@@ -32,13 +32,13 @@ class PurchaseRequestController extends Controller
 
         $purchaseRequests = $query->latest('date')->paginate(15);
 
-        return view('purchasesrequests.index', compact('purchaseRequests'));
+        return view('purchases.purchasesrequests.index', compact('purchaseRequests'));
     }
 
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchasesrequests.create', compact('suppliers'));
+        return view('purchases.purchasesrequests.create', compact('suppliers'));
     }
 
     public function store(Request $request)
@@ -66,20 +66,20 @@ class PurchaseRequestController extends Controller
         $purchaseRequest = PurchaseRequest::create($validated);
 
         return redirect()
-            ->route('purchasesrequests.show', $purchaseRequest)
+            ->route('purchases.purchasesrequests.show', $purchaseRequest)
             ->with('success', 'Purchase request created successfully.');
     }
 
     public function show(PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->load(['supplier', 'requestedBy', 'approvedBy', 'items']);
-        return view('purchasesrequests.show', compact('purchaseRequest'));
+        return view('purchases.purchasesrequests.show', compact('purchaseRequest'));
     }
 
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchasesrequests.edit', compact('purchaseRequest', 'suppliers'));
+        return view('purchases.purchasesrequests.edit', compact('purchaseRequest', 'suppliers'));
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
@@ -106,7 +106,7 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->update($validated);
 
         return redirect()
-            ->route('purchasesrequests.show', $purchaseRequest)
+            ->route('purchases.purchasesrequests.show', $purchaseRequest)
             ->with('success', 'Purchase request updated successfully.');
     }
 
@@ -119,7 +119,7 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->delete();
 
         return redirect()
-            ->route('purchasesrequests.index')
+            ->route('purchases.purchasesrequests.index')
             ->with('success', 'Purchase request deleted successfully.');
     }
 
