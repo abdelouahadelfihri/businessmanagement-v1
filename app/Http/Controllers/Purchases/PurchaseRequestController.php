@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Purchases;
 
 use App\Models\Purchases\PurchaseRequest;
 use App\Models\MasterData\Supplier;
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use App\Http\Controllers\Controller;
 class PurchaseRequestController extends Controller
 {
     public function index(Request $request)
