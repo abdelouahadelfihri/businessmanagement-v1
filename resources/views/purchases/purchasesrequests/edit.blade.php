@@ -5,7 +5,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>Edit a Purchase Request</h1>
-            <a href="{{ route('purchasesrequests.index') }}" class="btn btn-secondary">
+            <a href="{{ route('purchases.purchasesrequests.index') }}" class="btn btn-secondary">
                 Back
             </a>
         </div>
@@ -18,7 +18,7 @@
                     <strong>PR Number:</strong> {{ $purchaseRequest->pr_number }}
                 </div>
 
-                <form action="{{ route('purchasesrequests.update', $purchaseRequest) }}" method="POST"
+                <form action="{{ route('purchases.purchasesrequests.update', $purchaseRequest) }}" method="POST"
                     enctype="multipart/form-data" id="prForm">
                     @csrf
                     @method('PUT')
@@ -199,7 +199,7 @@
 
                     <!-- Actions -->
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('purchasesrequests.index') }}" class="btn btn-outline-secondary me-2">
+                        <a href="{{ route('purchases.purchasesrequests.index') }}" class="btn btn-outline-secondary me-2">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
