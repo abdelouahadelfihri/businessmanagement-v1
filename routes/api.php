@@ -13,8 +13,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // ---------------------
 // Purchases Controllers
 // ---------------------
-use App\Http\Controllers\Purchases\SupplierController;
-use App\Http\Controllers\Purchases\CustomerController;
+use App\Http\Controllers\MasterData\SupplierController;
+use App\Http\Controllers\MasterData\CustomerController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
 use App\Http\Controllers\Purchases\PurchaseInvoiceController;

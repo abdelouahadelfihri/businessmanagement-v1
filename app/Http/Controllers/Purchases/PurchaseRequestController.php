@@ -32,13 +32,13 @@ class PurchaseRequestController extends Controller
 
         $purchaseRequests = $query->latest('date')->paginate(15);
 
-        return view('purchase-requests.index', compact('purchaseRequests'));
+        return view('purchasesrequests.index', compact('purchaseRequests'));
     }
 
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchase-requests.create', compact('suppliers'));
+        return view('purchasesrequests.create', compact('suppliers'));
     }
 
     public function store(Request $request)
@@ -60,26 +60,26 @@ class PurchaseRequestController extends Controller
         $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('purchase-requests', 'public');
+            $validated['attachment'] = $request->file('attachment')->store('purchasesrequests', 'public');
         }
 
         $purchaseRequest = PurchaseRequest::create($validated);
 
         return redirect()
-            ->route('purchase-requests.show', $purchaseRequest)
+            ->route('purchasesrequests.show', $purchaseRequest)
             ->with('success', 'Purchase request created successfully.');
     }
 
     public function show(PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->load(['supplier', 'requestedBy', 'approvedBy', 'items']);
-        return view('purchase-requests.show', compact('purchaseRequest'));
+        return view('purchasesrequests.show', compact('purchaseRequest'));
     }
 
     public function edit(PurchaseRequest $purchaseRequest)
     {
         $suppliers = Supplier::orderBy('name')->get();
-        return view('purchase-requests.edit', compact('purchaseRequest', 'suppliers'));
+        return view('purchasesrequests.edit', compact('purchaseRequest', 'suppliers'));
     }
 
     public function update(Request $request, PurchaseRequest $purchaseRequest)
@@ -100,13 +100,13 @@ class PurchaseRequestController extends Controller
             if ($purchaseRequest->attachment) {
                 Storage::disk('public')->delete($purchaseRequest->attachment);
             }
-            $validated['attachment'] = $request->file('attachment')->store('purchase-requests', 'public');
+            $validated['attachment'] = $request->file('attachment')->store('purchasesrequests', 'public');
         }
 
         $purchaseRequest->update($validated);
 
         return redirect()
-            ->route('purchase-requests.show', $purchaseRequest)
+            ->route('purchasesrequests.show', $purchaseRequest)
             ->with('success', 'Purchase request updated successfully.');
     }
 
@@ -119,7 +119,7 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->delete();
 
         return redirect()
-            ->route('purchase-requests.index')
+            ->route('purchasesrequests.index')
             ->with('success', 'Purchase request deleted successfully.');
     }
 
