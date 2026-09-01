@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Purchases;
 
 use Illuminate\Http\Request;
 use App\Models\Purchases\PurchaseReceipt;
@@ -8,6 +8,7 @@ use App\Models\MasterData\StockMovement;
 use App\Models\MasterData\Warehouse;
 use App\Traits\StockHelper;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 class PurchaseReceiptController extends Controller
 {
 
