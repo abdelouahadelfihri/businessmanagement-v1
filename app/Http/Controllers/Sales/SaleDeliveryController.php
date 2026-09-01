@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Sales;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,6 +9,7 @@ use App\Models\MasterData\StockMovement;
 use App\Models\MasterData\WarehouseStock;
 use App\Models\MasterData\Warehouse;
 use App\Traits\StockHelper;
+use App\Http\Controllers\Controller;
 
 class SaleDeliveryController extends Controller
 {

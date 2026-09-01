@@ -12,9 +12,9 @@ use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
 use App\Http\Controllers\Purchases\PurchaseInvoiceController;
 
-use App\Http\Controllers\Sales\SaleQuotationController;
+use App\Http\Controllers\Sales\SaleQuoteController;
 use App\Http\Controllers\Sales\SaleOrderController;
-use App\Http\Controllers\Sales\DeliveryController;
+use App\Http\Controllers\Sales\SaleDeliveryController;
 use App\Http\Controllers\Sales\SaleInvoiceController;
 use App\Http\Controllers\Sales\SaleReturnController;
 
@@ -83,7 +83,7 @@ Route::middleware(['web'])->group(function () {
     */
     Route::resource('salesquotations', SaleQuoteController::class);
     Route::resource('salesorders', SaleOrderController::class);
-    Route::resource('salesdeliveries', DeliveryController::class);
+    Route::resource('salesdeliveries', SaleDeliveryController::class);
     Route::resource('salesinvoices', SaleInvoiceController::class);
     Route::resource('salesreturns', SaleReturnController::class);
 
