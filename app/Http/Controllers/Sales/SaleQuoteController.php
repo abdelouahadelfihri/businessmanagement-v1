@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Sales;
 
 use Illuminate\Http\Request;
 use App\Models\Sales\SaleQuotation;
+use App\Http\Controllers\Controller;
 
 class SaleQuoteController extends Controller
 {

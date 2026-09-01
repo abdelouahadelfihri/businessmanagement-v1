@@ -81,7 +81,7 @@ Route::middleware(['web'])->group(function () {
     | Sales
     |--------------------------------------------------------------------------
     */
-    Route::resource('salesquotations', SaleQuotationController::class);
+    Route::resource('salesquotations', SaleQuoteController::class);
     Route::resource('salesorders', SaleOrderController::class);
     Route::resource('salesdeliveries', DeliveryController::class);
     Route::resource('salesinvoices', SaleInvoiceController::class);
