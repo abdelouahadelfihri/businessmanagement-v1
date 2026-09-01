@@ -20,7 +20,6 @@ use App\Http\Controllers\Sales\SaleReturnController;
 
 use App\Http\Controllers\MasterData\CustomerController;
 use App\Http\Controllers\MasterData\SupplierController;
-use App\Http\Controllers\MasterData\InventoryController;
 use App\Http\Controllers\MasterData\ProductController;
 use App\Http\Controllers\MasterData\CategoryController;
 use App\Http\Controllers\MasterData\UnitController;
@@ -28,6 +27,7 @@ use App\Http\Controllers\MasterData\WarehouseController;
 use App\Http\Controllers\MasterData\LocationController;
 use App\Http\Controllers\MasterData\StockMovementController;
 use App\Http\Controllers\MasterData\TransferController;
+use App\Http\Controllers\MasterData\StockController;
 
 Route::middleware(['web'])->group(function () {
 
