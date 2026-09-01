@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Sales;
 
 use Illuminate\Http\Request;
 use App\Models\Sales\SaleInvoice;
 use App\Models\Sales\SaleOrder;
+use App\Http\Controllers\Controller;
 
-class SalesInvoiceController extends Controller
+class SaleInvoiceController extends Controller
 {
     public function create(Request $request)
     {
