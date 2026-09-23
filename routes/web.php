@@ -59,22 +59,29 @@ Route::middleware(['web'])->group(function () {
     | Purchases
     |--------------------------------------------------------------------------
     */
-    Route::resource(
-        'purchasesrequests',
-        PurchaseRequestController::class
-    )->parameters([
-                'purchasesrequests' => 'purchaseRequest'
-            ]);
+    Route::name('purchases.')->group(function () {
 
-    Route::post('purchasesrequests/{purchaseRequest}/approve', [PurchaseRequestController::class, 'approve'])->name('purchasesrequests.approve');
-    Route::post('purchasesrequests/{purchaseRequest}/reject', [PurchaseRequestController::class, 'reject'])->name('purchasesrequests.reject');
+        Route::resource(
+            'purchasesrequests',
+            PurchaseRequestController::class
+        )->parameters([
+                    'purchasesrequests' => 'purchaseRequest'
+                ]);
 
-    Route::resource('purchasesorders', PurchaseOrderController::class);
-    Route::post('purchasesorders/{order}/post', [PurchaseOrderController::class, 'post'])->name('purchasesorders.post');
-    Route::post('purchasesorders/{order}/cancel', [PurchaseOrderController::class, 'cancel'])->name('purchasesorders.cancel');
+        Route::post('purchasesrequests/{purchaseRequest}/approve', [PurchaseRequestController::class, 'approve'])
+            ->name('purchasesrequests.approve');
+        Route::post('purchasesrequests/{purchaseRequest}/reject', [PurchaseRequestController::class, 'reject'])
+            ->name('purchasesrequests.reject');
 
-    Route::resource('purchasesreceipts', PurchaseReceiptController::class);
-    Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
+        Route::resource('purchasesorders', PurchaseOrderController::class);
+        Route::post('purchasesorders/{order}/post', [PurchaseOrderController::class, 'post'])
+            ->name('purchasesorders.post');
+        Route::post('purchasesorders/{order}/cancel', [PurchaseOrderController::class, 'cancel'])
+            ->name('purchasesorders.cancel');
+
+        Route::resource('purchasesreceipts', PurchaseReceiptController::class);
+        Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
+    });
 
     /*
     |--------------------------------------------------------------------------
