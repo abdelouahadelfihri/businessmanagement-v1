@@ -44,15 +44,19 @@ Route::middleware(['web'])->group(function () {
     | Master Data
     |--------------------------------------------------------------------------
     */
-    Route::resource('suppliers', SupplierController::class);
-    Route::resource('customers', CustomerController::class);
-    Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
-    Route::resource('units', UnitController::class);
-    Route::resource('warehouses', WarehouseController::class);
-    Route::resource('locations', LocationController::class);
-    Route::resource('stocksmovements', StockMovementController::class);
-    Route::resource('transfers', TransferController::class);
+    Route::name('masterdata.')->group(function () {
+
+        Route::resource('suppliers', SupplierController::class);
+        Route::resource('customers', CustomerController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('products', ProductController::class);
+        Route::resource('units', UnitController::class);
+        Route::resource('warehouses', WarehouseController::class);
+        Route::resource('locations', LocationController::class);
+        Route::resource('stocksmovements', StockMovementController::class);
+        Route::resource('transfers', TransferController::class);
+
+    });
 
     /*
     |--------------------------------------------------------------------------
