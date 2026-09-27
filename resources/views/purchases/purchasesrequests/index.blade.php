@@ -6,7 +6,7 @@
 
         <div class="mb-3">
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
-                href="{{ route('purchasesrequests.create') }}">
+                href="{{ route('purchases.purchasesrequests.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Purchase Request
             </a>
         </div>
@@ -17,7 +17,7 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="purchasesRequestsTable"
+                        <table id="purchases.purchasesrequestsTable"
                             class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
@@ -71,7 +71,7 @@
                                             <div class="d-flex justify-content-center gap-1">
 
                                                 <!-- View is always available -->
-                                                <a href="{{ route('purchasesrequests.show', $purchaseRequest->id) }}"
+                                                <a href="{{ route('purchases.purchasesrequests.show', $purchaseRequest->id) }}"
                                                     class="btn btn-sm btn-info" title="View Request">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
@@ -79,13 +79,13 @@
                                                 @if($purchaseRequest->status === 'draft')
 
                                                     <!-- Edit button -->
-                                                    <a href="{{ route('purchasesrequests.edit', $purchaseRequest->id) }}"
+                                                    <a href="{{ route('purchases.purchasesrequests.edit', $purchaseRequest->id) }}"
                                                         class="btn btn-sm btn-warning" title="Edit Request">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
 
                                                     <!-- Delete button -->
-                                                    <form action="{{ route('purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
+                                                    <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
                                                         style="display:inline;"
                                                         onsubmit="return confirm('Are you sure you want to delete this request?');">
                                                         @csrf
@@ -98,7 +98,7 @@
                                                 @elseif($purchaseRequest->status === 'pending')
 
                                                     <!-- Approve button -->
-                                                    <form action="{{ route('purchasesrequests.approve', $purchaseRequest->id) }}" method="POST"
+                                                    <form action="{{ route('purchases.purchasesrequests.approve', $purchaseRequest->id) }}" method="POST"
                                                         style="display:inline;"
                                                         onsubmit="return confirm('Approve this purchase request?');">
                                                         @csrf
@@ -117,7 +117,7 @@
                                                     <div class="modal fade" id="rejectModal{{ $purchaseRequest->id }}" tabindex="-1">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
-                                                                <form action="{{ route('purchasesrequests.reject', $purchaseRequest->id) }}"
+                                                                <form action="{{ route('purchases.purchasesrequests.reject', $purchaseRequest->id) }}"
                                                                     method="POST">
                                                                     @csrf
                                                                     <div class="modal-header">
@@ -143,7 +143,7 @@
                                                 @elseif($purchaseRequest->status === 'rejected')
 
                                                     <!-- Allow delete only -->
-                                                    <form action="{{ route('purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
+                                                    <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
                                                         style="display:inline;"
                                                         onsubmit="return confirm('Are you sure you want to delete this rejected request?');">
                                                         @csrf
@@ -181,7 +181,7 @@
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#purchasesRequestsTable').DataTable({
+            $('#purchases.purchasesrequestsTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
