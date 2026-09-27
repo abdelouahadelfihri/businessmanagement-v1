@@ -88,11 +88,15 @@ Route::middleware(['web'])->group(function () {
     | Sales
     |--------------------------------------------------------------------------
     */
-    Route::resource('salesquotations', SaleQuoteController::class);
-    Route::resource('salesorders', SaleOrderController::class);
-    Route::resource('salesdeliveries', SaleDeliveryController::class);
-    Route::resource('salesinvoices', SaleInvoiceController::class);
-    Route::resource('salesreturns', SaleReturnController::class);
+    Route::name('sales.')->group(function () {
+
+        Route::resource('salesquotations', SaleQuoteController::class);
+        Route::resource('salesorders', SaleOrderController::class);
+        Route::resource('salesdeliveries', SaleDeliveryController::class);
+        Route::resource('salesinvoices', SaleInvoiceController::class);
+        Route::resource('salesreturns', SaleReturnController::class);
+
+    });
 
     Route::get('/stock/transfer', [StockMovementController::class, 'transferForm'])
         ->name('stocksmovements.transfer_form');
