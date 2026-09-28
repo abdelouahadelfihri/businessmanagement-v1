@@ -6,23 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('purchase_request_lines', function (Blueprint $table) {
-            //
+            if (!Schema::hasColumn('purchase_request_lines', 'description')) {
+                $table->text('description')->nullable()->after('product_id');
+            }
+            if (!Schema::hasColumn('purchase_request_lines', 'unit')) {
+                $table->string('unit')->nullable()->after('description');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('purchase_request_lines', function (Blueprint $table) {
-            //
-        });
+        // Intentionally empty: guarded repair migration.
     }
 };

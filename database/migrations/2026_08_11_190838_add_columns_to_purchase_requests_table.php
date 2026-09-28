@@ -9,42 +9,47 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('purchase_requests', function (Blueprint $table) {
-            $table->string('pr_number')->unique()->after('id');
-            $table->unsignedBigInteger('requested_by')->nullable()->after('supplier_id');
-            $table->date('expected_date')->nullable()->after('date');
-            $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium')->after('expected_date');
-            $table->decimal('total_amount', 12, 2)->default(0)->after('status');
-            $table->string('currency', 3)->default('MAD')->after('total_amount');
-            $table->unsignedBigInteger('approved_by')->nullable()->after('currency');
-            $table->timestamp('approved_at')->nullable()->after('approved_by');
-            $table->text('rejection_reason')->nullable()->after('approved_at');
-            $table->text('notes')->nullable()->after('rejection_reason');
-            $table->string('attachment')->nullable()->after('notes');
+            if (!Schema::hasColumn('purchase_requests', 'requested_by')) {
+                $table->unsignedBigInteger('requested_by')->nullable()->after('supplier_id');
+            }
+            if (!Schema::hasColumn('purchase_requests', 'expected_date')) {
+                $table->date('expected_date')->nullable()->after('date');
+            }
+            if (!Schema::hasColumn('purchase_requests', 'priority')) {
+                $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium');
+            }
+            if (!Schema::hasColumn('purchase_requests', 'total_amount')) {
+                $table->decimal('total_amount', 12, 2)->default(0);
+            }
+            if (!Schema::hasColumn('purchase_requests', 'currency')) {
+                $table->string('currency', 3)->default('MAD');
+            }
+            if (!Schema::hasColumn('purchase_requests', 'approved_by')) {
+                $table->unsignedBigInteger('approved_by')->nullable();
+            }
+            if (!Schema::hasColumn('purchase_requests', 'approved_at')) {
+                $table->timestamp('approved_at')->nullable();
+            }
+            if (!Schema::hasColumn('purchase_requests', 'rejection_reason')) {
+                $table->text('rejection_reason')->nullable();
+            }
+            if (!Schema::hasColumn('purchase_requests', 'notes')) {
+                $table->text('notes')->nullable();
+            }
+            if (!Schema::hasColumn('purchase_requests', 'attachment')) {
+                $table->string('attachment')->nullable();
+            }
+        });
 
-            $table->foreign('requested_by')->references('id')->on('users')->onDelete('cascade');
+        // Foreign keys in a second step, after the columns exist
+        Schema::table('purchase_requests', function (Blueprint $table) {
+            $table->foreign('requested_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
         });
     }
 
     public function down(): void
     {
-        Schema::table('purchase_requests', function (Blueprint $table) {
-            $table->dropForeign(['requested_by']);
-            $table->dropForeign(['approved_by']);
-
-            $table->dropColumn([
-                'pr_number',
-                'requested_by',
-                'expected_date',
-                'priority',
-                'total_amount',
-                'currency',
-                'approved_by',
-                'approved_at',
-                'rejection_reason',
-                'notes',
-                'attachment',
-            ]);
-        });
+        // Intentionally empty: guarded repair migration.
     }
 };
