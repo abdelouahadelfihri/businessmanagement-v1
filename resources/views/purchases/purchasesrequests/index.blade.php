@@ -11,13 +11,77 @@
             </a>
         </div>
 
+        {{-- Filter & search form (outside the @if so it stays visible when no results match) --}}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <form method="GET" action="{{ route('purchases.purchasesrequests.index') }}" class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label mb-1">Search</label>
+                        <input type="text" name="search" id="search" class="form-control"
+                            placeholder="PR number or description..." value="{{ request('search') }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="status" class="form-label mb-1">Status</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="">All statuses</option>
+                            @foreach(['draft', 'pending', 'approved', 'rejected', 'ordered', 'completed'] as $status)
+                                <option value="{{ $status }}" @selected(request('status') === $status)>
+                                    {{ ucfirst($status) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="priority" class="form-label mb-1">Priority</label>
+                        <select name="priority" id="priority" class="form-select">
+                            <option value="">All priorities</option>
+                            @foreach(['low', 'medium', 'high', 'urgent'] as $priority)
+                                <option value="{{ $priority }}" @selected(request('priority') === $priority)>
+                                    {{ ucfirst($priority) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel"></i> Filter
+                        </button>
+                        <a href="{{ route('purchases.purchasesrequests.index') }}" class="btn btn-outline-secondary"
+                            title="Reset filters">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         @if($purchaseRequests->isEmpty())
             <div class="alert alert-info">No purchase requests found.</div>
         @else
+            @php
+                $priorityColors = [
+                    'low' => 'secondary',
+                    'medium' => 'primary',
+                    'high' => 'warning',
+                    'urgent' => 'danger',
+                ];
+                $statusColors = [
+                    'draft' => 'secondary',
+                    'pending' => 'warning',
+                    'approved' => 'success',
+                    'rejected' => 'danger',
+                    'ordered' => 'info',
+                    'completed' => 'dark',
+                ];
+            @endphp
+
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="purchases.purchasesrequestsTable"
+                        <table id="purchaseRequestsTable"
                             class="table table-striped table-hover table-bordered align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
@@ -34,35 +98,17 @@
                             <tbody>
                                 @foreach($purchaseRequests as $purchaseRequest)
                                     <tr>
-                                        <td scope="row">{{ $purchaseRequest->id }}</td>
-                                        <td scope="row">{{ $purchaseRequest->pr_number }}</td>
+                                        <td>{{ $purchaseRequest->id }}</td>
+                                        <td>{{ $purchaseRequest->pr_number }}</td>
                                         <td>{{ $purchaseRequest->supplier->name ?? '—' }}</td>
                                         <td>{{ optional($purchaseRequest->date)->format('Y-m-d') }}</td>
                                         <td>
-                                            @php
-                                                $priorityColors = [
-                                                    'low' => 'secondary',
-                                                    'medium' => 'primary',
-                                                    'high' => 'warning',
-                                                    'urgent' => 'danger',
-                                                ];
-                                            @endphp
                                             <span class="badge bg-{{ $priorityColors[$purchaseRequest->priority] ?? 'secondary' }}">
                                                 {{ ucfirst($purchaseRequest->priority) }}
                                             </span>
                                         </td>
                                         <td>{{ number_format($purchaseRequest->total_amount, 2) }} {{ $purchaseRequest->currency }}</td>
                                         <td>
-                                            @php
-                                                $statusColors = [
-                                                    'draft' => 'secondary',
-                                                    'pending' => 'warning',
-                                                    'approved' => 'success',
-                                                    'rejected' => 'danger',
-                                                    'ordered' => 'info',
-                                                    'completed' => 'dark',
-                                                ];
-                                            @endphp
                                             <span class="badge bg-{{ $statusColors[$purchaseRequest->status] ?? 'secondary' }}">
                                                 {{ ucfirst($purchaseRequest->status) }}
                                             </span>
@@ -78,15 +124,13 @@
 
                                                 @if($purchaseRequest->status === 'draft')
 
-                                                    <!-- Edit button -->
                                                     <a href="{{ route('purchases.purchasesrequests.edit', $purchaseRequest->id) }}"
                                                         class="btn btn-sm btn-warning" title="Edit Request">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
 
-                                                    <!-- Delete button -->
-                                                    <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
-                                                        style="display:inline;"
+                                                    <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}"
+                                                        method="POST" style="display:inline;"
                                                         onsubmit="return confirm('Are you sure you want to delete this request?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -97,9 +141,8 @@
 
                                                 @elseif($purchaseRequest->status === 'pending')
 
-                                                    <!-- Approve button -->
-                                                    <form action="{{ route('purchases.purchasesrequests.approve', $purchaseRequest->id) }}" method="POST"
-                                                        style="display:inline;"
+                                                    <form action="{{ route('purchases.purchasesrequests.approve', $purchaseRequest->id) }}"
+                                                        method="POST" style="display:inline;"
                                                         onsubmit="return confirm('Approve this purchase request?');">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-success" title="Approve Request">
@@ -107,7 +150,6 @@
                                                         </button>
                                                     </form>
 
-                                                    <!-- Reject button (opens modal to capture reason) -->
                                                     <button type="button" class="btn btn-sm btn-danger" title="Reject Request"
                                                         data-bs-toggle="modal" data-bs-target="#rejectModal{{ $purchaseRequest->id }}">
                                                         <i class="bi bi-x-lg"></i>
@@ -142,9 +184,8 @@
 
                                                 @elseif($purchaseRequest->status === 'rejected')
 
-                                                    <!-- Allow delete only -->
-                                                    <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
-                                                        style="display:inline;"
+                                                    <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}"
+                                                        method="POST" style="display:inline;"
                                                         onsubmit="return confirm('Are you sure you want to delete this rejected request?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -154,7 +195,6 @@
                                                     </form>
 
                                                 @endif
-
                                             </div>
                                         </td>
                                     </tr>
@@ -163,16 +203,22 @@
                         </table>
                     </div>
                 </div>
+
+                {{-- Laravel pagination (server-side) --}}
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        Showing {{ $purchaseRequests->firstItem() }} to {{ $purchaseRequests->lastItem() }}
+                        of {{ $purchaseRequests->total() }} requests
+                    </small>
+                    {{ $purchaseRequests->links() }}
+                </div>
             </div>
-
-            <!-- Include Bootstrap Icons CDN if not already in your layout -->
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
         @endif
     </div>
 @endsection
 
 @push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
 @endpush
 
@@ -181,11 +227,14 @@
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#purchases.purchasesrequestsTable').DataTable({
-                paging: true,
-                searching: true,
+            // Search, filtering and pagination are handled by Laravel,
+            // so DataTables is only used for column sorting on the current page.
+            $('#purchaseRequestsTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
                 ordering: true,
-                info: true
+                columnDefs: [{ orderable: false, targets: -1 }] // no sorting on Action column
             });
         });
     </script>
