@@ -65,6 +65,7 @@ Route::middleware(['web'])->group(function () {
     */
     Route::name('purchases.')->group(function () {
 
+        // Purchase requests
         Route::resource(
             'purchasesrequests',
             PurchaseRequestController::class
@@ -77,11 +78,22 @@ Route::middleware(['web'])->group(function () {
         Route::post('purchasesrequests/{purchaseRequest}/reject', [PurchaseRequestController::class, 'reject'])
             ->name('purchasesrequests.reject');
 
-        Route::resource('purchasesorders', PurchaseOrderController::class);
-        Route::post('purchasesorders/{order}/post', [PurchaseOrderController::class, 'post'])
-            ->name('purchasesorders.post');
-        Route::post('purchasesorders/{order}/cancel', [PurchaseOrderController::class, 'cancel'])
+        // Purchase orders
+        Route::post('purchasesorders/{purchaseOrder}/submit', [PurchaseOrderController::class, 'submit'])
+            ->name('purchasesorders.submit');
+        Route::post('purchasesorders/{purchaseOrder}/approve', [PurchaseOrderController::class, 'approve'])
+            ->name('purchasesorders.approve');
+        Route::post('purchasesorders/{purchaseOrder}/send', [PurchaseOrderController::class, 'send'])
+            ->name('purchasesorders.send');
+        Route::post('purchasesorders/{purchaseOrder}/cancel', [PurchaseOrderController::class, 'cancel'])
             ->name('purchasesorders.cancel');
+
+        Route::resource(
+            'purchasesorders',
+            PurchaseOrderController::class
+        )->parameters([
+                    'purchasesorders' => 'purchaseOrder'
+                ]);
 
         Route::resource('purchasesreceipts', PurchaseReceiptController::class);
         Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
