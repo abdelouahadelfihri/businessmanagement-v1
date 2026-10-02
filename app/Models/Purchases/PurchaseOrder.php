@@ -105,7 +105,7 @@ class PurchaseOrder extends Model
 
     public function items()
     {
-        return $this->hasMany(PurchaseOrderItem::class);
+        return $this->hasMany(PurchaseOrderLine::class);
     }
 
     public function creator()
