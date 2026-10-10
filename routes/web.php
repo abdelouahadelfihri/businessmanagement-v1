@@ -95,15 +95,20 @@ Route::middleware(['web'])->group(function () {
                     'purchasesorders' => 'purchaseOrder'
                 ]);
 
-        Route::prefix('purchases')->name('purchases.')->group(function () {
-            Route::resource('purchasesreceipts', PurchaseReceiptController::class)
-                ->parameters(['purchasesreceipts' => 'purchaseReceipt']);
+        // Purchase receipts
+        Route::post('purchasesreceipts/{purchaseReceipt}/validate', [PurchaseReceiptController::class, 'confirm'])
+            ->name('purchasesreceipts.validate');
+        Route::post('purchasesreceipts/{purchaseReceipt}/cancel', [PurchaseReceiptController::class, 'cancel'])
+            ->name('purchasesreceipts.cancel');
 
-            Route::post('purchasesreceipts/{purchaseReceipt}/validate', [PurchaseReceiptController::class, 'confirm'])
-                ->name('purchasesreceipts.validate');
-            Route::post('purchasesreceipts/{purchaseReceipt}/cancel', [PurchaseReceiptController::class, 'cancel'])
-                ->name('purchasesreceipts.cancel');
-        });
+        Route::resource(
+            'purchasesreceipts',
+            PurchaseReceiptController::class
+        )->parameters([
+                    'purchasesreceipts' => 'purchaseReceipt'
+                ]);
+
+        // Purchase invoices
         Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
     });
 
