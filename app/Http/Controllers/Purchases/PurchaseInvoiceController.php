@@ -37,7 +37,7 @@ class PurchaseInvoiceController extends Controller
             ->latest('date')
             ->latest('id')
             ->paginate(15)
-            ->withQueryString();
+            ->appends($request->query());
 
         return view('purchases.purchasesinvoices.index', compact('purchaseInvoices'));
     }
@@ -60,7 +60,7 @@ class PurchaseInvoiceController extends Controller
                 ];
 
                 // Invoice what was accepted: received - rejected
-                $prefillLines = $receipt->items->map(function ($l) {
+                $prefillLines = collect($receipt->items)->map(function ($l) {
                     return [
                         'purchase_order_line_id' => $l->purchase_order_line_id,
                         'product_id'             => $l->product_id,
@@ -85,7 +85,7 @@ class PurchaseInvoiceController extends Controller
                 ];
 
                 // Invoice what is still not invoiced on the order
-                $prefillLines = $order->items->map(function ($l) {
+                $prefillLines = collect($order->items)->map(function ($l) {
                     $invoiced = (float) PurchaseInvoiceLine::where('purchase_order_line_id', $l->id)
                         ->whereHas('invoice', fn ($q) => $q->where('status', 'validated'))
                         ->sum('quantity');
@@ -322,10 +322,12 @@ class PurchaseInvoiceController extends Controller
         ]);
 
         if (!$invoice->exists) {
-            $invoice->status = 'draft';
-            $invoice->payment_status = 'unpaid';
-            $invoice->amount_paid = 0;
-            $invoice->created_by = Auth::id();
+            $invoice->fill([
+                'status'         => 'draft',
+                'payment_status' => 'unpaid',
+                'amount_paid'    => 0,
+                'created_by'     => Auth::id(),
+            ]);
         }
 
         $invoice->save();

@@ -36,7 +36,7 @@ class PurchaseReceiptController extends Controller
             ->latest('date')
             ->latest('id')
             ->paginate(15)
-            ->withQueryString();
+            ->appends($request->query());
 
         return view('purchases.purchasesreceipts.index', compact('purchaseReceipts'));
     }
@@ -56,7 +56,7 @@ class PurchaseReceiptController extends Controller
                     'currency'          => $order->currency,
                 ];
 
-                $prefillLines = $order->items->map(function ($line) {
+                $prefillLines = collect($order->items)->map(function ($line) {
                     $alreadyReceived = (float) PurchaseReceiptLine::where('purchase_order_line_id', $line->id)
                         ->whereHas('receipt', fn ($q) => $q->where('status', 'validated'))
                         ->sum('received_quantity');
@@ -265,8 +265,10 @@ class PurchaseReceiptController extends Controller
         ]);
 
         if (!$receipt->exists) {
-            $receipt->status = 'draft';
-            $receipt->received_by = Auth::id();
+            $receipt->fill([
+                'status'      => 'draft',
+                'received_by' => Auth::id(),
+            ]);
         }
 
         $receipt->save();
@@ -325,7 +327,7 @@ class PurchaseReceiptController extends Controller
 
         $order->loadMissing('items');
 
-        $fullyReceived = $order->items->every(function ($line) {
+        $fullyReceived = collect($order->items)->every(function ($line) {
             $received = (float) PurchaseReceiptLine::where('purchase_order_line_id', $line->id)
                 ->whereHas('receipt', fn ($q) => $q->where('status', 'validated'))
                 ->sum('received_quantity');
