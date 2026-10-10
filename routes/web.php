@@ -109,7 +109,19 @@ Route::middleware(['web'])->group(function () {
                 ]);
 
         // Purchase invoices
-        Route::resource('purchasesinvoices', PurchaseInvoiceController::class);
+        Route::post('purchasesinvoices/{purchaseInvoice}/validate', [PurchaseInvoiceController::class, 'confirm'])
+            ->name('purchasesinvoices.validate');
+        Route::post('purchasesinvoices/{purchaseInvoice}/cancel', [PurchaseInvoiceController::class, 'cancel'])
+            ->name('purchasesinvoices.cancel');
+        Route::post('purchasesinvoices/{purchaseInvoice}/payment', [PurchaseInvoiceController::class, 'payment'])
+            ->name('purchasesinvoices.payment');
+
+        Route::resource(
+            'purchasesinvoices',
+            PurchaseInvoiceController::class
+        )->parameters([
+                    'purchasesinvoices' => 'purchaseInvoice'
+                ]);
     });
 
     /*
