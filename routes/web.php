@@ -12,7 +12,7 @@ use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
 use App\Http\Controllers\Purchases\PurchaseInvoiceController;
 
-use App\Http\Controllers\Sales\SaleQuoteController;
+use App\Http\Controllers\Sales\SaleQuotationController;
 use App\Http\Controllers\Sales\SaleOrderController;
 use App\Http\Controllers\Sales\SaleDeliveryController;
 use App\Http\Controllers\Sales\SaleInvoiceController;
@@ -131,7 +131,23 @@ Route::middleware(['web'])->group(function () {
     */
     Route::name('sales.')->group(function () {
 
-        Route::resource('salesquotations', SaleQuoteController::class);
+        // Sales quotations
+        Route::post('salesquotations/{saleQuotation}/send', [SaleQuotationController::class, 'send'])
+            ->name('salesquotations.send');
+        Route::post('salesquotations/{saleQuotation}/accept', [SaleQuotationController::class, 'accept'])
+            ->name('salesquotations.accept');
+        Route::post('salesquotations/{saleQuotation}/reject', [SaleQuotationController::class, 'reject'])
+            ->name('salesquotations.reject');
+        Route::post('salesquotations/{saleQuotation}/cancel', [SaleQuotationController::class, 'cancel'])
+            ->name('salesquotations.cancel');
+
+        Route::resource(
+            'salesquotations',
+            SaleQuotationController::class
+        )->parameters([
+                    'salesquotations' => 'saleQuotation'
+                ]);
+
         Route::resource('salesorders', SaleOrderController::class);
         Route::resource('salesdeliveries', SaleDeliveryController::class);
         Route::resource('salesinvoices', SaleInvoiceController::class);
