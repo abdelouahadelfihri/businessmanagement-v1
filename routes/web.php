@@ -148,7 +148,25 @@ Route::middleware(['web'])->group(function () {
                     'salesquotations' => 'saleQuotation'
                 ]);
 
-        Route::resource('salesorders', SaleOrderController::class);
+        // Sales orders
+        Route::get('salesorders/from-quotation/{saleQuotation}', [SaleOrderController::class, 'createFromQuotation'])
+            ->name('salesorders.from_quotation');
+        Route::post('salesorders/{saleOrder}/confirm', [SaleOrderController::class, 'confirm'])
+            ->name('salesorders.confirm');
+        Route::post('salesorders/{saleOrder}/process', [SaleOrderController::class, 'process'])
+            ->name('salesorders.process');
+        Route::post('salesorders/{saleOrder}/deliver', [SaleOrderController::class, 'deliver'])
+            ->name('salesorders.deliver');
+        Route::post('salesorders/{saleOrder}/cancel', [SaleOrderController::class, 'cancel'])
+            ->name('salesorders.cancel');
+
+        Route::resource(
+            'salesorders',
+            SaleOrderController::class
+        )->parameters([
+                    'salesorders' => 'saleOrder'
+                ]);
+
         Route::resource('salesdeliveries', SaleDeliveryController::class);
         Route::resource('salesinvoices', SaleInvoiceController::class);
         Route::resource('salesreturns', SaleReturnController::class);
