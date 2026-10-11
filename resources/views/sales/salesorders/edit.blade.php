@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1 class="mb-4">Edit Purchase Order {{ $purchaseOrder->po_number }}</h1>
+        <h1 class="mb-4">Edit Sales Order {{ $saleOrder->order_number }}</h1>
 
-        <form method="POST" action="{{ route('purchases.purchasesorders.update', $purchaseOrder) }}">
+        <form method="POST" action="{{ route('sales.salesorders.update', $saleOrder) }}">
             @csrf
             @method('PUT')
-            @include('purchases.purchasesorders._form')
+            @include('sales.salesorders._form')
         </form>
     </div>
 @endsection

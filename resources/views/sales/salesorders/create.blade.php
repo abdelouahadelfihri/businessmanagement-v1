@@ -2,11 +2,11 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1 class="mb-4">New Purchase Order</h1>
+        <h1 class="mb-4">New Sales Order</h1>
 
-        <form method="POST" action="{{ route('purchases.purchasesorders.store') }}">
+        <form method="POST" action="{{ route('sales.salesorders.store') }}">
             @csrf
-            @include('purchases.purchasesorders._form')
+            @include('sales.salesorders._form')
         </form>
     </div>
 @endsection

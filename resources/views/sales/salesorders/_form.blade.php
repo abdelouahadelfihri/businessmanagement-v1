@@ -1,24 +1,36 @@
 @php
-    $purchaseOrder = $purchaseOrder ?? null;
+    $saleOrder = $saleOrder ?? null;
+    $prefill = $prefill ?? [];
+    $prefillItems = $prefillItems ?? null;
 
-    $val = function ($field, $default = null) use ($purchaseOrder) {
-        $v = old($field, optional($purchaseOrder)->$field ?? $default);
+    $val = function ($field, $default = null) use ($saleOrder, $prefill) {
+        $v = old($field, optional($saleOrder)->$field ?? ($prefill[$field] ?? $default));
         return $v instanceof \Carbon\CarbonInterface ? $v->format('Y-m-d') : $v;
     };
 
+    $blankLine = [
+        'product_id' => null,
+        'description' => '',
+        'quantity' => 1,
+        'unit' => '',
+        'price' => 0,
+        'discount_percent' => 0,
+        'tax_rate' => 20,
+    ];
+
     $lines = old(
         'items',
-        $purchaseOrder
-        ? $purchaseOrder->items->map(fn($l) => [
+        $saleOrder
+        ? $saleOrder->items->map(fn($l) => [
             'product_id' => $l->product_id,
             'description' => $l->description,
             'quantity' => (float) $l->quantity,
             'unit' => $l->unit,
-            'unit_price' => (float) $l->unit_price,
+            'price' => (float) $l->price,
             'discount_percent' => (float) $l->discount_percent,
             'tax_rate' => (float) $l->tax_rate,
         ])->values()->all()
-        : [['product_id' => null, 'description' => '', 'quantity' => 1, 'unit' => '', 'unit_price' => 0, 'discount_percent' => 0, 'tax_rate' => 20]]
+        : ($prefillItems ?: [$blankLine])
     );
 @endphp
 
@@ -32,48 +44,38 @@
     </div>
 @endif
 
+@if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
+
+@if($val('quotation_id'))
+    <div class="alert alert-info">
+        <i class="bi bi-link-45deg"></i> This order is created from a quotation.
+        <input type="hidden" name="quotation_id" value="{{ $val('quotation_id') }}">
+    </div>
+@endif
+
 <div class="card shadow-sm mb-3">
     <div class="card-header fw-semibold">General information</div>
     <div class="card-body row g-3">
         <div class="col-md-4">
-            <label class="form-label">Supplier *</label>
-            <select name="supplier_id" class="form-select" required>
-                <option value="">Select a supplier</option>
-                @foreach($suppliers as $supplier)
-                    <option value="{{ $supplier->id }}" @selected($val('supplier_id') == $supplier->id)>{{ $supplier->name }}
+            <label class="form-label">Customer *</label>
+            <select name="customer_id" class="form-select" required>
+                <option value="">Select a customer</option>
+                @foreach($customers as $customer)
+                    <option value="{{ $customer->id }}" @selected($val('customer_id') == $customer->id)>{{ $customer->name }}
                     </option>
                 @endforeach
             </select>
         </div>
 
         <div class="col-md-4">
-            <label class="form-label">Purchase request</label>
-            <select name="request_id" class="form-select">
-                <option value="">— None —</option>
-                @foreach($purchaseRequests as $pr)
-                    <option value="{{ $pr->id }}" @selected($val('request_id') == $pr->id)>{{ $pr->pr_number }}</option>
-                @endforeach
-            </select>
+            <label class="form-label">Customer PO reference</label>
+            <input type="text" name="reference" class="form-control" placeholder="e.g. PO-5532"
+                value="{{ $val('reference') }}">
         </div>
 
         <div class="col-md-4">
-            <label class="form-label">Supplier reference</label>
-            <input type="text" name="supplier_reference" class="form-control" value="{{ $val('supplier_reference') }}">
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Order date *</label>
-            <input type="date" name="order_date" class="form-control"
-                value="{{ $val('order_date', now()->format('Y-m-d')) }}" required>
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Expected delivery</label>
-            <input type="date" name="expected_delivery_date" class="form-control"
-                value="{{ $val('expected_delivery_date') }}">
-        </div>
-
-        <div class="col-md-2">
             <label class="form-label">Currency *</label>
             <select name="currency" class="form-select" required>
                 @foreach(['MAD', 'EUR', 'USD'] as $cur)
@@ -82,20 +84,38 @@
             </select>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="form-label">Order date *</label>
+            <input type="date" name="date" class="form-control" value="{{ $val('date', now()->format('Y-m-d')) }}"
+                required>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Expected delivery date</label>
+            <input type="date" name="expected_delivery_date" class="form-control"
+                value="{{ $val('expected_delivery_date', now()->addDays(7)->format('Y-m-d')) }}">
+        </div>
+
+        <div class="col-md-3">
             <label class="form-label">Payment terms</label>
-            <input type="text" name="payment_terms" class="form-control" placeholder="e.g. Net 30"
+            <input type="text" name="payment_terms" class="form-control" placeholder="e.g. 50% upfront, balance Net 30"
                 value="{{ $val('payment_terms') }}">
         </div>
 
-        <div class="col-md-4">
-            <label class="form-label">Shipping method</label>
-            <input type="text" name="shipping_method" class="form-control" value="{{ $val('shipping_method') }}">
+        <div class="col-md-3">
+            <label class="form-label">Delivery terms</label>
+            <input type="text" name="delivery_terms" class="form-control" placeholder="e.g. Ex-works, 7 working days"
+                value="{{ $val('delivery_terms') }}">
         </div>
 
-        <div class="col-md-8">
-            <label class="form-label">Delivery address</label>
-            <textarea name="delivery_address" class="form-control" rows="2">{{ $val('delivery_address') }}</textarea>
+        <div class="col-md-6">
+            <label class="form-label">Billing address</label>
+            <textarea name="billing_address" class="form-control" rows="2">{{ $val('billing_address') }}</textarea>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Shipping address</label>
+            <textarea name="shipping_address" class="form-control" rows="2">{{ $val('shipping_address') }}</textarea>
         </div>
     </div>
 </div>
@@ -134,7 +154,7 @@
         <div class="card shadow-sm h-100">
             <div class="card-body row g-3">
                 <div class="col-12">
-                    <label class="form-label">Notes (visible to supplier)</label>
+                    <label class="form-label">Notes (visible to the customer)</label>
                     <textarea name="notes" class="form-control" rows="2">{{ $val('notes') }}</textarea>
                 </div>
                 <div class="col-12">
@@ -181,14 +201,14 @@
 
 <div class="d-flex gap-2 mb-5">
     <button type="submit" class="btn btn-secondary">
-        <i class="bi bi-save"></i> Save
+        <i class="bi bi-save"></i> Save as draft
     </button>
-    @if(!$purchaseOrder || $purchaseOrder->status === 'draft')
-        <button type="submit" name="submit" value="1" class="btn btn-primary">
-            <i class="bi bi-send"></i> Save &amp; submit for approval
+    @if(!$saleOrder || $saleOrder->status === 'draft')
+        <button type="submit" name="confirm_now" value="1" class="btn btn-success">
+            <i class="bi bi-check2-circle"></i> Save &amp; confirm
         </button>
     @endif
-    <a href="{{ route('purchases.purchasesorders.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    <a href="{{ route('sales.salesorders.index') }}" class="btn btn-outline-secondary">Cancel</a>
 </div>
 
 {{-- Row template --}}
@@ -198,7 +218,9 @@
             <select name="items[__INDEX__][product_id]" class="form-select form-select-sm product-select">
                 <option value="">— Free text —</option>
                 @foreach($products as $product)
-                    <option value="{{ $product->id }}" data-name="{{ $product->name }}">{{ $product->name }}</option>
+                    <option value="{{ $product->id }}" data-name="{{ $product->name }}"
+                        data-price="{{ $product->sale_price ?? $product->price ?? 0 }}"
+                        data-unit="{{ $product->unit ?? '' }}">{{ $product->name }}</option>
                 @endforeach
             </select>
         </td>
@@ -206,7 +228,7 @@
         <td><input type="number" step="0.001" min="0.001" name="items[__INDEX__][quantity]"
                 class="form-control form-control-sm" required></td>
         <td><input type="text" name="items[__INDEX__][unit]" class="form-control form-control-sm"></td>
-        <td><input type="number" step="0.01" min="0" name="items[__INDEX__][unit_price]"
+        <td><input type="number" step="0.01" min="0" name="items[__INDEX__][price]"
                 class="form-control form-control-sm" required></td>
         <td><input type="number" step="0.01" min="0" max="100" name="items[__INDEX__][discount_percent]"
                 class="form-control form-control-sm"></td>
@@ -227,6 +249,8 @@
             const body = document.getElementById('linesBody');
             const template = document.getElementById('lineTemplate').innerHTML;
             const initialLines = @json($lines);
+            const fieldNames = ['product_id', 'description', 'quantity', 'unit', 'price',
+                'discount_percent', 'tax_rate'];
             let index = 0;
 
             const num = (el) => parseFloat(el ? el.value : 0) || 0;
@@ -236,7 +260,7 @@
                 body.insertAdjacentHTML('beforeend', template.replaceAll('__INDEX__', index));
                 const row = body.lastElementChild;
 
-                ['product_id', 'description', 'quantity', 'unit', 'unit_price', 'discount_percent', 'tax_rate'].forEach(name => {
+                fieldNames.forEach(name => {
                     const el = field(row, name);
                     if (el && data[name] !== undefined && data[name] !== null) el.value = data[name];
                 });
@@ -249,7 +273,7 @@
                 let subtotal = 0, tax = 0;
 
                 body.querySelectorAll('.line-row').forEach(row => {
-                    const total = num(field(row, 'quantity')) * num(field(row, 'unit_price'))
+                    const total = num(field(row, 'quantity')) * num(field(row, 'price'))
                         * (1 - num(field(row, 'discount_percent')) / 100);
 
                     row.querySelector('.line-total').textContent = total.toFixed(2);
@@ -267,12 +291,21 @@
 
             body.addEventListener('input', recalc);
 
+            // Picking a product fills description / unit / price when those are still empty
             body.addEventListener('change', e => {
                 if (!e.target.classList.contains('product-select')) return;
                 const row = e.target.closest('.line-row');
-                const name = e.target.selectedOptions[0].dataset.name;
+                const opt = e.target.selectedOptions[0];
+                if (!opt || !opt.value) return;
+
                 const desc = field(row, 'description');
-                if (name && !desc.value) desc.value = name;
+                const unit = field(row, 'unit');
+                const price = field(row, 'price');
+
+                if (opt.dataset.name && !desc.value) desc.value = opt.dataset.name;
+                if (opt.dataset.unit && !unit.value) unit.value = opt.dataset.unit;
+                if (num(price) === 0) price.value = parseFloat(opt.dataset.price) || 0;
+                recalc();
             });
 
             body.addEventListener('click', e => {
@@ -285,7 +318,7 @@
             });
 
             document.getElementById('addLine').addEventListener('click', () =>
-                addLine({ quantity: 1, unit_price: 0, discount_percent: 0, tax_rate: 20 }));
+                addLine({ quantity: 1, price: 0, discount_percent: 0, tax_rate: 20 }));
             document.getElementById('discount_amount').addEventListener('input', recalc);
             document.getElementById('shipping_cost').addEventListener('input', recalc);
 
