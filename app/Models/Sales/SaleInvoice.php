@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class SaleInvoice extends Model
 {
     use HasFactory;
+    protected $table = 'sales_invoices';
 
     public const STATUSES = [
         'draft' => 'Draft',
