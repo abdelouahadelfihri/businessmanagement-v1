@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 | Controllers
 |--------------------------------------------------------------------------
 */
+use App\Http\Controllers\DashboardController;
+
 use App\Http\Controllers\Purchases\PurchaseRequestController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
@@ -36,7 +38,7 @@ Route::middleware(['web'])->group(function () {
     | Dashboard
     |--------------------------------------------------------------------------
     */
-    Route::get('/', fn() => view('dashboard'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 
     /*

@@ -117,6 +117,11 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
+        .sidebar .nav-link.active-link {
+            background: rgba(255, 255, 255, 0.65);
+            font-weight: 600;
+        }
+
         /* Hide text when collapsed */
         .sidebar.collapsed .nav-link span {
             display: none;
@@ -171,13 +176,21 @@
 
             <!-- App header -->
             <div class="app-header">
-                <div class="app-brand">
+                <a href="{{ route('dashboard') }}" class="app-brand">
                     <i class="bi bi-building"></i>
                     <span>Business MS</span>
-                </div>
+                </a>
             </div>
 
             <ul class="nav nav-pills flex-column mb-auto">
+
+                <!-- Dashboard -->
+                <li>
+                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active-link' : '' }}" href="{{ route('dashboard') }}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
 
                 <!-- Purchases -->
                 <li>
