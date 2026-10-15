@@ -169,7 +169,19 @@ Route::middleware(['web'])->group(function () {
 
         Route::resource('salesdeliveries', SaleDeliveryController::class);
         Route::resource('salesinvoices', SaleInvoiceController::class);
-        Route::resource('salesreturns', SaleReturnController::class);
+
+        // Sales returns
+        Route::post('salesreturns/{saleReturn}/validate', [SaleReturnController::class, 'validateReturn'])
+            ->name('salesreturns.validate');
+        Route::post('salesreturns/{saleReturn}/cancel', [SaleReturnController::class, 'cancel'])
+            ->name('salesreturns.cancel');
+
+        Route::resource(
+            'salesreturns',
+            SaleReturnController::class
+        )->parameters([
+                    'salesreturns' => 'saleReturn'
+                ]);
 
     });
 
