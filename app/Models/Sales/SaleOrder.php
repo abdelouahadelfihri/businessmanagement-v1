@@ -87,6 +87,12 @@ class SaleOrder extends Model
         return $this->hasMany(\App\Models\Sales\SaleOrderLine::class, 'order_id');
     }
 
+    /** Alias of items(), used by the delivery, invoice and return controllers. */
+    public function lines()
+    {
+        return $this->items();
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');

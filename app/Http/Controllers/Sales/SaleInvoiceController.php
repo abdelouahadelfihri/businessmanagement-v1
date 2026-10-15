@@ -369,11 +369,11 @@ class SaleInvoiceController extends Controller
                 'description' => $ol->description ?? ($ol->product->name ?? null),
                 'unit' => $ol->unit ?? null,
                 'quantity' => $qty,
-                'price' => $price,
+                'unit_price' => $price,
                 'discount_percent' => $disc,
                 'tax_rate' => $rate,
                 'tax_amount' => round($lineTax, 2),
-                'total' => round($lineTotal, 2),
+                'total_price' => round($lineTotal, 2),
                 'sort_order' => count($computed),
             ];
         }

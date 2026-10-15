@@ -62,7 +62,7 @@ class SaleInvoice extends Model
 
     public function lines()
     {
-        return $this->hasMany(SalesInvoiceLine::class, 'invoice_id')->orderBy('sort_order')->orderBy('id');
+        return $this->hasMany(SalesInvoiceLine::class, 'sales_invoice_id')->orderBy('sort_order')->orderBy('id');
     }
 
     public function createdBy()

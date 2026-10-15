@@ -32,8 +32,8 @@ class SaleDeliveryStockService
         'warehouse' => 'warehouse_id',
         'type' => 'type',
         'quantity' => 'quantity',
-        'date' => null,   // e.g. 'movement_date'
-        'note' => null,   // e.g. 'note' or 'reason'
+        'date' => 'date',
+        'note' => 'reason',
     ];
 
     /** Stock on hand for a product in a warehouse. */

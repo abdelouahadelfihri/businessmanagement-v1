@@ -17,7 +17,6 @@ use App\Models\Sales\SalesInvoiceLine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
@@ -163,26 +162,15 @@ class DashboardController extends Controller
         return round(($current - $previous) / $previous * 100, 1);
     }
 
-    /**
-     * Best-selling products. The invoice lines table and the SalesInvoiceLine model
-     * do not agree on column names, so the real columns are detected here.
-     */
+    /** Best-selling products (by invoiced amount, excluding VAT). */
     private function topProducts(Carbon $from, Carbon $to)
     {
-        $table = (new SalesInvoiceLine())->getTable();
-        $has = fn($col) => Schema::hasColumn($table, $col);
-
-        $fk = $has('sales_invoice_id') ? 'sales_invoice_id' : 'invoice_id';
-        $price = $has('unit_price') ? 'unit_price' : 'price';
-        $total = $has('total_price') ? 'total_price' : ($has('total') ? 'total' : null);
-        $amount = $total ? "COALESCE(l.$total, l.quantity * l.$price)" : "l.quantity * l.$price";
-
-        $rows = DB::table("$table as l")
-            ->join('sales_invoices as i', 'i.id', '=', "l.$fk")
+        $rows = DB::table((new SalesInvoiceLine())->getTable() . ' as l')
+            ->join('sales_invoices as i', 'i.id', '=', 'l.sales_invoice_id')
             ->whereIn('i.status', self::BILLED)
             ->whereBetween('i.date', [$from, $to])
             ->whereNotNull('l.product_id')
-            ->select('l.product_id', DB::raw('SUM(l.quantity) as qty'), DB::raw("SUM($amount) as revenue"))
+            ->select('l.product_id', DB::raw('SUM(l.quantity) as qty'), DB::raw('SUM(l.total_price) as revenue'))
             ->groupBy('l.product_id')
             ->orderByDesc('revenue')
             ->limit(5)

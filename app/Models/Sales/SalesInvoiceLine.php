@@ -7,24 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class SalesInvoiceLine extends Model
 {
+    protected $table = 'sales_invoice_lines';
+
     protected $fillable = [
-        'invoice_id', 'order_line_id', 'product_id', 'description', 'unit',
-        'quantity', 'price', 'discount_percent', 'tax_rate', 'tax_amount',
-        'total', 'sort_order',
+        'sales_invoice_id', 'order_line_id', 'product_id', 'description', 'unit',
+        'quantity', 'unit_price', 'discount_percent', 'tax_rate', 'tax_amount',
+        'total_price', 'notes', 'sort_order',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:3',
-        'price' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'discount_percent' => 'decimal:2',
         'tax_rate' => 'decimal:2',
         'tax_amount' => 'decimal:2',
-        'total' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
 
     public function invoice()
     {
-        return $this->belongsTo(SaleInvoice::class, 'invoice_id');
+        // explicit FK: Laravel would otherwise guess `sale_invoice_id`
+        return $this->belongsTo(SaleInvoice::class, 'sales_invoice_id');
     }
 
     public function product()

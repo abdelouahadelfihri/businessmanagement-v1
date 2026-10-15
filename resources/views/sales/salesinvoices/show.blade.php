@@ -111,10 +111,10 @@
                                     <td>{{ $line->description }}</td>
                                     <td class="text-end">{{ $qty($line->quantity) }}</td>
                                     <td>{{ $line->unit ?? '—' }}</td>
-                                    <td class="text-end">{{ number_format($line->price, 2) }}</td>
+                                    <td class="text-end">{{ number_format($line->unit_price, 2) }}</td>
                                     <td class="text-end">{{ number_format($line->discount_percent, 2) }}</td>
                                     <td class="text-end">{{ number_format($line->tax_rate, 2) }}</td>
-                                    <td class="text-end">{{ number_format($line->total, 2) }}</td>
+                                    <td class="text-end">{{ number_format($line->total_price, 2) }}</td>
                                 </tr>
                             @empty
                                 <tr><td colspan="8" class="text-center text-muted">No lines.</td></tr>
