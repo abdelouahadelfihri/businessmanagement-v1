@@ -20,7 +20,6 @@ class PurchaseRequestLine extends Model
         'unit',
         'unit_price',
         'total_price',
-        'notes',
     ];
 
     protected $casts = [
