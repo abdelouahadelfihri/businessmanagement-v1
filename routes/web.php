@@ -167,8 +167,33 @@ Route::middleware(['web'])->group(function () {
                     'salesorders' => 'saleOrder'
                 ]);
 
-        Route::resource('salesdeliveries', SaleDeliveryController::class);
-        Route::resource('salesinvoices', SaleInvoiceController::class);
+        // Sales deliveries
+        Route::post('salesdeliveries/{saleDelivery}/validate', [SaleDeliveryController::class, 'confirm'])
+            ->name('salesdeliveries.validate');
+        Route::post('salesdeliveries/{saleDelivery}/cancel', [SaleDeliveryController::class, 'cancel'])
+            ->name('salesdeliveries.cancel');
+
+        Route::resource(
+            'salesdeliveries',
+            SaleDeliveryController::class
+        )->parameters([
+                    'salesdeliveries' => 'saleDelivery'
+                ]);
+
+        // Sales invoices
+        Route::post('salesinvoices/{saleInvoice}/validate', [SaleInvoiceController::class, 'issueInvoice'])
+            ->name('salesinvoices.validate');
+        Route::post('salesinvoices/{saleInvoice}/payment', [SaleInvoiceController::class, 'recordPayment'])
+            ->name('salesinvoices.payment');
+        Route::post('salesinvoices/{saleInvoice}/cancel', [SaleInvoiceController::class, 'cancel'])
+            ->name('salesinvoices.cancel');
+
+        Route::resource(
+            'salesinvoices',
+            SaleInvoiceController::class
+        )->parameters([
+                    'salesinvoices' => 'saleInvoice'
+                ]);
 
         // Sales returns
         Route::post('salesreturns/{saleReturn}/validate', [SaleReturnController::class, 'validateReturn'])
