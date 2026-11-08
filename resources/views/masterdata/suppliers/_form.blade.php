@@ -215,10 +215,8 @@
     </div>
 </div>
 
-{{-- People: managed on the supplier page once it exists --}}
-@unless($s->exists)
-    @include('crm.contacts._quick')
-@endunless
+{{-- Contacts (add / edit / remove, saved with the form) --}}
+@include('crm.contacts._editor', ['owner' => $s])
 
 {{-- Notes --}}
 <div class="card shadow-sm mb-3">

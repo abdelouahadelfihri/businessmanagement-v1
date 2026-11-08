@@ -58,48 +58,85 @@ class Contact extends Model
         });
     }
 
-    /* ---------------- Quick "primary contact" on owner create forms ---------------- */
+    /* ---------------- Contacts editor embedded in owner forms ---------------- */
 
-    /** Validation rules for the optional primary_contact[...] block of an owner form. */
-    public static function quickRules(): array
+    /** Fields edited inline on the customer / supplier / prospect forms. */
+    public const EDITOR_FIELDS = ['first_name', 'last_name', 'job_title', 'email', 'phone', 'mobile'];
+
+    /** Validation rules for the contacts[...] rows of an owner form. */
+    public static function editorRules(): array
     {
+        $others = 'contacts.*.last_name,contacts.*.job_title,contacts.*.email,contacts.*.phone,contacts.*.mobile';
+
         return [
-            'primary_contact.first_name' => 'nullable|string|max:100',
-            'primary_contact.last_name' => 'nullable|string|max:100',
-            'primary_contact.job_title' => 'nullable|string|max:100',
-            'primary_contact.email' => 'nullable|email|max:255',
-            'primary_contact.mobile' => 'nullable|string|max:30',
+            'contacts' => 'nullable|array|max:50',
+            'contacts.*.id' => 'nullable|integer',
+            'contacts.*._delete' => 'nullable|boolean',
+            'contacts.*.first_name' => "nullable|required_with:$others|string|max:100",
+            'contacts.*.last_name' => 'nullable|string|max:100',
+            'contacts.*.job_title' => 'nullable|string|max:100',
+            'contacts.*.email' => 'nullable|email|max:255',
+            'contacts.*.phone' => 'nullable|string|max:30',
+            'contacts.*.mobile' => 'nullable|string|max:30',
+            'primary_contact_row' => 'nullable|string|max:20',
         ];
     }
 
-    /** Readable field names for the primary_contact[...] block in validation messages. */
-    public static function quickAttributes(): array
+    public static function editorMessages(): array
+    {
+        return ['contacts.*.first_name.required_with' => 'Each contact needs a first name (or clear the row to ignore it).'];
+    }
+
+    /** Readable field names for validation messages. */
+    public static function editorAttributes(): array
     {
         return [
-            'primary_contact.first_name' => 'contact first name',
-            'primary_contact.last_name' => 'contact last name',
-            'primary_contact.job_title' => 'contact job title',
-            'primary_contact.email' => 'contact email',
-            'primary_contact.mobile' => 'contact mobile',
+            'contacts.*.first_name' => 'contact first name',
+            'contacts.*.last_name' => 'contact last name',
+            'contacts.*.job_title' => 'contact job title',
+            'contacts.*.email' => 'contact email',
+            'contacts.*.phone' => 'contact phone',
+            'contacts.*.mobile' => 'contact mobile',
         ];
     }
 
-    /** Creates the owner's primary contact when a first name was given. */
-    public static function createPrimaryFor(Model $owner, ?array $data): ?self
+    /**
+     * Applies the contacts[...] rows of an owner form: updates existing contacts,
+     * creates new ones, deletes rows flagged with _delete, ignores blank rows,
+     * and marks the chosen row ($primaryRow = row key) as the primary contact.
+     */
+    public static function syncFor(Model $owner, ?array $rows, ?string $primaryRow = null): void
     {
-        if (blank($data['first_name'] ?? null)) {
-            return null;
+        $primary = null;
+
+        foreach ($rows ?? [] as $key => $row) {
+            $existing = filled($row['id'] ?? null)
+                ? $owner->contacts()->whereKey((int) $row['id'])->first()   // only this owner's contacts
+                : null;
+
+            if (! empty($row['_delete']) || blank($row['first_name'] ?? null)) {
+                $existing?->delete();
+                continue;
+            }
+
+            $data = array_intersect_key($row, array_flip(self::EDITOR_FIELDS));
+
+            if ($existing) {
+                $existing->update($data);
+                $contact = $existing;
+            } else {
+                $data['preferred_channel'] = filled($data['mobile'] ?? null) && blank($data['email'] ?? null) ? 'mobile' : 'email';
+                $contact = $owner->contacts()->create($data + ['is_active' => true, 'is_primary' => false]);
+            }
+
+            if ((string) $key === (string) $primaryRow) {
+                $primary = $contact;
+            }
         }
 
-        return $owner->contacts()->create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'] ?? null,
-            'job_title' => $data['job_title'] ?? null,
-            'email' => $data['email'] ?? null,
-            'mobile' => $data['mobile'] ?? null,
-            'preferred_channel' => filled($data['mobile'] ?? null) && blank($data['email'] ?? null) ? 'mobile' : 'email',
-            'is_primary' => true,
-        ]);
+        // Exactly one primary contact when the owner has any
+        $primary ??= $owner->contacts()->where('is_primary', true)->first() ?? $owner->contacts()->first();
+        $primary?->update(['is_primary' => true]);
     }
 
     /* ---------------- Relations ---------------- */

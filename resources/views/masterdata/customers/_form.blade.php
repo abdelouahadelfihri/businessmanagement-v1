@@ -178,10 +178,8 @@
     </div>
 </div>
 
-{{-- People: managed on the customer page once it exists --}}
-@unless($c->exists)
-    @include('crm.contacts._quick')
-@endunless
+{{-- Contacts (add / edit / remove, saved with the form) --}}
+@include('crm.contacts._editor', ['owner' => $c])
 
 {{-- Notes --}}
 <div class="card shadow-sm mb-3">

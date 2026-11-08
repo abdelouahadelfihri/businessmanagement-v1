@@ -62,7 +62,7 @@ class ProspectController extends Controller
     {
         $prospect = DB::transaction(function () use ($request) {
             $prospect = Prospect::create($this->validated($request));
-            Contact::createPrimaryFor($prospect, $request->input('primary_contact'));
+            Contact::syncFor($prospect, $request->input('contacts'), $request->input('primary_contact_row'));
 
             return $prospect;
         });
@@ -79,12 +79,17 @@ class ProspectController extends Controller
 
     public function edit(Prospect $prospect)
     {
+        $prospect->load('contacts');
+
         return view('crm.prospects.edit', compact('prospect'));
     }
 
     public function update(Request $request, Prospect $prospect)
     {
-        $prospect->update($this->validated($request, $prospect));
+        DB::transaction(function () use ($request, $prospect) {
+            $prospect->update($this->validated($request, $prospect));
+            Contact::syncFor($prospect, $request->input('contacts'), $request->input('primary_contact_row'));
+        });
 
         return redirect()->route('crm.prospects.show', $prospect)->with('success', "Prospect {$prospect->name} updated.");
     }
@@ -185,15 +190,13 @@ class ProspectController extends Controller
             'notes' => 'nullable|string|max:5000',
         ];
 
-        if (! $prospect) {
-            $rules += Contact::quickRules();
-        }
+        $rules += Contact::editorRules();
 
         $data = $request->validate($rules, [
             'lost_reason.required_if' => 'Please give a reason when the prospect is lost.',
-        ], Contact::quickAttributes());
+        ] + Contact::editorMessages(), Contact::editorAttributes());
 
-        unset($data['primary_contact']);
+        unset($data['contacts'], $data['primary_contact_row']);
         $data['country'] = $data['country'] ?: 'Morocco';
         $data['estimated_value'] = $data['estimated_value'] ?? 0;
         if ($data['status'] !== 'lost') {

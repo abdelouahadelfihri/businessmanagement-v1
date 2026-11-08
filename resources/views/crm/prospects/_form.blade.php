@@ -146,9 +146,8 @@
     </div>
 </div>
 
-@unless($pr->exists)
-    @include('crm.contacts._quick')
-@endunless
+{{-- Contacts (add / edit / remove, saved with the form) --}}
+@include('crm.contacts._editor', ['owner' => $pr])
 
 <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mb-5">
     <a href="{{ $pr->exists ? route('crm.prospects.show', $pr) : route('crm.prospects.index') }}" class="btn btn-outline-secondary">Cancel</a>

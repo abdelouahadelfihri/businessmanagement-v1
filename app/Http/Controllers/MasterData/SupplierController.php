@@ -40,7 +40,7 @@ class SupplierController extends Controller
     {
         $supplier = DB::transaction(function () use ($request) {
             $supplier = Supplier::create($this->validated($request));
-            Contact::createPrimaryFor($supplier, $request->input('primary_contact'));
+            Contact::syncFor($supplier, $request->input('contacts'), $request->input('primary_contact_row'));
 
             return $supplier;
         });
@@ -75,12 +75,17 @@ class SupplierController extends Controller
 
     public function edit(Supplier $supplier)
     {
+        $supplier->load('contacts');
+
         return view('masterdata.suppliers.edit', compact('supplier'));
     }
 
     public function update(Request $request, Supplier $supplier)
     {
-        $supplier->update($this->validated($request, $supplier));
+        DB::transaction(function () use ($request, $supplier) {
+            $supplier->update($this->validated($request, $supplier));
+            Contact::syncFor($supplier, $request->input('contacts'), $request->input('primary_contact_row'));
+        });
 
         return redirect()
             ->route('masterdata.suppliers.show', $supplier)
@@ -150,17 +155,15 @@ class SupplierController extends Controller
             'notes' => 'nullable|string|max:5000',
         ];
 
-        if (! $supplier) {
-            $rules += Contact::quickRules();
-        }
+        $rules += Contact::editorRules();
 
         $data = $request->validate($rules, [
             'ice.digits' => 'The ICE must be exactly 15 digits.',
             'rib.digits' => 'The RIB must be exactly 24 digits.',
             'swift.regex' => 'The SWIFT / BIC code must be 8 or 11 characters (e.g. BCMAMAMC).',
-        ], Contact::quickAttributes());
+        ] + Contact::editorMessages(), Contact::editorAttributes());
 
-        unset($data['primary_contact']);
+        unset($data['contacts'], $data['primary_contact_row']);
         $data['is_active'] = $request->boolean('is_active');
         $data['country'] = $data['country'] ?: 'Morocco';
         $data['swift'] = isset($data['swift']) ? strtoupper($data['swift']) : null;

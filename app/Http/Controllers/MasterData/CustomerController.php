@@ -37,7 +37,7 @@ class CustomerController extends Controller
     {
         $customer = DB::transaction(function () use ($request) {
             $customer = Customer::create($this->validated($request));
-            Contact::createPrimaryFor($customer, $request->input('primary_contact'));
+            Contact::syncFor($customer, $request->input('contacts'), $request->input('primary_contact_row'));
 
             return $customer;
         });
@@ -70,12 +70,17 @@ class CustomerController extends Controller
 
     public function edit(Customer $customer)
     {
+        $customer->load('contacts');
+
         return view('masterdata.customers.edit', compact('customer'));
     }
 
     public function update(Request $request, Customer $customer)
     {
-        $customer->update($this->validated($request, $customer));
+        DB::transaction(function () use ($request, $customer) {
+            $customer->update($this->validated($request, $customer));
+            Contact::syncFor($customer, $request->input('contacts'), $request->input('primary_contact_row'));
+        });
 
         return redirect()
             ->route('masterdata.customers.show', $customer)
@@ -138,15 +143,13 @@ class CustomerController extends Controller
             'notes' => 'nullable|string|max:5000',
         ];
 
-        if (! $customer) {
-            $rules += Contact::quickRules();
-        }
+        $rules += Contact::editorRules();
 
         $data = $request->validate($rules, [
             'ice.digits' => 'The ICE must be exactly 15 digits.',
-        ], Contact::quickAttributes());
+        ] + Contact::editorMessages(), Contact::editorAttributes());
 
-        unset($data['primary_contact']);
+        unset($data['contacts'], $data['primary_contact_row']);
         $data['is_active'] = $request->boolean('is_active');
         $data['country'] = $data['country'] ?: 'Morocco';
         $data['credit_limit'] = $data['credit_limit'] ?? 0;
