@@ -1,94 +1,14 @@
 @extends('layouts.app')
 
+@section('title', 'New Product')
+
 @section('content')
-    <div class="container">
-        <h3>Create Product</h3>
+    <div class="container mt-4">
+        <h1 class="mb-4">New Product</h1>
 
-        <form method="POST" action="{{ route('products.store') }}">
+        <form method="POST" action="{{ route('masterdata.products.store') }}">
             @csrf
-
-            {{-- NAME --}}
-            <div class="mb-3">
-                <label class="form-label">Product Name</label>
-                <input type="text" name="name" class="form-control" required>
-            </div>
-
-            {{-- CODE --}}
-            <div class="mb-3">
-                <label class="form-label">Product Code</label>
-                <input type="text" name="code" class="form-control">
-            </div>
-
-            {{-- BARCODE --}}
-            <div class="mb-3">
-                <label class="form-label">Barcode</label>
-                <div class="input-group">
-                    <input type="text" name="bar_code" id="barcode" class="form-control">
-                    <button type="button" class="btn btn-outline-secondary" onclick="startBarcodeScan()">
-                        📷 Scan
-                    </button>
-                </div>
-            </div>
-
-            {{-- CATEGORY --}}
-            <div class="mb-3">
-                <label class="form-label">Category</label>
-                <div class="input-group">
-                    <input type="hidden" name="category_id" id="category_id">
-                    <input type="text" name="category_name" id="category_name" class="form-control" readonly>
-                    <button type="button" class="btn btn-outline-primary" onclick="openCategoryModal()">
-                        Pick
-                    </button>
-                </div>
-            </div>
-
-            {{-- UNIT --}}
-            <div class="mb-3">
-                <label class="form-label">Unit</label>
-                <div class="input-group">
-                    <input type="hidden" name="unit_id" id="unit_id">
-                    <input type="text" name="unit_name" id="unit_name" class="form-control" readonly>
-                    <button type="button" class="btn btn-outline-primary" onclick="openUnitModal()">
-                        Pick
-                    </button>
-                </div>
-            </div>
-
-            {{-- REORDER LEVEL --}}
-            <div class="mb-3">
-                <label class="form-label">Reorder Level</label>
-                <input type="number" name="reorder_level" class="form-control">
-            </div>
-
-            {{-- ACTIVE --}}
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="is_active" value="1" class="form-check-input" checked>
-                <label class="form-check-label">Active</label>
-            </div>
-
-            <button class="btn btn-success">Save Product</button>
+            @include('masterdata.products._form')
         </form>
     </div>
-
-    @include('modals.category-picker')
-    @include('modals.unit-picker')
-    @include('products.partials.barcode-script')
 @endsection
-
-@push('scripts')
-    <script>
-        // 🔹 Open Category Modal
-        function openCategoryModal() {
-            let modalEl = document.getElementById('categoryModal');
-            let modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        }
-
-        // 🔹 Open Unit Modal
-        function openUnitModal() {
-            let modalEl = document.getElementById('unitModal');
-            let modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        }
-    </script>
-@endpush

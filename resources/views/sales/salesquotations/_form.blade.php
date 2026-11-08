@@ -197,8 +197,8 @@
                 <option value="">— Free text —</option>
                 @foreach($products as $product)
                     <option value="{{ $product->id }}" data-name="{{ $product->name }}"
-                        data-price="{{ $product->sale_price ?? $product->price ?? 0 }}"
-                        data-unit="{{ $product->unit ?? '' }}">{{ $product->name }}</option>
+                        data-price="{{ (float) $product->sale_price }}" data-tax="{{ (float) $product->tax_rate }}"
+                        data-unit="{{ $product->unit_label ?? '' }}">{{ $product->name }}</option>
                 @endforeach
             </select>
         </td>
@@ -283,6 +283,7 @@
                 if (opt.dataset.name && !desc.value) desc.value = opt.dataset.name;
                 if (opt.dataset.unit && !unit.value) unit.value = opt.dataset.unit;
                 if (num(price) === 0) price.value = parseFloat(opt.dataset.price) || 0;
+                if (opt.dataset.tax !== undefined) field(row, 'tax_rate').value = parseFloat(opt.dataset.tax) || 0;
                 recalc();
             });
 

@@ -173,7 +173,7 @@ class SaleQuotationController extends Controller
     {
         return [
             'customers' => Customer::orderBy('name')->get(),
-            'products'  => Product::orderBy('name')->get(),
+            'products'  => Product::with('unit')->orderBy('name')->get(),
         ];
     }
 
