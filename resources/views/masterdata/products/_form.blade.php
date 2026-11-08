@@ -61,7 +61,8 @@
             <select name="category_id" class="form-select {{ $err('category_id') }}">
                 <option value="">— None —</option>
                 @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected($val('category_id') == $category->id)>{{ $category->name }}</option>
+                    <option value="{{ $category->id }}" data-tax="{{ $category->default_tax_rate !== null ? (float) $category->default_tax_rate : '' }}"
+                        @selected($val('category_id') == $category->id)>{{ $category->full_name }}</option>
                 @endforeach
             </select>
         </div>
@@ -229,6 +230,15 @@
             ['purchase_price', 'sale_price', 'tax_rate'].forEach(id =>
                 document.getElementById(id).addEventListener('input', updatePricing));
             updatePricing();
+
+            // Picking a category applies its default VAT rate
+            document.querySelector('[name=category_id]').addEventListener('change', e => {
+                const tax = e.target.selectedOptions[0]?.dataset.tax;
+                if (tax !== undefined && tax !== '') {
+                    document.getElementById('tax_rate').value = String(parseFloat(tax));
+                    updatePricing();
+                }
+            });
 
             // Services have no stock
             const type = document.getElementById('productType');

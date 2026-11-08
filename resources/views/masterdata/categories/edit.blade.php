@@ -1,54 +1,15 @@
 @extends('layouts.app')
 
+@section('title', 'Edit ' . $category->name)
+
 @section('content')
     <div class="container mt-4">
+        <h1 class="mb-4">Edit Category {{ $category->code }}</h1>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Edit Category</h1>
-            <a href="{{ route('categories.index') }}" class="btn btn-secondary">
-                Back
-            </a>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-
-                <form action="{{ route('categories.update', $category) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <!-- Name -->
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                            value="{{ old('name', $category->name) }}" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Description -->
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <input type="text" name="description"
-                            class="form-control @error('description') is-invalid @enderror"
-                            value="{{ old('description', $category->description) }}">
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="d-flex justify-content-end">
-                        <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary me-2">
-                            Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            Update Category
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <form method="POST" action="{{ route('masterdata.categories.update', $category) }}">
+            @csrf
+            @method('PUT')
+            @include('masterdata.categories._form')
+        </form>
     </div>
 @endsection

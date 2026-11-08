@@ -98,7 +98,7 @@ class ProductController extends Controller
     private function formData(): array
     {
         return [
-            'categories' => Category::orderBy('name')->get(['id', 'name']),
+            'categories' => Category::with('parent')->ordered()->get(['id', 'name', 'parent_id', 'default_tax_rate']),
             'units' => Unit::orderBy('name')->get(),
             'suppliers' => Supplier::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
         ];
