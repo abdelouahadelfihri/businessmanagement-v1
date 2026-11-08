@@ -7,13 +7,14 @@ use App\Models\Purchases\PurchaseOrder;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseRequest;
 use App\Models\Purchases\PurchaseReturn;
+use App\Models\Concerns\HasContacts;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-    use HasFactory;
+    use HasFactory, HasContacts;
 
     protected $table = 'suppliers';
 
@@ -27,7 +28,7 @@ class Supplier extends Model
     public const PAYMENT_METHODS = PurchaseInvoice::PAYMENT_METHODS;
 
     protected $fillable = [
-        'code', 'type', 'name', 'contact_person',
+        'code', 'type', 'name',
         'email', 'phone', 'mobile', 'website',
         'address', 'city', 'postal_code', 'country',
         'ice', 'tax_id', 'trade_register', 'patente',
@@ -100,7 +101,7 @@ class Supplier extends Model
             $like = '%' . $term . '%';
             $q->where('name', 'like', $like)
                 ->orWhere('code', 'like', $like)
-                ->orWhere('contact_person', 'like', $like)
+                ->orWhereHas('contacts', fn(Builder $c) => $c->where('first_name', 'like', $like)->orWhere('last_name', 'like', $like)->orWhere('email', 'like', $like))
                 ->orWhere('email', 'like', $like)
                 ->orWhere('phone', 'like', $like)
                 ->orWhere('mobile', 'like', $like)

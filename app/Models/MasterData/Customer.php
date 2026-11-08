@@ -6,13 +6,14 @@ use App\Models\Sales\SaleInvoice;
 use App\Models\Sales\SaleOrder;
 use App\Models\Sales\SaleQuotation;
 use App\Models\Sales\SaleReturn;
+use App\Models\Concerns\HasContacts;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory, HasContacts;
 
     protected $table = 'customers';
 
@@ -24,7 +25,7 @@ class Customer extends Model
     public const CURRENCIES = ['MAD', 'EUR', 'USD'];
 
     protected $fillable = [
-        'code', 'type', 'name', 'contact_person',
+        'code', 'type', 'name',
         'email', 'phone', 'mobile', 'website',
         'address', 'city', 'postal_code', 'country', 'shipping_address',
         'ice', 'tax_id', 'trade_register', 'patente',
@@ -72,6 +73,12 @@ class Customer extends Model
         return $this->hasMany(SaleReturn::class);
     }
 
+    /** The prospect this customer was converted from, if any. */
+    public function sourceProspect()
+    {
+        return $this->hasOne(\App\Models\CRM\Prospect::class, 'converted_customer_id');
+    }
+
     /* ---------------- Scopes ---------------- */
 
     public function scopeActive(Builder $query): Builder
@@ -89,7 +96,7 @@ class Customer extends Model
             $like = '%' . $term . '%';
             $q->where('name', 'like', $like)
                 ->orWhere('code', 'like', $like)
-                ->orWhere('contact_person', 'like', $like)
+                ->orWhereHas('contacts', fn(Builder $c) => $c->where('first_name', 'like', $like)->orWhere('last_name', 'like', $like)->orWhere('email', 'like', $like))
                 ->orWhere('email', 'like', $like)
                 ->orWhere('phone', 'like', $like)
                 ->orWhere('mobile', 'like', $like)

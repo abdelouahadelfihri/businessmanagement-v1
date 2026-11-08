@@ -200,6 +200,24 @@
                 padding: 12px;
             }
         }
+
+        /* Extra colours used by badges / buttons (Bootstrap has no purple / orange utilities) */
+        .bg-purple { background-color: #7c4dff !important; color: #fff; }
+        .bg-orange { background-color: #fd7e14 !important; color: #fff; }
+        .text-purple { color: #7c4dff !important; }
+        .btn-orange { background-color: #fd7e14; border-color: #fd7e14; color: #fff; }
+        .btn-orange:hover, .btn-orange:disabled { background-color: #e8590c; border-color: #e8590c; color: #fff; }
+
+        /* Contact avatars */
+        .contact-avatar {
+            width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: #e7efff; color: #2f6bff; font-weight: 600; font-size: .9rem;
+        }
+        .contact-avatar-sm { width: 30px; height: 30px; font-size: .75rem; }
+        .contact-avatar-lg { width: 60px; height: 60px; font-size: 1.3rem; }
+        .min-w-0 { min-width: 0; }
+        @media (min-width: 768px) { .border-end-md { border-right: 1px solid var(--bs-border-color); } }
     </style>
     @stack('styles')
 </head>
@@ -444,6 +462,63 @@
                                         </li>
                                         <li>
                                             <a class="nav-link" href="{{ route('sales.salesreturns.create') }}">
+                                                <i class="bi bi-plus-circle"></i>
+                                                <span>Add</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- CRM -->
+                <li>
+                    <a class="nav-link" data-bs-toggle="collapse" href="#crmMenu">
+                        <i class="bi bi-people"></i>
+                        <span>CRM</span>
+                    </a>
+
+                    <div class="collapse {{ request()->routeIs('crm.*') ? 'show' : '' }}" id="crmMenu">
+                        <ul class="nav flex-column submenu">
+                            <li>
+                                <a class="nav-link" data-bs-toggle="collapse" href="#prospectsMenu">
+                                    <i class="bi bi-bullseye"></i>
+                                    <span>Prospects</span>
+                                </a>
+                                <div class="collapse {{ request()->routeIs('crm.prospects.*') ? 'show' : '' }}" id="prospectsMenu">
+                                    <ul class="nav flex-column submenu">
+                                        <li>
+                                            <a class="nav-link {{ request()->routeIs('crm.prospects.index') ? 'active-link' : '' }}" href="{{ route('crm.prospects.index') }}">
+                                                <i class="bi bi-list-ul"></i>
+                                                <span>List</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link {{ request()->routeIs('crm.prospects.create') ? 'active-link' : '' }}" href="{{ route('crm.prospects.create') }}">
+                                                <i class="bi bi-plus-circle"></i>
+                                                <span>Add</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a class="nav-link" data-bs-toggle="collapse" href="#contactsMenu">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                    <span>Contacts</span>
+                                </a>
+                                <div class="collapse {{ request()->routeIs('crm.contacts.*') ? 'show' : '' }}" id="contactsMenu">
+                                    <ul class="nav flex-column submenu">
+                                        <li>
+                                            <a class="nav-link {{ request()->routeIs('crm.contacts.index') ? 'active-link' : '' }}" href="{{ route('crm.contacts.index') }}">
+                                                <i class="bi bi-list-ul"></i>
+                                                <span>List</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link {{ request()->routeIs('crm.contacts.create') ? 'active-link' : '' }}" href="{{ route('crm.contacts.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>

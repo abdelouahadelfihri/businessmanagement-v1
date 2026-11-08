@@ -78,7 +78,11 @@
         <div class="card shadow-sm mb-3">
             <div class="card-header fw-semibold">General information</div>
             <div class="card-body row g-3">
-                <div class="col-sm-6 col-md-4"><small class="text-muted d-block">Contact person</small>{{ $s->contact_person ?? '—' }}</div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text-muted d-block">Primary contact</small>
+                    @php $pc = $s->contacts->firstWhere('is_primary', true); @endphp
+                    @if($pc)<a href="{{ route('crm.contacts.show', $pc) }}">{{ $pc->display_name }}</a>@else — @endif
+                </div>
                 <div class="col-sm-6 col-md-4">
                     <small class="text-muted d-block">Email</small>
                     @if($s->email)<a href="mailto:{{ $s->email }}">{{ $s->email }}</a>@else — @endif
@@ -138,6 +142,8 @@
                 </div>
             </div>
         </div>
+
+        @include('crm.contacts._list', ['owner' => $s])
 
         {{-- Activity --}}
         <div class="card shadow-sm mb-3">

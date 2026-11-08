@@ -84,7 +84,7 @@
                                 <tr>
                                     <th>Code</th>
                                     <th>Name</th>
-                                    <th>Contact</th>
+                                    <th>Primary contact</th>
                                     <th>Phone</th>
                                     <th>City</th>
                                     <th>Rating</th>
@@ -104,7 +104,14 @@
                                             </a>
                                             <small class="d-block text-muted">{{ $supplier->email ?? (\App\Models\MasterData\Supplier::TYPES[$supplier->type] ?? '') }}</small>
                                         </td>
-                                        <td>{{ $supplier->contact_person ?? '—' }}</td>
+                                        <td>
+                                            @if($supplier->primaryContact)
+                                                <a href="{{ route('crm.contacts.show', $supplier->primaryContact) }}">{{ $supplier->primaryContact->full_name }}</a>
+                                                <small class="d-block text-muted">{{ $supplier->primaryContact->job_title }}</small>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $supplier->phone ?? $supplier->mobile ?? '—' }}</td>
                                         <td>{{ $supplier->city ?? '—' }}</td>
                                         <td class="text-warning" data-order="{{ $supplier->rating ?? 0 }}">

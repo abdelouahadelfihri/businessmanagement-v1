@@ -39,14 +39,8 @@
                 placeholder="e.g. Atlas Distribution SARL" value="{{ $val('name') }}">
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label">Contact person</label>
-            <input type="text" name="contact_person" maxlength="255" class="form-control {{ $err('contact_person') }}"
-                placeholder="e.g. Youssef Amrani" value="{{ $val('contact_person') }}">
-        </div>
-
-        <div class="col-md-6 d-flex align-items-end">
-            <div class="form-check form-switch mb-2">
+        <div class="col-12">
+            <div class="form-check form-switch">
                 <input type="hidden" name="is_active" value="0">
                 <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active" value="1"
                     @checked($val('is_active', true))>
@@ -183,6 +177,11 @@
         </div>
     </div>
 </div>
+
+{{-- People: managed on the customer page once it exists --}}
+@unless($c->exists)
+    @include('crm.contacts._quick')
+@endunless
 
 {{-- Notes --}}
 <div class="card shadow-sm mb-3">

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Route;
 */
 use App\Http\Controllers\DashboardController;
 
+use App\Http\Controllers\CRM\ContactController;
+use App\Http\Controllers\CRM\ProspectController;
+
 use App\Http\Controllers\Purchases\PurchaseRequestController;
 use App\Http\Controllers\Purchases\PurchaseOrderController;
 use App\Http\Controllers\Purchases\PurchaseReceiptController;
@@ -57,6 +60,22 @@ Route::middleware(['web'])->group(function () {
         Route::resource('locations', LocationController::class);
         Route::resource('stocksmovements', StockMovementController::class);
         Route::resource('transfers', TransferController::class);
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | CRM
+    |--------------------------------------------------------------------------
+    */
+    Route::name('crm.')->group(function () {
+
+        Route::post('prospects/{prospect}/convert', [ProspectController::class, 'convert'])->name('prospects.convert');
+        Route::post('prospects/{prospect}/status', [ProspectController::class, 'updateStatus'])->name('prospects.status');
+        Route::resource('prospects', ProspectController::class);
+
+        Route::post('contacts/{contact}/primary', [ContactController::class, 'makePrimary'])->name('contacts.primary');
+        Route::resource('contacts', ContactController::class);
 
     });
 

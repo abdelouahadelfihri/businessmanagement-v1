@@ -39,13 +39,7 @@
                 placeholder="e.g. Maghreb Steel SA" value="{{ $val('name') }}">
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label">Contact person</label>
-            <input type="text" name="contact_person" maxlength="255" class="form-control {{ $err('contact_person') }}"
-                placeholder="e.g. Karim Benali" value="{{ $val('contact_person') }}">
-        </div>
-
-        <div class="col-sm-6 col-md-3">
+        <div class="col-sm-6">
             <label class="form-label">Rating</label>
             <select name="rating" class="form-select {{ $err('rating') }}">
                 <option value="">Not rated</option>
@@ -55,7 +49,7 @@
             </select>
         </div>
 
-        <div class="col-sm-6 col-md-3 d-flex align-items-end">
+        <div class="col-sm-6 d-flex align-items-end">
             <div class="form-check form-switch mb-2">
                 <input type="hidden" name="is_active" value="0">
                 <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active" value="1"
@@ -220,6 +214,11 @@
         </div>
     </div>
 </div>
+
+{{-- People: managed on the supplier page once it exists --}}
+@unless($s->exists)
+    @include('crm.contacts._quick')
+@endunless
 
 {{-- Notes --}}
 <div class="card shadow-sm mb-3">

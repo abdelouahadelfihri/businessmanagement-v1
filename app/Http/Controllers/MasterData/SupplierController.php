@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Http\Controllers\Controller;
+use App\Models\CRM\Contact;
 use App\Models\MasterData\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
@@ -12,6 +14,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $suppliers = Supplier::query()
+            ->with('primaryContact')
             ->search($request->input('search'))
             ->when($request->filled('type'), fn($q) => $q->where('type', $request->input('type')))
             ->when($request->input('status') === 'active', fn($q) => $q->where('is_active', true))
@@ -35,7 +38,12 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
-        $supplier = Supplier::create($this->validated($request));
+        $supplier = DB::transaction(function () use ($request) {
+            $supplier = Supplier::create($this->validated($request));
+            Contact::createPrimaryFor($supplier, $request->input('primary_contact'));
+
+            return $supplier;
+        });
 
         return redirect()
             ->route('masterdata.suppliers.show', $supplier)
@@ -44,6 +52,7 @@ class SupplierController extends Controller
 
     public function show(Supplier $supplier)
     {
+        $supplier->load('contacts');
         $supplier->loadCount(['requests', 'orders', 'receipts', 'invoices', 'returns']);
 
         $validated = $supplier->invoices()->whereNotNull('validated_at');
@@ -106,11 +115,10 @@ class SupplierController extends Controller
 
     private function validated(Request $request, ?Supplier $supplier = null): array
     {
-        $data = $request->validate([
+        $rules = [
             'code' => ['nullable', 'string', 'max:20', Rule::unique('suppliers', 'code')->ignore($supplier)],
             'type' => ['required', Rule::in(array_keys(Supplier::TYPES))],
             'name' => 'required|string|max:255',
-            'contact_person' => 'nullable|string|max:255',
 
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:30',
@@ -140,12 +148,19 @@ class SupplierController extends Controller
 
             'rating' => 'nullable|integer|min:1|max:5',
             'notes' => 'nullable|string|max:5000',
-        ], [
+        ];
+
+        if (! $supplier) {
+            $rules += Contact::quickRules();
+        }
+
+        $data = $request->validate($rules, [
             'ice.digits' => 'The ICE must be exactly 15 digits.',
             'rib.digits' => 'The RIB must be exactly 24 digits.',
             'swift.regex' => 'The SWIFT / BIC code must be 8 or 11 characters (e.g. BCMAMAMC).',
-        ]);
+        ], Contact::quickAttributes());
 
+        unset($data['primary_contact']);
         $data['is_active'] = $request->boolean('is_active');
         $data['country'] = $data['country'] ?: 'Morocco';
         $data['swift'] = isset($data['swift']) ? strtoupper($data['swift']) : null;

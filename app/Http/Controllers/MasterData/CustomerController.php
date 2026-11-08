@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Http\Controllers\Controller;
+use App\Models\CRM\Contact;
 use App\Models\MasterData\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
@@ -12,6 +14,7 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $customers = Customer::query()
+            ->with('primaryContact')
             ->search($request->input('search'))
             ->when($request->filled('type'), fn($q) => $q->where('type', $request->input('type')))
             ->when($request->input('status') === 'active', fn($q) => $q->where('is_active', true))
@@ -32,7 +35,12 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $customer = Customer::create($this->validated($request));
+        $customer = DB::transaction(function () use ($request) {
+            $customer = Customer::create($this->validated($request));
+            Contact::createPrimaryFor($customer, $request->input('primary_contact'));
+
+            return $customer;
+        });
 
         return redirect()
             ->route('masterdata.customers.show', $customer)
@@ -41,6 +49,7 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
+        $customer->load(['contacts', 'sourceProspect']);
         $customer->loadCount(['quotations', 'orders', 'invoices', 'returns']);
 
         $stats = [
@@ -100,11 +109,10 @@ class CustomerController extends Controller
 
     private function validated(Request $request, ?Customer $customer = null): array
     {
-        $data = $request->validate([
+        $rules = [
             'code' => ['nullable', 'string', 'max:20', Rule::unique('customers', 'code')->ignore($customer)],
             'type' => ['required', Rule::in(array_keys(Customer::TYPES))],
             'name' => 'required|string|max:255',
-            'contact_person' => 'nullable|string|max:255',
 
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:30',
@@ -128,10 +136,17 @@ class CustomerController extends Controller
             'currency' => ['required', Rule::in(Customer::CURRENCIES)],
 
             'notes' => 'nullable|string|max:5000',
-        ], [
-            'ice.digits' => 'The ICE must be exactly 15 digits.',
-        ]);
+        ];
 
+        if (! $customer) {
+            $rules += Contact::quickRules();
+        }
+
+        $data = $request->validate($rules, [
+            'ice.digits' => 'The ICE must be exactly 15 digits.',
+        ], Contact::quickAttributes());
+
+        unset($data['primary_contact']);
         $data['is_active'] = $request->boolean('is_active');
         $data['country'] = $data['country'] ?: 'Morocco';
         $data['credit_limit'] = $data['credit_limit'] ?? 0;
