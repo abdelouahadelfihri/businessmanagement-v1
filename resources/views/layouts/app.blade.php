@@ -13,6 +13,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        :root {
+            --sidebar-bg: #B0C4DE;
+            --sidebar-width: 230px;
+            --sidebar-collapsed-width: 72px;
+            --topbar-height: 56px;
+        }
+
         html,
         body {
             height: 100%;
@@ -27,34 +34,57 @@
         .layout {
             display: flex;
             height: 100vh;
+            height: 100dvh;
         }
 
-        /* Sidebar */
+        /* Sidebar: Bootstrap off-canvas drawer below lg, fixed column from lg up */
         .sidebar {
-            height: 100vh;
-            width: 230px;
-            background: #B0C4DE;
+            --bs-offcanvas-width: 270px;
+            --bs-offcanvas-bg: var(--sidebar-bg);
             color: #000;
-            transition: width 0.3s;
+        }
+
+        /* offcanvas-lg forces a transparent background on desktop, so restore it */
+        .sidebar.offcanvas-lg {
+            background-color: var(--sidebar-bg) !important;
+        }
+
+        .sidebar .offcanvas-body {
             overflow-y: auto;
             overflow-x: hidden;
         }
 
-        .sidebar.collapsed {
-            width: 72px;
+        @media (min-width: 992px) {
+            .sidebar {
+                width: var(--sidebar-width);
+                height: 100vh;
+                height: 100dvh;
+                flex-shrink: 0;
+                transition: width 0.3s;
+            }
+
+            .sidebar.collapsed {
+                width: var(--sidebar-collapsed-width);
+            }
+
+            .sidebar.collapsed .app-brand span,
+            .sidebar.collapsed .nav-link span,
+            .sidebar.collapsed .submenu {
+                display: none;
+            }
         }
 
         /* Sidebar scrollbar */
-        .sidebar::-webkit-scrollbar {
+        .sidebar .offcanvas-body::-webkit-scrollbar {
             width: 6px;
         }
 
-        .sidebar::-webkit-scrollbar-thumb {
+        .sidebar .offcanvas-body::-webkit-scrollbar-thumb {
             background-color: rgba(0, 0, 0, 0.3);
             border-radius: 6px;
         }
 
-        .sidebar::-webkit-scrollbar-track {
+        .sidebar .offcanvas-body::-webkit-scrollbar-track {
             background: transparent;
         }
 
@@ -73,15 +103,13 @@
             font-size: 1.2rem;
             font-weight: 600;
             white-space: nowrap;
-        }
-
-        .sidebar.collapsed .app-brand span {
-            display: none;
+            color: #000;
+            text-decoration: none;
         }
 
         /* Toggle button */
         .toggle-btn {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(176, 196, 222, 0.45);
             border: none;
             color: #000;
             border-radius: 8px;
@@ -91,10 +119,11 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            font-size: 1.25rem;
         }
 
         .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(176, 196, 222, 0.8);
         }
 
         /* Links */
@@ -122,11 +151,6 @@
             font-weight: 600;
         }
 
-        /* Hide text when collapsed */
-        .sidebar.collapsed .nav-link span {
-            display: none;
-        }
-
         /* Submenus */
         .submenu .nav-link {
             padding-left: 36px;
@@ -139,29 +163,42 @@
             font-size: 0.85rem;
         }
 
-        .sidebar.collapsed .submenu {
-            display: none;
+        /* Main column (topbar + content) */
+        .main {
+            flex-grow: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: var(--topbar-height);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+            background: #fff;
+            border-bottom: 1px solid #e9edf3;
         }
 
         /* Content */
         .content {
             flex-grow: 1;
+            min-width: 0;
             padding: 20px;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .topbar {
-            position: fixed;
-            top: 10px;
-            left: 230px;
-            /* same as sidebar width */
-            z-index: 1050;
-            transition: left 0.3s;
-        }
+        @media (max-width: 575.98px) {
+            .topbar {
+                padding: 0 12px;
+            }
 
-        /* Move toggle when sidebar collapses */
-        .sidebar.collapsed+.topbar {
-            left: 72px;
+            .content {
+                padding: 12px;
+            }
         }
     </style>
     @stack('styles')
@@ -172,7 +209,8 @@
     <div class="layout">
 
         <!-- SIDEBAR -->
-        <nav class="sidebar d-flex flex-column p-3" id="sidebar">
+        <nav class="sidebar offcanvas-lg offcanvas-start" id="sidebar" tabindex="-1" aria-label="Main navigation">
+          <div class="offcanvas-body d-flex flex-column p-3 h-100">
 
             <!-- App header -->
             <div class="app-header">
@@ -180,6 +218,7 @@
                     <i class="bi bi-building"></i>
                     <span>Business MS</span>
                 </a>
+                <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close menu"></button>
             </div>
 
             <ul class="nav nav-pills flex-column mb-auto">
@@ -600,17 +639,30 @@
                 </li>
 
             </ul>
+          </div>
         </nav>
 
-        <div class="topbar">
-            <button class="toggle-btn" onclick="toggleSidebar()">
-                <i class="bi bi-list"></i>
-            </button>
-        </div>
+        <div class="main">
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <!-- Phones / tablets: open the off-canvas menu -->
+                <button type="button" class="toggle-btn d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Open menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <!-- Desktop: collapse the sidebar to icons -->
+                <button type="button" class="toggle-btn d-none d-lg-flex" onclick="toggleSidebar()" aria-label="Collapse menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <a href="{{ route('dashboard') }}" class="app-brand d-lg-none">
+                    <i class="bi bi-building"></i>
+                    <span>Business MS</span>
+                </a>
+            </header>
 
-        <!-- CONTENT -->
-        <div class="content">
-            @yield('content')
+            <!-- CONTENT -->
+            <main class="content">
+                @yield('content')
+            </main>
         </div>
 
     </div>
@@ -622,9 +674,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
+        (function () {
+            const sidebar = document.getElementById('sidebar');
+            const KEY = 'sidebar-collapsed';
+
+            // Restore the desktop collapsed state
+            try {
+                if (localStorage.getItem(KEY) === '1') sidebar.classList.add('collapsed');
+            } catch (e) {}
+
+            window.toggleSidebar = function () {
+                const collapsed = sidebar.classList.toggle('collapsed');
+                try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+            };
+
+            // Clicking a menu group while collapsed expands the sidebar so its submenu is visible
+            sidebar.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (sidebar.classList.contains('collapsed') && window.innerWidth >= 992) toggleSidebar();
+                });
+            });
+
+            // Growing past the mobile breakpoint: close the drawer cleanly
+            window.matchMedia('(min-width: 992px)').addEventListener('change', function (e) {
+                if (e.matches) {
+                    const oc = bootstrap.Offcanvas.getInstance(sidebar);
+                    if (oc) oc.hide();
+                }
+            });
+        })();
     </script>
     @stack('scripts')
 </body>

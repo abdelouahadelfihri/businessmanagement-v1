@@ -14,28 +14,38 @@
         $pendingTodo = collect($todo)->sum('count');
     @endphp
 
-    <div class="container-fluid dashboard py-3">
+    <div class="container-fluid dashboard py-3 px-2 px-sm-3">
 
         {{-- Header --}}
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-4">
             <div>
                 <h1 class="h3 mb-1">{{ $greeting }} 👋</h1>
                 <p class="text-muted mb-0">
                     Here is how the business is doing —
-                    <strong>{{ $from->format('d M Y') }}</strong> to <strong>{{ $to->format('d M Y') }}</strong>
+                    <strong class="text-nowrap">{{ $from->format('d M Y') }}</strong> to <strong class="text-nowrap">{{ $to->format('d M Y') }}</strong>
                 </p>
             </div>
 
-            <form method="GET" action="{{ route('dashboard') }}" class="period-switch btn-group shadow-sm" role="group">
+            {{-- Period: button group on tablet/desktop, dropdown on phones --}}
+            <form method="GET" action="{{ route('dashboard') }}" class="period-switch btn-group shadow-sm d-none d-sm-inline-flex" role="group">
                 @foreach(\App\Http\Controllers\DashboardController::PERIODS as $key => $label)
                     <button type="submit" name="period" value="{{ $key }}"
-                        class="btn btn-sm {{ $period === $key ? 'btn-primary' : 'btn-light' }}">{{ $label }}</button>
+                        class="btn btn-sm text-nowrap {{ $period === $key ? 'btn-primary' : 'btn-light' }}">{{ $label }}</button>
                 @endforeach
+            </form>
+
+            <form method="GET" action="{{ route('dashboard') }}" class="d-sm-none">
+                <label for="periodSelect" class="visually-hidden">Period</label>
+                <select id="periodSelect" name="period" class="form-select shadow-sm" onchange="this.form.submit()">
+                    @foreach(\App\Http\Controllers\DashboardController::PERIODS as $key => $label)
+                        <option value="{{ $key }}" @selected($period === $key)>{{ $label }}</option>
+                    @endforeach
+                </select>
             </form>
         </div>
 
-        {{-- Quick actions --}}
-        <div class="d-flex flex-wrap gap-2 mb-4">
+        {{-- Quick actions (wrap on desktop, swipe horizontally on phones) --}}
+        <div class="quick-actions d-flex gap-2 mb-4">
             <a href="{{ route('sales.salesquotations.create') }}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-file-earmark-plus"></i> New quotation</a>
             <a href="{{ route('sales.salesorders.create') }}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-cart-plus"></i> New sales order</a>
             <a href="{{ route('sales.salesinvoices.create') }}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-receipt"></i> New invoice</a>
@@ -65,14 +75,14 @@
             @endphp
 
             @foreach($cards as $card)
-                <div class="col-xl-2 col-lg-4 col-sm-6">
+                <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
                     <div class="card kpi-card border-0 shadow-sm h-100">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
                                 <span class="text-muted small text-uppercase fw-semibold">{{ $card['label'] }}</span>
                                 <span class="kpi-icon tone-{{ $card['tone'] }}"><i class="bi {{ $card['icon'] }}"></i></span>
                             </div>
-                            <div class="fs-4 fw-bold lh-1 mb-2">{{ $card['value'] }}</div>
+                            <div class="kpi-value fw-bold lh-1 mb-2">{{ $card['value'] }}</div>
                             <div class="small d-flex align-items-center gap-2 flex-wrap">
                                 @if(!is_null($card['change']))
                                     @php
@@ -93,10 +103,10 @@
 
         {{-- Charts + todo --}}
         <div class="row g-3 mb-4">
-            <div class="col-xl-6">
+            <div class="col-12 col-xl-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
-                        <h6 class="mb-0 fw-semibold">Sales vs purchases <small class="text-muted fw-normal">· last 12 months</small></h6>
+                        <h6 class="mb-0 fw-semibold">Sales vs purchases <small class="text-muted fw-normal d-block d-sm-inline">· last 12 months</small></h6>
                     </div>
                     <div class="card-body">
                         <div class="chart-box"><canvas id="trendChart"></canvas></div>
@@ -104,7 +114,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
+            <div class="col-12 col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 pt-3">
                         <h6 class="mb-0 fw-semibold">Sales orders by status</h6>
@@ -119,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
+            <div class="col-12 col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Needs your attention</h6>
@@ -142,7 +152,7 @@
 
         {{-- Rankings + stock --}}
         <div class="row g-3 mb-4">
-            <div class="col-xl-4 col-md-6">
+            <div class="col-12 col-md-6 col-xl-4">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 pt-3"><h6 class="mb-0 fw-semibold">Top customers</h6></div>
                     <div class="card-body pt-0">
@@ -165,7 +175,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-4 col-md-6">
+            <div class="col-12 col-md-6 col-xl-4">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 pt-3"><h6 class="mb-0 fw-semibold">Best-selling products</h6></div>
                     <div class="card-body pt-0">
@@ -188,7 +198,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-4">
+            <div class="col-12 col-xl-4">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Low stock</h6>
@@ -224,14 +234,14 @@
 
         {{-- Recent activity --}}
         <div class="row g-3 mb-4">
-            <div class="col-xl-6">
+            <div class="col-12 col-xl-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Recent invoices</h6>
                         <a href="{{ route('sales.salesinvoices.index') }}" class="small">View all</a>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0 small">
+                        <table class="table table-hover align-middle mb-0 small text-nowrap">
                             <thead class="table-light">
                                 <tr><th>Invoice</th><th>Customer</th><th>Date</th><th class="text-end">Total</th><th>Status</th></tr>
                             </thead>
@@ -256,14 +266,14 @@
                 </div>
             </div>
 
-            <div class="col-xl-6">
+            <div class="col-12 col-xl-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Recent sales orders</h6>
                         <a href="{{ route('sales.salesorders.index') }}" class="small">View all</a>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0 small">
+                        <table class="table table-hover align-middle mb-0 small text-nowrap">
                             <thead class="table-light">
                                 <tr><th>Order</th><th>Customer</th><th>Date</th><th class="text-end">Total</th><th>Status</th></tr>
                             </thead>
@@ -288,14 +298,14 @@
 
         {{-- Overdue + counters --}}
         <div class="row g-3 mb-5">
-            <div class="col-xl-8">
+            <div class="col-12 col-xl-8">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold text-danger"><i class="bi bi-exclamation-triangle"></i> Overdue invoices</h6>
                         <a href="{{ route('sales.salesinvoices.index', ['status' => 'overdue']) }}" class="small">View all</a>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0 small">
+                        <table class="table table-hover align-middle mb-0 small text-nowrap">
                             <thead class="table-light">
                                 <tr><th>Invoice</th><th>Customer</th><th>Due date</th><th>Late by</th><th class="text-end">Balance due</th></tr>
                             </thead>
@@ -317,7 +327,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-4">
+            <div class="col-12 col-xl-4">
                 <div class="row g-3 h-100">
                     @foreach([
                         ['Customers', $kpis['customers'], 'bi-people', 'primary', route('masterdata.customers.index')],
@@ -370,6 +380,18 @@
         .empty-state i { font-size: 1.8rem; }
         .dashboard .list-group-item { border-color: #eef1f6; padding: .55rem 1rem; }
         .dashboard .table thead th { font-weight: 600; color: #667085; border-bottom: 0; }
+        .kpi-value { font-size: clamp(1.2rem, 1rem + .5vw, 1.5rem); overflow-wrap: anywhere; }
+        .quick-actions { flex-wrap: wrap; }
+        .quick-actions .btn { white-space: nowrap; }
+        .counter-card .card-body { padding: .9rem; }
+        @media (max-width: 575.98px) {
+            .dashboard { border-radius: 8px; }
+            .quick-actions { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .25rem; scrollbar-width: none; }
+            .quick-actions::-webkit-scrollbar { display: none; }
+            .chart-box { height: 240px; }
+            .chart-box-sm { height: 220px; }
+            .counter-card .card-body { flex-direction: column; align-items: flex-start !important; gap: .5rem !important; }
+        }
     </style>
 @endpush
 
