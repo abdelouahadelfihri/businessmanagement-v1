@@ -223,6 +223,7 @@ Route::middleware(['web'])->group(function () {
 
     // AJAX routes for modal add
     Route::post('suppliers/ajax-store', [SupplierController::class, 'ajaxStore'])->name('suppliers.ajaxStore');
+    Route::post('customers/ajax-store', [CustomerController::class, 'ajaxStore'])->name('customers.ajaxStore');
     Route::post('categories/ajax-store', [CategoryController::class, 'ajaxStore'])->name('categories.ajaxStore');
     Route::post('units/ajax-store', [UnitController::class, 'ajaxStore'])->name('units.ajaxStore');
     Route::post('locations/ajax-store', [UnitController::class, 'ajaxStore'])->name('locations.ajaxStore');
