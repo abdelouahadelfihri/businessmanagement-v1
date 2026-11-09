@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Purchase Orders</h1>
 
         <div class="mb-3">
+            @canroute('purchases.purchasesorders.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('purchases.purchasesorders.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Purchase Order
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -119,17 +121,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('purchases.purchasesorders.show')
                                                 <a href="{{ route('purchases.purchasesorders.show', $order) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($order->status === 'draft')
+                                                    @canroute('purchases.purchasesorders.edit')
                                                     <a href="{{ route('purchases.purchasesorders.edit', $order) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('purchases.purchasesorders.submit')
                                                     <form action="{{ route('purchases.purchasesorders.submit', $order) }}" method="POST"
                                                         onsubmit="return confirm('Submit this order for approval?');">
                                                         @csrf
@@ -137,7 +144,9 @@
                                                             <i class="bi bi-send"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
+                                                    @canroute('purchases.purchasesorders.destroy')
                                                     <form action="{{ route('purchases.purchasesorders.destroy', $order) }}" method="POST"
                                                         onsubmit="return confirm('Delete this purchase order?');">
                                                         @csrf
@@ -146,13 +155,17 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
                                                 @elseif($order->status === 'pending_approval')
+                                                    @canroute('purchases.purchasesorders.edit')
                                                     <a href="{{ route('purchases.purchasesorders.edit', $order) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('purchases.purchasesorders.approve')
                                                     <form action="{{ route('purchases.purchasesorders.approve', $order) }}" method="POST"
                                                         onsubmit="return confirm('Approve this purchase order?');">
                                                         @csrf
@@ -160,8 +173,10 @@
                                                             <i class="bi bi-check-lg"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
                                                 @elseif($order->status === 'approved')
+                                                    @canroute('purchases.purchasesorders.send')
                                                     <form action="{{ route('purchases.purchasesorders.send', $order) }}" method="POST"
                                                         onsubmit="return confirm('Mark this order as sent to the supplier?');">
                                                         @csrf
@@ -169,8 +184,10 @@
                                                             <i class="bi bi-send-check"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
                                                 @elseif($order->status === 'cancelled')
+                                                    @canroute('purchases.purchasesorders.destroy')
                                                     <form action="{{ route('purchases.purchasesorders.destroy', $order) }}" method="POST"
                                                         onsubmit="return confirm('Delete this cancelled order?');">
                                                         @csrf
@@ -179,6 +196,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

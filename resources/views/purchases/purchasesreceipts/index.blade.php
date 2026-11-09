@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Purchase Receipts</h1>
 
         <div class="mb-3">
+            @canroute('purchases.purchasesreceipts.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('purchases.purchasesreceipts.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Purchase Receipt
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -113,17 +115,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('purchases.purchasesreceipts.show')
                                                 <a href="{{ route('purchases.purchasesreceipts.show', $receipt) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($receipt->status === 'draft')
+                                                    @canroute('purchases.purchasesreceipts.edit')
                                                     <a href="{{ route('purchases.purchasesreceipts.edit', $receipt) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('purchases.purchasesreceipts.validate')
                                                     <form action="{{ route('purchases.purchasesreceipts.validate', $receipt) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Validate this receipt?');">
@@ -132,9 +139,11 @@
                                                             <i class="bi bi-check-lg"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
 
                                                 @if(in_array($receipt->status, ['draft', 'cancelled']))
+                                                    @canroute('purchases.purchasesreceipts.destroy')
                                                     <form action="{{ route('purchases.purchasesreceipts.destroy', $receipt) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Delete this purchase receipt?');">
@@ -144,6 +153,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

@@ -16,18 +16,24 @@
 
             <div class="d-flex gap-2">
                 @if($d->status === 'draft')
+                    @canroute('sales.salesdeliveries.edit')
                     <a href="{{ route('sales.salesdeliveries.edit', $d) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('sales.salesdeliveries.validate')
                     <form action="{{ route('sales.salesdeliveries.validate', $d) }}" method="POST"
                         onsubmit="return confirm('Validate this delivery? The stock will be updated.');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check2-circle"></i> Validate</button>
                     </form>
+                    @endcanroute
                 @endif
 
+                @canroute('sales.salesdeliveries.index')
                 <a href="{{ route('sales.salesdeliveries.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -56,7 +62,11 @@
                 <div class="col-md-4">
                     <small class="text-muted d-block">Sales order</small>
                     @if($d->salesOrder)
+                        @canroute('sales.salesorders.show')
                         <a href="{{ route('sales.salesorders.show', $d->salesOrder) }}">{{ $d->salesOrder->order_number }}</a>
+                        @else
+                        {{ $d->salesOrder->order_number }}
+                        @endcanroute
                     @else
                         —
                     @endif
@@ -162,6 +172,7 @@
                             re-opens the delivered quantities on the order.
                         </div>
                     @endif
+                    @canroute('sales.salesdeliveries.cancel')
                     <form method="POST" action="{{ route('sales.salesdeliveries.cancel', $d) }}"
                         class="row g-2 align-items-end" onsubmit="return confirm('Cancel this delivery?');">
                         @csrf
@@ -176,6 +187,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @else

@@ -20,6 +20,7 @@
                             to be invoiced.
                         </div>
                     @else
+                        @canroute('sales.salesinvoices.create')
                         <form method="GET" action="{{ route('sales.salesinvoices.create') }}"
                             class="row g-2 align-items-end">
                             <div class="col-md-9">
@@ -40,11 +41,14 @@
                                 </button>
                             </div>
                         </form>
+                        @endcanroute
                     @endif
                 </div>
             </div>
             <div class="mt-3">
+                @canroute('sales.salesinvoices.index')
                 <a href="{{ route('sales.salesinvoices.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         @else
             {{-- Step 2: the invoice form --}}

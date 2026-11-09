@@ -5,9 +5,11 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>Purchase Request Details</h1>
+            @canroute('purchases.purchasesrequests.index')
             <a href="{{ route('purchases.purchasesrequests.index') }}" class="btn btn-secondary">
                 Back
             </a>
+            @endcanroute
         </div>
 
         <div class="card shadow-sm mb-4">
@@ -161,6 +163,7 @@
         </div>
 
         <div class="d-flex justify-content-end mt-3">
+            @canroute('purchases.purchasesrequests.destroy')
             <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}" method="POST"
                 onsubmit="return confirm('Are you sure you want to delete this request?');">
                 @csrf
@@ -169,6 +172,7 @@
                     <i class="bi bi-trash"></i> Delete
                 </button>
             </form>
+            @endcanroute
         </div>
 
     </div>

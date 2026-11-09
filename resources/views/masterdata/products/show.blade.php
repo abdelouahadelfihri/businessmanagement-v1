@@ -27,16 +27,22 @@
             </h1>
 
             <div class="d-flex flex-wrap gap-2">
+                @canroute('masterdata.products.edit')
                 <a href="{{ route('masterdata.products.edit', $p) }}" class="btn btn-warning">
                     <i class="bi bi-pencil-square"></i> Edit
                 </a>
+                @endcanroute
+                @canroute('masterdata.products.destroy')
                 <form action="{{ route('masterdata.products.destroy', $p) }}" method="POST"
                     onsubmit="return confirm('Delete this product?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
                 </form>
+                @endcanroute
+                @canroute('masterdata.products.index')
                 <a href="{{ route('masterdata.products.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -53,7 +59,8 @@
                 {{ $state === 'out' ? 'This product is out of stock.' : "Stock ({$qty($stock)}) is at or below the reorder level ({$p->reorder_level})." }}
                 @if($p->preferredSupplier)
                     Preferred supplier:
-                    <a href="{{ route('masterdata.suppliers.show', $p->preferredSupplier) }}">{{ $p->preferredSupplier->name }}</a>.
+                    @canroute('masterdata.suppliers.show')
+                    <a href="{{ route('masterdata.suppliers.show', $p->preferredSupplier) }}">{{ $p->preferredSupplier->name }}</a>@else {{ $p->preferredSupplier->name }}@endcanroute.
                 @endif
             </div>
         @endif
@@ -118,7 +125,11 @@
                         <div class="col-6">
                             <small class="text-muted d-block">Preferred supplier</small>
                             @if($p->preferredSupplier)
+                                @canroute('masterdata.suppliers.show')
                                 <a href="{{ route('masterdata.suppliers.show', $p->preferredSupplier) }}">{{ $p->preferredSupplier->name }}</a>
+                                @else
+                                {{ $p->preferredSupplier->name }}
+                                @endcanroute
                             @else — @endif
                         </div>
                     </div>

@@ -24,20 +24,28 @@
 
             <div class="d-flex flex-wrap gap-2">
                 @if(! $locked && $pr->status !== 'lost')
+                    @canroute('crm.prospects.convert')
                     <form action="{{ route('crm.prospects.convert', $pr) }}" method="POST"
                         onsubmit="return confirm('Create a customer from this prospect and move its contacts?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-person-check"></i> Convert to customer</button>
                     </form>
+                    @endcanroute
                 @endif
+                @canroute('crm.prospects.edit')
                 <a href="{{ route('crm.prospects.edit', $pr) }}" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+                @endcanroute
+                @canroute('crm.prospects.destroy')
                 <form action="{{ route('crm.prospects.destroy', $pr) }}" method="POST"
                     onsubmit="return confirm('Delete this prospect and its contacts?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
                 </form>
+                @endcanroute
+                @canroute('crm.prospects.index')
                 <a href="{{ route('crm.prospects.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -56,9 +64,10 @@
                 <i class="bi bi-person-check-fill"></i>
                 Converted on {{ optional($pr->converted_at)->format('Y-m-d') }} into customer
                 @if($pr->convertedCustomer)
+                    @canroute('masterdata.customers.show')
                     <a href="{{ route('masterdata.customers.show', $pr->convertedCustomer) }}" class="alert-link">
                         {{ $pr->convertedCustomer->name }} ({{ $pr->convertedCustomer->code }})
-                    </a>.
+                    </a>@else {{ $pr->convertedCustomer->name }} ({{ $pr->convertedCustomer->code }})@endcanroute.
                 @else
                     (since deleted).
                 @endif
@@ -81,6 +90,7 @@
                             $done = $pr->status !== 'lost' && $currentIndex !== false && $i < $currentIndex;
                             $current = $pr->status === $stage;
                         @endphp
+                        @canroute('crm.prospects.status')
                         <form action="{{ route('crm.prospects.status', $pr) }}" method="POST" class="pipeline-step">
                             @csrf
                             <input type="hidden" name="status" value="{{ $stage }}">
@@ -90,10 +100,12 @@
                                 {{ $P::STATUSES[$stage] }}
                             </button>
                         </form>
+                        @endcanroute
                     @endforeach
                 </div>
 
                 @unless($locked || $pr->status === 'lost')
+                    @canroute('crm.prospects.status')
                     <form action="{{ route('crm.prospects.status', $pr) }}" method="POST" class="row g-2 align-items-end mt-2">
                         @csrf
                         <input type="hidden" name="status" value="lost">
@@ -106,6 +118,7 @@
                             <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-x-circle"></i> Mark as lost</button>
                         </div>
                     </form>
+                    @endcanroute
                 @endunless
 
                 @if($pr->status === 'lost' && ! $locked)

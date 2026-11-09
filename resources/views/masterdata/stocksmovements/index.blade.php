@@ -5,15 +5,19 @@
         <div class="d-flex justify-content-between mb-3">
             <h3 class="m-0">Stock Movements</h3>
             <div class="d-flex gap-2">
+                @canroute('stocksmovements.create')
                 <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                     href="{{ route('stocksmovements.create') }}">
                     <i class="bi bi-plus-lg"></i> Add Movement
                 </a>
+                @endcanroute
 
+                @canroute('stocksmovements.transfer_form')
                 <a class="btn btn-secondary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                     href="{{ route('stocksmovements.transfer_form') }}">
                     <i class="bi bi-arrow-left-right"></i> Transfer Stock
                 </a>
+                @endcanroute
             </div>
         </div>
 
@@ -56,12 +60,15 @@
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
+                                                @canroute('stocksmovements.edit')
                                                 <a href="{{ route('stocksmovements.edit', $req) }}" class="btn btn-sm btn-warning"
                                                     title="Edit">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
+                                                @endcanroute
 
                                                 <!-- Delete button -->
+                                                @canroute('stocksmovements.destroy')
                                                 <form action="{{ route('stocksmovements.destroy', $req) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this request?');">
                                                     @csrf
@@ -70,6 +77,7 @@
                                                         <i class="bi bi-trash"></i> Delete
                                                     </button>
                                                 </form>
+                                                @endcanroute
                                             </div>
                                         </td>
 

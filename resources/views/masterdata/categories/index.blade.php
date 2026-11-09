@@ -7,10 +7,12 @@
         <h1 class="mb-4">List of Categories</h1>
 
         <div class="mb-3">
+            @canroute('masterdata.categories.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('masterdata.categories.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Category
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -95,23 +97,36 @@
                                     <tr>
                                         <td>{{ $category->code }}</td>
                                         <td>
+                                            @canroute('masterdata.categories.show')
                                             <a href="{{ route('masterdata.categories.show', $category) }}" class="text-decoration-none d-inline-flex align-items-center gap-2">
                                                 <span class="cat-icon" style="background: {{ $category->color }};"><i class="bi {{ $category->icon }}"></i></span>
                                                 <span class="fw-semibold">{{ $category->name }}</span>
                                             </a>
+                                            @else
+                                            <span class="cat-icon" style="background: {{ $category->color }};"><i class="bi {{ $category->icon }}"></i></span>
+                                                <span class="fw-semibold">{{ $category->name }}</span>
+                                            @endcanroute
                                             @if($category->description)
                                                 <small class="d-block text-muted text-truncate" style="max-width: 260px;">{{ $category->description }}</small>
                                             @endif
                                         </td>
                                         <td>
                                             @if($category->parent)
+                                                @canroute('masterdata.categories.show')
                                                 <a href="{{ route('masterdata.categories.show', $category->parent) }}">{{ $category->parent->name }}</a>
+                                                @else
+                                                {{ $category->parent->name }}
+                                                @endcanroute
                                             @else
                                                 <span class="text-muted">—</span>
                                             @endif
                                         </td>
                                         <td class="text-end">
+                                            @canroute('masterdata.products.index')
                                             <a href="{{ route('masterdata.products.index', ['category_id' => $category->id]) }}">{{ $category->products_count }}</a>
+                                            @else
+                                            {{ $category->products_count }}
+                                            @endcanroute
                                         </td>
                                         <td class="text-end">{{ $category->children_count }}</td>
                                         <td>{{ $category->default_tax_rate !== null ? (float) $category->default_tax_rate . ' %' : '—' }}</td>
@@ -122,15 +137,20 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('masterdata.categories.show')
                                                 <a href="{{ route('masterdata.categories.show', $category) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
+                                                @canroute('masterdata.categories.edit')
                                                 <a href="{{ route('masterdata.categories.edit', $category) }}"
                                                     class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                @endcanroute
                                                 @if($category->products_count === 0 && $category->children_count === 0)
+                                                    @canroute('masterdata.categories.destroy')
                                                     <form action="{{ route('masterdata.categories.destroy', $category) }}" method="POST"
                                                         onsubmit="return confirm('Delete this category?');">
                                                         @csrf
@@ -139,6 +159,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

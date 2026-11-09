@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Locations</h1>
 
         <div class="mb-3">
+            @canroute('locations.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('locations.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a Location
             </a>
+            @endcanroute
         </div>
 
         @if($locations->isEmpty())
@@ -35,12 +37,15 @@
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <!-- Edit button -->
+                                                @canroute('locations.edit')
                                                 <a href="{{ route('locations.edit', $location) }}" class="btn btn-sm btn-warning"
                                                     title="Edit">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
+                                                @endcanroute
 
                                                 <!-- Delete button -->
+                                                @canroute('locations.destroy')
                                                 <form action="{{ route('locations.destroy', $location) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this request?');">
                                                     @csrf
@@ -49,6 +54,7 @@
                                                         <i class="bi bi-trash"></i> Delete
                                                     </button>
                                                 </form>
+                                                @endcanroute
                                             </div>
                                         </td>
                                     </tr>

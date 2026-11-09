@@ -8,9 +8,11 @@
     <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
         <span><i class="bi bi-person-lines-fill"></i> Contacts <span class="badge bg-light text-dark ms-1">{{ $owner->contacts->count() }}</span></span>
         @unless($readOnly)
+            @canroute('crm.contacts.create')
             <a href="{{ route('crm.contacts.create', ['owner' => $ownerKey, 'return' => 'owner']) }}" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-person-plus"></i> Add contact
             </a>
+            @endcanroute
         @endunless
     </div>
 
@@ -18,7 +20,11 @@
         <div class="card-body text-muted small">
             No contacts yet.
             @unless($readOnly)
+                @canroute('crm.contacts.create')
                 <a href="{{ route('crm.contacts.create', ['owner' => $ownerKey, 'return' => 'owner']) }}">Add the first one</a>
+                @else
+                Add the first one
+                @endcanroute
                 — it becomes the primary contact.
             @endunless
         </div>
@@ -30,7 +36,11 @@
                         <span class="contact-avatar">{{ $person->initials }}</span>
                         <div class="flex-grow-1 min-w-0">
                             <div class="d-flex align-items-center gap-2 flex-wrap">
+                                @canroute('crm.contacts.show')
                                 <a href="{{ route('crm.contacts.show', $person) }}" class="fw-semibold text-decoration-none">{{ $person->display_name }}</a>
+                                @else
+                                {{ $person->display_name }}
+                                @endcanroute
                                 @if($person->is_primary)
                                     <span class="badge bg-primary-subtle text-primary">Primary</span>
                                 @endif
@@ -61,17 +71,22 @@
                                             <i class="bi bi-whatsapp"></i>
                                         </a>
                                     @endif
+                                    @canroute('crm.contacts.edit')
                                     <a href="{{ route('crm.contacts.edit', [$person, 'return' => 'owner']) }}" class="btn btn-sm btn-outline-warning" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
+                                    @endcanroute
                                     @unless($person->is_primary)
+                                        @canroute('crm.contacts.primary')
                                         <form action="{{ route('crm.contacts.primary', $person) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-outline-primary" title="Make primary">
                                                 <i class="bi bi-star"></i>
                                             </button>
                                         </form>
+                                        @endcanroute
                                     @endunless
+                                    @canroute('crm.contacts.destroy')
                                     <form action="{{ route('crm.contacts.destroy', $person) }}" method="POST"
                                         onsubmit="return confirm('Delete this contact?');">
                                         @csrf
@@ -81,6 +96,7 @@
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
+                                    @endcanroute
                                 </div>
                             @endunless
                         </div>

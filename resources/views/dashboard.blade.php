@@ -46,13 +46,27 @@
 
         {{-- Quick actions (wrap on desktop, swipe horizontally on phones) --}}
         <div class="quick-actions d-flex gap-2 mb-4">
+            @canroute('sales.salesquotations.create')
             <a href="{{ route('sales.salesquotations.create') }}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-file-earmark-plus"></i> New quotation</a>
+            @endcanroute
+            @canroute('sales.salesorders.create')
             <a href="{{ route('sales.salesorders.create') }}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-cart-plus"></i> New sales order</a>
+            @endcanroute
+            @canroute('sales.salesinvoices.create')
             <a href="{{ route('sales.salesinvoices.create') }}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-receipt"></i> New invoice</a>
+            @endcanroute
+            @canroute('purchases.purchasesrequests.create')
             <a href="{{ route('purchases.purchasesrequests.create') }}" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="bi bi-clipboard-plus"></i> New purchase request</a>
+            @endcanroute
+            @canroute('purchases.purchasesorders.create')
             <a href="{{ route('purchases.purchasesorders.create') }}" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="bi bi-bag-plus"></i> New purchase order</a>
+            @endcanroute
+            @canroute('masterdata.customers.create')
             <a href="{{ route('masterdata.customers.create') }}" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="bi bi-person-plus"></i> New customer</a>
+            @endcanroute
+            @canroute('masterdata.products.create')
             <a href="{{ route('masterdata.products.create') }}" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="bi bi-box"></i> New product</a>
+            @endcanroute
         </div>
 
         {{-- KPI cards --}}
@@ -202,7 +216,11 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Low stock</h6>
+                        @canroute('masterdata.products.index')
                         <a href="{{ route('masterdata.products.index') }}" class="small">All products</a>
+                        @else
+                        All products
+                        @endcanroute
                     </div>
                     <div class="card-body pt-0">
                         @forelse($lowStock as $product)
@@ -238,7 +256,11 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Recent invoices</h6>
+                        @canroute('sales.salesinvoices.index')
                         <a href="{{ route('sales.salesinvoices.index') }}" class="small">View all</a>
+                        @else
+                        View all
+                        @endcanroute
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 small text-nowrap">
@@ -248,7 +270,7 @@
                             <tbody>
                                 @forelse($recentInvoices as $invoice)
                                     <tr>
-                                        <td><a href="{{ route('sales.salesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a></td>
+                                        <td>@canroute('sales.salesinvoices.show')<a href="{{ route('sales.salesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a>@else {{ $invoice->invoice_number }}@endcanroute</td>
                                         <td>{{ $invoice->customer->name ?? '—' }}</td>
                                         <td>{{ optional($invoice->date)->format('Y-m-d') }}</td>
                                         <td class="text-end">{{ $money($invoice->total) }}</td>
@@ -270,7 +292,11 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold">Recent sales orders</h6>
+                        @canroute('sales.salesorders.index')
                         <a href="{{ route('sales.salesorders.index') }}" class="small">View all</a>
+                        @else
+                        View all
+                        @endcanroute
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 small text-nowrap">
@@ -280,7 +306,7 @@
                             <tbody>
                                 @forelse($recentOrders as $order)
                                     <tr>
-                                        <td><a href="{{ route('sales.salesorders.show', $order) }}">{{ $order->order_number }}</a></td>
+                                        <td>@canroute('sales.salesorders.show')<a href="{{ route('sales.salesorders.show', $order) }}">{{ $order->order_number }}</a>@else {{ $order->order_number }}@endcanroute</td>
                                         <td>{{ $order->customer->name ?? '—' }}</td>
                                         <td>{{ optional($order->date)->format('Y-m-d') }}</td>
                                         <td class="text-end">{{ $money($order->total) }}</td>
@@ -302,7 +328,11 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
                         <h6 class="mb-0 fw-semibold text-danger"><i class="bi bi-exclamation-triangle"></i> Overdue invoices</h6>
+                        @canroute('sales.salesinvoices.index')
                         <a href="{{ route('sales.salesinvoices.index', ['status' => 'overdue']) }}" class="small">View all</a>
+                        @else
+                        View all
+                        @endcanroute
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 small text-nowrap">
@@ -312,7 +342,7 @@
                             <tbody>
                                 @forelse($overdueInvoices as $invoice)
                                     <tr>
-                                        <td><a href="{{ route('sales.salesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a></td>
+                                        <td>@canroute('sales.salesinvoices.show')<a href="{{ route('sales.salesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a>@else {{ $invoice->invoice_number }}@endcanroute</td>
                                         <td>{{ $invoice->customer->name ?? '—' }}</td>
                                         <td>{{ optional($invoice->due_date)->format('Y-m-d') }}</td>
                                         <td><span class="badge bg-danger-subtle text-danger">{{ (int) $invoice->due_date->diffInDays(today()) }} days</span></td>

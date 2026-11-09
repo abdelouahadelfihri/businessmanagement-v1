@@ -9,16 +9,20 @@
         <h1 class="mb-4">List of Contacts</h1>
 
         <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+            @canroute('crm.contacts.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('crm.contacts.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Contact
             </a>
+            @endcanroute
             @foreach($types as $key => $meta)
+                @canroute('crm.contacts.index')
                 <a href="{{ route('crm.contacts.index', ['owner_type' => $key]) }}"
                     class="btn btn-sm rounded-pill {{ request('owner_type') === $key ? 'btn-dark' : 'btn-outline-secondary' }}">
                     <i class="bi {{ $meta['icon'] }}"></i> {{ $meta['label'] }}s
                     <span class="badge bg-light text-dark ms-1">{{ $counts[$key] ?? 0 }}</span>
                 </a>
+                @endcanroute
             @endforeach
         </div>
 
@@ -102,10 +106,15 @@
                                     @php $meta = $contact->owner_meta; @endphp
                                     <tr>
                                         <td>
+                                            @canroute('crm.contacts.show')
                                             <a href="{{ route('crm.contacts.show', $contact) }}" class="text-decoration-none d-inline-flex align-items-center gap-2">
                                                 <span class="contact-avatar contact-avatar-sm">{{ $contact->initials }}</span>
                                                 <span class="fw-semibold">{{ $contact->display_name }}</span>
                                             </a>
+                                            @else
+                                            <span class="contact-avatar contact-avatar-sm">{{ $contact->initials }}</span>
+                                                <span class="fw-semibold">{{ $contact->display_name }}</span>
+                                            @endcanroute
                                             @if($contact->is_primary)
                                                 <span class="badge bg-primary-subtle text-primary ms-1">Primary</span>
                                             @endif
@@ -130,17 +139,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('crm.contacts.show')
                                                 <a href="{{ route('crm.contacts.show', $contact) }}" class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
+                                                @canroute('crm.contacts.edit')
                                                 <a href="{{ route('crm.contacts.edit', $contact) }}" class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                @endcanroute
                                                 @if($contact->whatsapp_url)
                                                     <a href="{{ $contact->whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-success" title="WhatsApp">
                                                         <i class="bi bi-whatsapp"></i>
                                                     </a>
                                                 @endif
+                                                @canroute('crm.contacts.destroy')
                                                 <form action="{{ route('crm.contacts.destroy', $contact) }}" method="POST"
                                                     onsubmit="return confirm('Delete this contact?');">
                                                     @csrf
@@ -149,6 +163,7 @@
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endcanroute
                                             </div>
                                         </td>
                                     </tr>

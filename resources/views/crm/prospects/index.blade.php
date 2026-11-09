@@ -12,10 +12,12 @@
         <h1 class="mb-4">List of Prospects</h1>
 
         <div class="mb-3">
+            @canroute('crm.prospects.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('crm.prospects.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Prospect
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -46,20 +48,28 @@
 
         {{-- Stage pills --}}
         <div class="d-flex flex-nowrap flex-md-wrap gap-2 mb-3 overflow-auto pb-1">
+            @canroute('crm.prospects.index')
             <a href="{{ route('crm.prospects.index') }}"
                 class="btn btn-sm rounded-pill text-nowrap {{ !request('status') && !request('follow_up') ? 'btn-dark' : 'btn-outline-secondary' }}">All</a>
+            @endcanroute
+            @canroute('crm.prospects.index')
             <a href="{{ route('crm.prospects.index', ['status' => 'open']) }}"
                 class="btn btn-sm rounded-pill text-nowrap {{ request('status') === 'open' ? 'btn-dark' : 'btn-outline-secondary' }}">Open</a>
+            @endcanroute
             @foreach($P::STATUSES as $key => $label)
+                @canroute('crm.prospects.index')
                 <a href="{{ route('crm.prospects.index', ['status' => $key]) }}"
                     class="btn btn-sm rounded-pill text-nowrap {{ request('status') === $key ? 'btn-dark' : 'btn-outline-secondary' }}">
                     {{ $label }} <span class="badge bg-{{ $P::STATUS_COLORS[$key] }} ms-1">{{ $pipeline[$key]->total ?? 0 }}</span>
                 </a>
+                @endcanroute
             @endforeach
+            @canroute('crm.prospects.index')
             <a href="{{ route('crm.prospects.index', ['follow_up' => 1]) }}"
                 class="btn btn-sm rounded-pill text-nowrap {{ request('follow_up') ? 'btn-danger' : 'btn-outline-danger' }}">
                 <i class="bi bi-alarm"></i> Follow-ups due <span class="badge bg-danger ms-1">{{ $summary['follow_ups'] }}</span>
             </a>
+            @endcanroute
         </div>
 
         {{-- Filter & search form --}}
@@ -125,14 +135,22 @@
                                     <tr>
                                         <td>{{ $prospect->code }}</td>
                                         <td>
+                                            @canroute('crm.prospects.show')
                                             <a href="{{ route('crm.prospects.show', $prospect) }}" class="fw-semibold text-decoration-none">{{ $prospect->name }}</a>
+                                            @else
+                                            {{ $prospect->name }}
+                                            @endcanroute
                                             <small class="d-block text-muted">
                                                 {{ collect([$prospect->industry, $prospect->city, $P::SOURCES[$prospect->source] ?? null])->filter()->implode(' · ') }}
                                             </small>
                                         </td>
                                         <td>
                                             @if($prospect->primaryContact)
+                                                @canroute('crm.contacts.show')
                                                 <a href="{{ route('crm.contacts.show', $prospect->primaryContact) }}">{{ $prospect->primaryContact->full_name }}</a>
+                                                @else
+                                                {{ $prospect->primaryContact->full_name }}
+                                                @endcanroute
                                                 <small class="d-block text-muted">{{ $prospect->primaryContact->mobile ?? $prospect->primaryContact->email }}</small>
                                             @else
                                                 <span class="text-muted">—</span>
@@ -158,14 +176,20 @@
                                         <td>{{ $prospect->assigned_to ?? '—' }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('crm.prospects.show')
                                                 <a href="{{ route('crm.prospects.show', $prospect) }}" class="btn btn-sm btn-info" title="View"><i class="bi bi-eye"></i></a>
+                                                @endcanroute
+                                                @canroute('crm.prospects.edit')
                                                 <a href="{{ route('crm.prospects.edit', $prospect) }}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                                                @endcanroute
+                                                @canroute('crm.prospects.destroy')
                                                 <form action="{{ route('crm.prospects.destroy', $prospect) }}" method="POST"
                                                     onsubmit="return confirm('Delete this prospect and its contacts?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
                                                 </form>
+                                                @endcanroute
                                             </div>
                                         </td>
                                     </tr>

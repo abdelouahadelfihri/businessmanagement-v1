@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Sales Invoices</h1>
 
         <div class="mb-3">
+            @canroute('sales.salesinvoices.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('sales.salesinvoices.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Sales Invoice
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -105,7 +107,11 @@
                                         <td>{{ $invoice->invoice_number }}</td>
                                         <td>
                                             @if($invoice->salesOrder)
+                                                @canroute('sales.salesorders.show')
                                                 <a href="{{ route('sales.salesorders.show', $invoice->salesOrder) }}">{{ $invoice->salesOrder->order_number }}</a>
+                                                @else
+                                                {{ $invoice->salesOrder->order_number }}
+                                                @endcanroute
                                             @else
                                                 —
                                             @endif
@@ -127,17 +133,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('sales.salesinvoices.show')
                                                 <a href="{{ route('sales.salesinvoices.show', $invoice) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($invoice->status === 'draft')
+                                                    @canroute('sales.salesinvoices.edit')
                                                     <a href="{{ route('sales.salesinvoices.edit', $invoice) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesinvoices.validate')
                                                     <form action="{{ route('sales.salesinvoices.validate', $invoice) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Issue this invoice? It will no longer be editable.');">
@@ -146,7 +157,9 @@
                                                             <i class="bi bi-check2-circle"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesinvoices.destroy')
                                                     <form action="{{ route('sales.salesinvoices.destroy', $invoice) }}"
                                                         method="POST" onsubmit="return confirm('Delete this draft invoice?');">
                                                         @csrf
@@ -155,6 +168,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

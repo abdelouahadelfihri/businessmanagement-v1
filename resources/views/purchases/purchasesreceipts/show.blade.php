@@ -16,24 +16,32 @@
 
             <div class="d-flex gap-2">
                 @if($r->status === 'draft')
+                    @canroute('purchases.purchasesreceipts.edit')
                     <a href="{{ route('purchases.purchasesreceipts.edit', $r) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('purchases.purchasesreceipts.validate')
                     <form action="{{ route('purchases.purchasesreceipts.validate', $r) }}" method="POST"
                         onsubmit="return confirm('Validate this receipt?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Validate</button>
                     </form>
+                    @endcanroute
 
+                    @canroute('purchases.purchasesreceipts.cancel')
                     <form action="{{ route('purchases.purchasesreceipts.cancel', $r) }}" method="POST"
                         onsubmit="return confirm('Cancel this receipt?');">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Cancel</button>
                     </form>
+                    @endcanroute
                 @endif
 
+                @canroute('purchases.purchasesreceipts.index')
                 <a href="{{ route('purchases.purchasesreceipts.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 

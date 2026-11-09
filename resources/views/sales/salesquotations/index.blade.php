@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Sales Quotations</h1>
 
         <div class="mb-3">
+            @canroute('sales.salesquotations.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('sales.salesquotations.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Sales Quotation
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -98,17 +100,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('sales.salesquotations.show')
                                                 <a href="{{ route('sales.salesquotations.show', $quote) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($quote->status === 'draft')
+                                                    @canroute('sales.salesquotations.edit')
                                                     <a href="{{ route('sales.salesquotations.edit', $quote) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesquotations.send')
                                                     <form action="{{ route('sales.salesquotations.send', $quote) }}" method="POST"
                                                         onsubmit="return confirm('Mark this quotation as sent?');">
                                                         @csrf
@@ -116,9 +123,11 @@
                                                             <i class="bi bi-send"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
 
                                                 @if(in_array($quote->status, ['draft', 'cancelled']))
+                                                    @canroute('sales.salesquotations.destroy')
                                                     <form action="{{ route('sales.salesquotations.destroy', $quote) }}"
                                                         method="POST" onsubmit="return confirm('Delete this quotation?');">
                                                         @csrf
@@ -127,6 +136,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

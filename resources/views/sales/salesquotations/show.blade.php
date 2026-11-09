@@ -15,34 +15,44 @@
 
             <div class="d-flex gap-2">
                 @if($q->status === 'draft')
+                    @canroute('sales.salesquotations.edit')
                     <a href="{{ route('sales.salesquotations.edit', $q) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('sales.salesquotations.send')
                     <form action="{{ route('sales.salesquotations.send', $q) }}" method="POST"
                         onsubmit="return confirm('Mark this quotation as sent?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-send"></i> Mark as sent</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 @if($q->status === 'sent')
+                    @canroute('sales.salesquotations.accept')
                     <form action="{{ route('sales.salesquotations.accept', $q) }}" method="POST"
                         onsubmit="return confirm('Mark this quotation as accepted by the customer?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Accepted</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 @if(in_array($q->status, ['draft', 'sent']))
+                    @canroute('sales.salesquotations.cancel')
                     <form action="{{ route('sales.salesquotations.cancel', $q) }}" method="POST"
                         onsubmit="return confirm('Cancel this quotation?');">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Cancel</button>
                     </form>
+                    @endcanroute
                 @endif
 
+                @canroute('sales.salesquotations.index')
                 <a href="{{ route('sales.salesquotations.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -163,6 +173,7 @@
             <div class="card shadow-sm mb-5">
                 <div class="card-header fw-semibold">Customer declined?</div>
                 <div class="card-body">
+                    @canroute('sales.salesquotations.reject')
                     <form method="POST" action="{{ route('sales.salesquotations.reject', $q) }}"
                         class="row g-2 align-items-end" onsubmit="return confirm('Mark this quotation as rejected?');">
                         @csrf
@@ -177,6 +188,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @else

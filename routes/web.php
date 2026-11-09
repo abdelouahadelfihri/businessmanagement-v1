@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
+
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Controllers\CRM\ContactController;
 use App\Http\Controllers\CRM\ProspectController;
@@ -34,7 +42,49 @@ use App\Http\Controllers\MasterData\StockMovementController;
 use App\Http\Controllers\MasterData\TransferController;
 use App\Http\Controllers\MasterData\StockController;
 
-Route::middleware(['web'])->group(function () {
+/*
+|--------------------------------------------------------------------------
+| Authentication (guests only)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'create'])->name('login');
+    Route::post('login', [LoginController::class, 'store'])->middleware('throttle:10,1')->name('login.store');
+
+    Route::get('forgot-password', [PasswordResetController::class, 'request'])->name('password.request');
+    Route::post('forgot-password', [PasswordResetController::class, 'email'])->middleware('throttle:5,1')->name('password.email');
+    Route::get('reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('reset-password', [PasswordResetController::class, 'update'])->middleware('throttle:5,1')->name('password.update');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Application (signed-in, active users; every route is permission-checked
+| by name, see config/permissions.php)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['web', 'auth', 'active', 'permission'])->group(function () {
+
+    Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'password'])->name('profile.password');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Administration
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::post('users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
+        Route::post('users/{user}/reset-link', [UserController::class, 'resetLink'])->name('users.reset_link');
+        Route::resource('users', UserController::class);
+
+        Route::resource('roles', RoleController::class);
+    });
 
     /*
     |--------------------------------------------------------------------------

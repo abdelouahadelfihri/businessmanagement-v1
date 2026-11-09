@@ -186,7 +186,9 @@
             <i class="bi bi-send"></i> Save &amp; mark as sent
         </button>
     @endif
+    @canroute('sales.salesquotations.index')
     <a href="{{ route('sales.salesquotations.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    @endcanroute
 </div>
 
 {{-- Row template --}}

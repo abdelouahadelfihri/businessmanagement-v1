@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Sales Deliveries</h1>
 
         <div class="mb-3">
+            @canroute('sales.salesdeliveries.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('sales.salesdeliveries.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Sales Delivery
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -91,7 +93,11 @@
                                         <td>{{ $delivery->delivery_number }}</td>
                                         <td>
                                             @if($delivery->salesOrder)
+                                                @canroute('sales.salesorders.show')
                                                 <a href="{{ route('sales.salesorders.show', $delivery->salesOrder) }}">{{ $delivery->salesOrder->order_number }}</a>
+                                                @else
+                                                {{ $delivery->salesOrder->order_number }}
+                                                @endcanroute
                                             @else
                                                 —
                                             @endif
@@ -109,17 +115,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('sales.salesdeliveries.show')
                                                 <a href="{{ route('sales.salesdeliveries.show', $delivery) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($delivery->status === 'draft')
+                                                    @canroute('sales.salesdeliveries.edit')
                                                     <a href="{{ route('sales.salesdeliveries.edit', $delivery) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesdeliveries.validate')
                                                     <form action="{{ route('sales.salesdeliveries.validate', $delivery) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Validate this delivery? The stock will be updated.');">
@@ -128,7 +139,9 @@
                                                             <i class="bi bi-check2-circle"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesdeliveries.destroy')
                                                     <form action="{{ route('sales.salesdeliveries.destroy', $delivery) }}"
                                                         method="POST" onsubmit="return confirm('Delete this delivery?');">
                                                         @csrf
@@ -137,6 +150,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

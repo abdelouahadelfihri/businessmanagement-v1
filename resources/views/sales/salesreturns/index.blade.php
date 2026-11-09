@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Sales Returns</h1>
 
         <div class="mb-3">
+            @canroute('sales.salesreturns.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('sales.salesreturns.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Sales Return
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -124,7 +126,11 @@
                                         <td>{{ $return->return_number }}</td>
                                         <td>
                                             @if($return->salesOrder)
+                                                @canroute('sales.salesorders.show')
                                                 <a href="{{ route('sales.salesorders.show', $return->salesOrder) }}">{{ $return->salesOrder->order_number }}</a>
+                                                @else
+                                                {{ $return->salesOrder->order_number }}
+                                                @endcanroute
                                             @else
                                                 —
                                             @endif
@@ -142,17 +148,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('sales.salesreturns.show')
                                                 <a href="{{ route('sales.salesreturns.show', $return) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($return->isDraft())
+                                                    @canroute('sales.salesreturns.edit')
                                                     <a href="{{ route('sales.salesreturns.edit', $return) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesreturns.validate')
                                                     <form action="{{ route('sales.salesreturns.validate', $return) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Validate this return? Restocked goods will be put back into the warehouse.');">
@@ -161,7 +172,9 @@
                                                             <i class="bi bi-check2-circle"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesreturns.destroy')
                                                     <form action="{{ route('sales.salesreturns.destroy', $return) }}"
                                                         method="POST" onsubmit="return confirm('Delete this draft return?');">
                                                         @csrf
@@ -170,6 +183,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

@@ -31,21 +31,29 @@
             </h1>
 
             <div class="d-flex flex-wrap gap-2">
+                @canroute('purchases.purchasesorders.create')
                 <a href="{{ route('purchases.purchasesorders.create') }}" class="btn btn-outline-primary">
                     <i class="bi bi-bag-plus"></i> New purchase order
                 </a>
+                @endcanroute
+                @canroute('masterdata.suppliers.edit')
                 <a href="{{ route('masterdata.suppliers.edit', $s) }}" class="btn btn-warning">
                     <i class="bi bi-pencil-square"></i> Edit
                 </a>
+                @endcanroute
                 @unless($hasDocs)
+                    @canroute('masterdata.suppliers.destroy')
                     <form action="{{ route('masterdata.suppliers.destroy', $s) }}" method="POST"
                         onsubmit="return confirm('Delete this supplier?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
                     </form>
+                    @endcanroute
                 @endunless
+                @canroute('masterdata.suppliers.index')
                 <a href="{{ route('masterdata.suppliers.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -81,7 +89,7 @@
                 <div class="col-sm-6 col-md-4">
                     <small class="text-muted d-block">Primary contact</small>
                     @php $pc = $s->contacts->firstWhere('is_primary', true); @endphp
-                    @if($pc)<a href="{{ route('crm.contacts.show', $pc) }}">{{ $pc->display_name }}</a>@else — @endif
+                    @if($pc)@canroute('crm.contacts.show')<a href="{{ route('crm.contacts.show', $pc) }}">{{ $pc->display_name }}</a>@else {{ $pc->display_name }}@endcanroute @else — @endif
                 </div>
                 <div class="col-sm-6 col-md-4">
                     <small class="text-muted d-block">Email</small>
@@ -166,7 +174,7 @@
                             <tbody>
                                 @forelse($recentOrders as $order)
                                     <tr>
-                                        <td><a href="{{ route('purchases.purchasesorders.show', $order) }}">{{ $order->po_number }}</a></td>
+                                        <td>@canroute('purchases.purchasesorders.show')<a href="{{ route('purchases.purchasesorders.show', $order) }}">{{ $order->po_number }}</a>@else {{ $order->po_number }}@endcanroute</td>
                                         <td>{{ optional($order->order_date)->format('Y-m-d') }}</td>
                                         <td class="text-end">{{ $money($order->total_amount) }} {{ $order->currency }}</td>
                                         <td><span class="badge bg-{{ $orderColors[$order->status] ?? 'secondary' }}">{{ $label($order->status) }}</span></td>
@@ -190,7 +198,11 @@
                                 @forelse($recentInvoices as $invoice)
                                     <tr>
                                         <td>
+                                            @canroute('purchases.purchasesinvoices.show')
                                             <a href="{{ route('purchases.purchasesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a>
+                                            @else
+                                            {{ $invoice->invoice_number }}
+                                            @endcanroute
                                             @if($invoice->supplier_invoice_number)
                                                 <small class="d-block text-muted">{{ $invoice->supplier_invoice_number }}</small>
                                             @endif

@@ -17,24 +17,32 @@
 
             <div class="d-flex gap-2">
                 @if($i->status === 'draft')
+                    @canroute('purchases.purchasesinvoices.edit')
                     <a href="{{ route('purchases.purchasesinvoices.edit', $i) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('purchases.purchasesinvoices.validate')
                     <form action="{{ route('purchases.purchasesinvoices.validate', $i) }}" method="POST"
                         onsubmit="return confirm('Validate this invoice?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Validate</button>
                     </form>
+                    @endcanroute
 
+                    @canroute('purchases.purchasesinvoices.cancel')
                     <form action="{{ route('purchases.purchasesinvoices.cancel', $i) }}" method="POST"
                         onsubmit="return confirm('Cancel this invoice?');">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Cancel</button>
                     </form>
+                    @endcanroute
                 @endif
 
+                @canroute('purchases.purchasesinvoices.index')
                 <a href="{{ route('purchases.purchasesinvoices.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -155,6 +163,7 @@
             <div class="card shadow-sm mb-5">
                 <div class="card-header fw-semibold">Record a payment</div>
                 <div class="card-body">
+                    @canroute('purchases.purchasesinvoices.payment')
                     <form method="POST" action="{{ route('purchases.purchasesinvoices.payment', $i) }}"
                         class="row g-2 align-items-end">
                         @csrf
@@ -182,6 +191,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @else

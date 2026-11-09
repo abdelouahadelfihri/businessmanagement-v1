@@ -26,21 +26,29 @@
             </h1>
 
             <div class="d-flex flex-wrap gap-2">
+                @canroute('sales.salesquotations.create')
                 <a href="{{ route('sales.salesquotations.create') }}" class="btn btn-outline-primary">
                     <i class="bi bi-file-earmark-plus"></i> New quotation
                 </a>
+                @endcanroute
+                @canroute('masterdata.customers.edit')
                 <a href="{{ route('masterdata.customers.edit', $c) }}" class="btn btn-warning">
                     <i class="bi bi-pencil-square"></i> Edit
                 </a>
+                @endcanroute
                 @unless($c->quotations_count || $c->orders_count || $c->invoices_count || $c->returns_count)
+                    @canroute('masterdata.customers.destroy')
                     <form action="{{ route('masterdata.customers.destroy', $c) }}" method="POST"
                         onsubmit="return confirm('Delete this customer?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
                     </form>
+                    @endcanroute
                 @endunless
+                @canroute('masterdata.customers.index')
                 <a href="{{ route('masterdata.customers.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -55,7 +63,11 @@
             <div class="alert alert-info">
                 <i class="bi bi-bullseye"></i>
                 Converted from prospect
+                @canroute('crm.prospects.show')
                 <a href="{{ route('crm.prospects.show', $c->sourceProspect) }}" class="alert-link">{{ $c->sourceProspect->code }}</a>
+                @else
+                {{ $c->sourceProspect->code }}
+                @endcanroute
                 on {{ optional($c->sourceProspect->converted_at)->format('Y-m-d') }}
                 (source: {{ \App\Models\CRM\Prospect::SOURCES[$c->sourceProspect->source] ?? '—' }}).
             </div>
@@ -94,7 +106,7 @@
                 <div class="col-sm-6 col-md-4">
                     <small class="text-muted d-block">Primary contact</small>
                     @php $pc = $c->contacts->firstWhere('is_primary', true); @endphp
-                    @if($pc)<a href="{{ route('crm.contacts.show', $pc) }}">{{ $pc->display_name }}</a>@else — @endif
+                    @if($pc)@canroute('crm.contacts.show')<a href="{{ route('crm.contacts.show', $pc) }}">{{ $pc->display_name }}</a>@else {{ $pc->display_name }}@endcanroute @else — @endif
                 </div>
                 <div class="col-sm-6 col-md-4">
                     <small class="text-muted d-block">Email</small>
@@ -170,7 +182,7 @@
                             <tbody>
                                 @forelse($recentInvoices as $invoice)
                                     <tr>
-                                        <td><a href="{{ route('sales.salesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a></td>
+                                        <td>@canroute('sales.salesinvoices.show')<a href="{{ route('sales.salesinvoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a>@else {{ $invoice->invoice_number }}@endcanroute</td>
                                         <td>{{ optional($invoice->date)->format('Y-m-d') }}</td>
                                         <td class="{{ $invoice->isOverdue() ? 'text-danger fw-semibold' : '' }}">{{ optional($invoice->due_date)->format('Y-m-d') ?? '—' }}</td>
                                         <td class="text-end">{{ $money($invoice->total) }}</td>
@@ -195,7 +207,7 @@
                             <tbody>
                                 @forelse($recentOrders as $order)
                                     <tr>
-                                        <td><a href="{{ route('sales.salesorders.show', $order) }}">{{ $order->order_number }}</a></td>
+                                        <td>@canroute('sales.salesorders.show')<a href="{{ route('sales.salesorders.show', $order) }}">{{ $order->order_number }}</a>@else {{ $order->order_number }}@endcanroute</td>
                                         <td>{{ optional($order->date)->format('Y-m-d') }}</td>
                                         <td class="text-end">{{ $money($order->total) }} {{ $order->currency }}</td>
                                         <td><span class="badge bg-{{ $orderColors[$order->status] ?? 'secondary' }}">{{ $orderLabels[$order->status] ?? ucfirst($order->status) }}</span></td>

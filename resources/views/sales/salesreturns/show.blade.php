@@ -19,28 +19,36 @@
 
             <div class="d-flex gap-2">
                 @if($ret->isDraft())
+                    @canroute('sales.salesreturns.edit')
                     <a href="{{ route('sales.salesreturns.edit', $ret) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('sales.salesreturns.validate')
                     <form action="{{ route('sales.salesreturns.validate', $ret) }}" method="POST"
                         onsubmit="return confirm('Validate this return? Restocked goods will be put back into the warehouse.');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check2-circle"></i> Validate</button>
                     </form>
+                    @endcanroute
 
+                    @canroute('sales.salesreturns.destroy')
                     <form action="{{ route('sales.salesreturns.destroy', $ret) }}" method="POST"
                         onsubmit="return confirm('Delete this draft return?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 <button type="button" class="btn btn-outline-dark" onclick="window.print()">
                     <i class="bi bi-printer"></i> Print
                 </button>
+                @canroute('sales.salesreturns.index')
                 <a href="{{ route('sales.salesreturns.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -69,7 +77,11 @@
                 <div class="col-md-4">
                     <small class="text-muted d-block">Sales order</small>
                     @if($ret->salesOrder)
+                        @canroute('sales.salesorders.show')
                         <a href="{{ route('sales.salesorders.show', $ret->salesOrder) }}">{{ $ret->salesOrder->order_number }}</a>
+                        @else
+                        {{ $ret->salesOrder->order_number }}
+                        @endcanroute
                     @else
                         —
                     @endif
@@ -78,7 +90,11 @@
                 <div class="col-md-4">
                     <small class="text-muted d-block">Invoice</small>
                     @if($ret->invoice)
+                        @canroute('sales.salesinvoices.show')
                         <a href="{{ route('sales.salesinvoices.show', $ret->invoice) }}">{{ $ret->invoice->invoice_number }}</a>
+                        @else
+                        {{ $ret->invoice->invoice_number }}
+                        @endcanroute
                     @else
                         —
                     @endif
@@ -224,6 +240,7 @@
                             warehouse (reverse stock movements are recorded).
                         </div>
                     @endif
+                    @canroute('sales.salesreturns.cancel')
                     <form method="POST" action="{{ route('sales.salesreturns.cancel', $ret) }}"
                         class="row g-2 align-items-end" onsubmit="return confirm('Cancel this return?');">
                         @csrf
@@ -238,6 +255,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @else

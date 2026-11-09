@@ -37,13 +37,19 @@
                 @if($ct->whatsapp_url)
                     <a href="{{ $ct->whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-outline-success"><i class="bi bi-whatsapp"></i> WhatsApp</a>
                 @endif
+                @canroute('crm.contacts.edit')
                 <a href="{{ route('crm.contacts.edit', $ct) }}" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+                @endcanroute
+                @canroute('crm.contacts.destroy')
                 <form action="{{ route('crm.contacts.destroy', $ct) }}" method="POST" onsubmit="return confirm('Delete this contact?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
                 </form>
+                @endcanroute
+                @canroute('crm.contacts.index')
                 <a href="{{ route('crm.contacts.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -96,6 +102,7 @@
                             <h6 class="fw-semibold mt-3">Other contacts at {{ $owner->name }}</h6>
                             <div class="list-group list-group-flush">
                                 @forelse($colleagues as $other)
+                                    @canroute('crm.contacts.show')
                                     <a href="{{ route('crm.contacts.show', $other) }}" class="list-group-item list-group-item-action px-0 d-flex align-items-center gap-2">
                                         <span class="contact-avatar contact-avatar-sm">{{ $other->initials }}</span>
                                         <span class="flex-grow-1">
@@ -104,6 +111,7 @@
                                         </span>
                                         @if($other->is_primary)<span class="badge bg-primary-subtle text-primary">Primary</span>@endif
                                     </a>
+                                    @endcanroute
                                 @empty
                                     <div class="text-muted small">No other contacts.</div>
                                 @endforelse

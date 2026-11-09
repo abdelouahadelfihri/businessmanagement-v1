@@ -12,10 +12,12 @@
         <h1 class="mb-4">List of Products</h1>
 
         <div class="mb-3">
+            @canroute('masterdata.products.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('masterdata.products.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Product
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -122,9 +124,13 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @canroute('masterdata.products.show')
                                             <a href="{{ route('masterdata.products.show', $product) }}" class="fw-semibold text-decoration-none">
                                                 {{ $product->name }}
                                             </a>
+                                            @else
+                                            {{ $product->name }}
+                                            @endcanroute
                                             <small class="d-block text-muted">
                                                 {{ \App\Models\MasterData\Product::TYPES[$product->type] ?? '' }}{{ $product->brand ? ' · ' . $product->brand : '' }}
                                             </small>
@@ -152,14 +158,19 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('masterdata.products.show')
                                                 <a href="{{ route('masterdata.products.show', $product) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
+                                                @canroute('masterdata.products.edit')
                                                 <a href="{{ route('masterdata.products.edit', $product) }}"
                                                     class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                @endcanroute
+                                                @canroute('masterdata.products.destroy')
                                                 <form action="{{ route('masterdata.products.destroy', $product) }}" method="POST"
                                                     onsubmit="return confirm('Delete this product?');">
                                                     @csrf
@@ -168,6 +179,7 @@
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endcanroute
                                             </div>
                                         </td>
                                     </tr>

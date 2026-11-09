@@ -33,7 +33,11 @@
     <div class="card-body row g-3">
         <div class="col-md-4">
             <small class="text-muted d-block">Sales order</small>
+            @canroute('sales.salesorders.show')
             <a href="{{ route('sales.salesorders.show', $saleOrder) }}">{{ $saleOrder->order_number }}</a>
+            @else
+            {{ $saleOrder->order_number }}
+            @endcanroute
         </div>
         <div class="col-md-4">
             <small class="text-muted d-block">Customer</small>
@@ -215,7 +219,9 @@
         onclick="return confirm('Validate now? The stock will be updated.');">
         <i class="bi bi-check2-circle"></i> Save &amp; validate
     </button>
+    @canroute('sales.salesreturns.index')
     <a href="{{ route('sales.salesreturns.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    @endcanroute
 </div>
 
 @push('scripts')

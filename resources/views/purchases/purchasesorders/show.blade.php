@@ -31,31 +31,41 @@
             </h1>
 
             <div class="d-flex gap-2">
+                @canroute('purchases.purchasesorders.index')
                 <a href="{{ route('purchases.purchasesorders.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
+                @endcanroute
 
                 @if($purchaseOrder->isEditable())
+                    @canroute('purchases.purchasesorders.edit')
                     <a href="{{ route('purchases.purchasesorders.edit', $purchaseOrder) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
                 @endif
 
                 @if($purchaseOrder->status === 'draft')
+                    @canroute('purchases.purchasesorders.submit')
                     <form action="{{ route('purchases.purchasesorders.submit', $purchaseOrder) }}" method="POST">
                         @csrf
                         <button class="btn btn-primary"><i class="bi bi-send"></i> Submit for approval</button>
                     </form>
+                    @endcanroute
                 @elseif($purchaseOrder->status === 'pending_approval')
+                    @canroute('purchases.purchasesorders.approve')
                     <form action="{{ route('purchases.purchasesorders.approve', $purchaseOrder) }}" method="POST">
                         @csrf
                         <button class="btn btn-success"><i class="bi bi-check-lg"></i> Approve</button>
                     </form>
+                    @endcanroute
                 @elseif($purchaseOrder->status === 'approved')
+                    @canroute('purchases.purchasesorders.send')
                     <form action="{{ route('purchases.purchasesorders.send', $purchaseOrder) }}" method="POST">
                         @csrf
                         <button class="btn btn-primary"><i class="bi bi-send-check"></i> Mark as sent</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 @if($canCancel)
@@ -198,6 +208,7 @@
         <div class="modal fade" id="cancelModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    @canroute('purchases.purchasesorders.cancel')
                     <form action="{{ route('purchases.purchasesorders.cancel', $purchaseOrder) }}" method="POST">
                         @csrf
                         <div class="modal-header">
@@ -213,6 +224,7 @@
                             <button type="submit" class="btn btn-danger">Cancel order</button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         </div>

@@ -21,21 +21,27 @@
 
             <div class="d-flex gap-2">
                 @if($inv->status === 'draft')
+                    @canroute('sales.salesinvoices.edit')
                     <a href="{{ route('sales.salesinvoices.edit', $inv) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('sales.salesinvoices.validate')
                     <form action="{{ route('sales.salesinvoices.validate', $inv) }}" method="POST"
                         onsubmit="return confirm('Issue this invoice? It will no longer be editable.');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check2-circle"></i> Issue</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 <button type="button" class="btn btn-outline-dark" onclick="window.print()">
                     <i class="bi bi-printer"></i> Print
                 </button>
+                @canroute('sales.salesinvoices.index')
                 <a href="{{ route('sales.salesinvoices.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -64,7 +70,11 @@
                 <div class="col-md-4">
                     <small class="text-muted d-block">Sales order</small>
                     @if($inv->salesOrder)
+                        @canroute('sales.salesorders.show')
                         <a href="{{ route('sales.salesorders.show', $inv->salesOrder) }}">{{ $inv->salesOrder->order_number }}</a>
+                        @else
+                        {{ $inv->salesOrder->order_number }}
+                        @endcanroute
                     @else
                         —
                     @endif
@@ -162,6 +172,7 @@
             <div class="card shadow-sm mb-3 d-print-none">
                 <div class="card-header fw-semibold">Record a payment</div>
                 <div class="card-body">
+                    @canroute('sales.salesinvoices.payment')
                     <form method="POST" action="{{ route('sales.salesinvoices.payment', $inv) }}"
                         class="row g-2 align-items-end">
                         @csrf
@@ -185,6 +196,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @endif
@@ -201,6 +213,7 @@
                             order so they can be invoiced again.
                         </div>
                     @endif
+                    @canroute('sales.salesinvoices.cancel')
                     <form method="POST" action="{{ route('sales.salesinvoices.cancel', $inv) }}"
                         class="row g-2 align-items-end" onsubmit="return confirm('Cancel this invoice?');">
                         @csrf
@@ -215,6 +228,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @else

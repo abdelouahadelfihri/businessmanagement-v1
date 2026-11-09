@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Sales Orders</h1>
 
         <div class="mb-3">
+            @canroute('sales.salesorders.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('sales.salesorders.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Sales Order
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -95,17 +97,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('sales.salesorders.show')
                                                 <a href="{{ route('sales.salesorders.show', $order) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($order->status === 'draft')
+                                                    @canroute('sales.salesorders.edit')
                                                     <a href="{{ route('sales.salesorders.edit', $order) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('sales.salesorders.confirm')
                                                     <form action="{{ route('sales.salesorders.confirm', $order) }}" method="POST"
                                                         onsubmit="return confirm('Confirm this order?');">
                                                         @csrf
@@ -113,9 +120,11 @@
                                                             <i class="bi bi-check2-circle"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
 
                                                 @if(in_array($order->status, ['draft', 'cancelled']))
+                                                    @canroute('sales.salesorders.destroy')
                                                     <form action="{{ route('sales.salesorders.destroy', $order) }}" method="POST"
                                                         onsubmit="return confirm('Delete this order?');">
                                                         @csrf
@@ -124,6 +133,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

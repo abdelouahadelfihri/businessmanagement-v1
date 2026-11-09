@@ -5,15 +5,19 @@
 
     <h1 class="mb-4">Edit Purchase Order #{{ $purchaseOrder->id }}</h1>
 
+    @canroute('suppliers.index')
     <a class="btn btn-secondary mb-3"
        href="{{ route('suppliers.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
        Pick Supplier
     </a>
+    @endcanroute
 
+    @canroute('purchase-requests.index')
     <a class="btn btn-secondary mb-3"
        href="{{ route('purchase-requests.index', ['select_for' => 'purchase-order', 'return_url' => url()->current()]) }}">
        Pick Purchase Request
     </a>
+    @endcanroute
 
     <div class="card shadow-sm">
         <div class="card-body">

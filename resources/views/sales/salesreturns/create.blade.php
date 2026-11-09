@@ -19,6 +19,7 @@
                             <strong>validated delivery</strong> can have a return.
                         </div>
                     @else
+                        @canroute('sales.salesreturns.create')
                         <form method="GET" action="{{ route('sales.salesreturns.create') }}"
                             class="row g-2 align-items-end">
                             <div class="col-md-9">
@@ -39,11 +40,14 @@
                                 </button>
                             </div>
                         </form>
+                        @endcanroute
                     @endif
                 </div>
             </div>
             <div class="mt-3">
+                @canroute('sales.salesreturns.index')
                 <a href="{{ route('sales.salesreturns.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         @else
             {{-- Step 2: the return form --}}

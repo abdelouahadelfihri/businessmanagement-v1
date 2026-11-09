@@ -16,34 +16,44 @@
 
             <div class="d-flex gap-2">
                 @if($o->status === 'draft')
+                    @canroute('sales.salesorders.edit')
                     <a href="{{ route('sales.salesorders.edit', $o) }}" class="btn btn-warning">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    @endcanroute
 
+                    @canroute('sales.salesorders.confirm')
                     <form action="{{ route('sales.salesorders.confirm', $o) }}" method="POST"
                         onsubmit="return confirm('Confirm this order?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-check2-circle"></i> Confirm</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 @if($o->status === 'confirmed')
+                    @canroute('sales.salesorders.process')
                     <form action="{{ route('sales.salesorders.process', $o) }}" method="POST"
                         onsubmit="return confirm('Start processing this order?');">
                         @csrf
                         <button type="submit" class="btn btn-info"><i class="bi bi-gear"></i> Start processing</button>
                     </form>
+                    @endcanroute
                 @endif
 
                 @if(in_array($o->status, ['confirmed', 'processing']))
+                    @canroute('sales.salesorders.deliver')
                     <form action="{{ route('sales.salesorders.deliver', $o) }}" method="POST"
                         onsubmit="return confirm('Mark this order as fully delivered?');">
                         @csrf
                         <button type="submit" class="btn btn-success"><i class="bi bi-truck"></i> Mark as delivered</button>
                     </form>
+                    @endcanroute
                 @endif
 
+                @canroute('sales.salesorders.index')
                 <a href="{{ route('sales.salesorders.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -94,7 +104,11 @@
                 <div class="col-md-3">
                     <small class="text-muted d-block">Quotation</small>
                     @if($o->quotation)
+                        @canroute('sales.salesquotations.show')
                         <a href="{{ route('sales.salesquotations.show', $o->quotation) }}">{{ $o->quotation->quote_number }}</a>
+                        @else
+                        {{ $o->quotation->quote_number }}
+                        @endcanroute
                     @else
                         —
                     @endif
@@ -178,6 +192,7 @@
             <div class="card shadow-sm mb-5">
                 <div class="card-header fw-semibold">Cancel this order</div>
                 <div class="card-body">
+                    @canroute('sales.salesorders.cancel')
                     <form method="POST" action="{{ route('sales.salesorders.cancel', $o) }}"
                         class="row g-2 align-items-end" onsubmit="return confirm('Cancel this order?');">
                         @csrf
@@ -192,6 +207,7 @@
                             </button>
                         </div>
                     </form>
+                    @endcanroute
                 </div>
             </div>
         @else

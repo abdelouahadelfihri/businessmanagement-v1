@@ -188,7 +188,9 @@
             <i class="bi bi-send"></i> Save &amp; submit for approval
         </button>
     @endif
+    @canroute('purchases.purchasesorders.index')
     <a href="{{ route('purchases.purchasesorders.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    @endcanroute
 </div>
 
 {{-- Row template --}}

@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Purchase Requests</h1>
 
         <div class="mb-3">
+            @canroute('purchases.purchasesrequests.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('purchases.purchasesrequests.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Purchase Request
             </a>
+            @endcanroute
         </div>
 
         {{-- Filter & search form (outside the @if so it stays visible when no results match) --}}
@@ -117,18 +119,23 @@
                                             <div class="d-flex justify-content-center gap-1">
 
                                                 <!-- View is always available -->
+                                                @canroute('purchases.purchasesrequests.show')
                                                 <a href="{{ route('purchases.purchasesrequests.show', $purchaseRequest->id) }}"
                                                     class="btn btn-sm btn-info" title="View Request">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($purchaseRequest->status === 'draft')
 
+                                                    @canroute('purchases.purchasesrequests.edit')
                                                     <a href="{{ route('purchases.purchasesrequests.edit', $purchaseRequest->id) }}"
                                                         class="btn btn-sm btn-warning" title="Edit Request">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('purchases.purchasesrequests.destroy')
                                                     <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}"
                                                         method="POST" style="display:inline;"
                                                         onsubmit="return confirm('Are you sure you want to delete this request?');">
@@ -138,9 +145,11 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
                                                 @elseif($purchaseRequest->status === 'pending')
 
+                                                    @canroute('purchases.purchasesrequests.approve')
                                                     <form action="{{ route('purchases.purchasesrequests.approve', $purchaseRequest->id) }}"
                                                         method="POST" style="display:inline;"
                                                         onsubmit="return confirm('Approve this purchase request?');">
@@ -149,6 +158,7 @@
                                                             <i class="bi bi-check-lg"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
                                                     <button type="button" class="btn btn-sm btn-danger" title="Reject Request"
                                                         data-bs-toggle="modal" data-bs-target="#rejectModal{{ $purchaseRequest->id }}">
@@ -159,6 +169,7 @@
                                                     <div class="modal fade" id="rejectModal{{ $purchaseRequest->id }}" tabindex="-1">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
+                                                                @canroute('purchases.purchasesrequests.reject')
                                                                 <form action="{{ route('purchases.purchasesrequests.reject', $purchaseRequest->id) }}"
                                                                     method="POST">
                                                                     @csrf
@@ -178,12 +189,14 @@
                                                                         <button type="submit" class="btn btn-danger">Reject</button>
                                                                     </div>
                                                                 </form>
+                                                                @endcanroute
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                 @elseif($purchaseRequest->status === 'rejected')
 
+                                                    @canroute('purchases.purchasesrequests.destroy')
                                                     <form action="{{ route('purchases.purchasesrequests.destroy', $purchaseRequest->id) }}"
                                                         method="POST" style="display:inline;"
                                                         onsubmit="return confirm('Are you sure you want to delete this rejected request?');">
@@ -193,6 +206,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
 
                                                 @endif
                                             </div>

@@ -14,7 +14,7 @@
         @if($c->parent)
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-2 small">
-                    <li class="breadcrumb-item"><a href="{{ route('masterdata.categories.index') }}">Categories</a></li>
+                    <li class="breadcrumb-item">@canroute('masterdata.categories.index')<a href="{{ route('masterdata.categories.index') }}">Categories</a>@else Categories @endcanroute</li>
                     @foreach(array_slice(explode(' › ', $c->full_name), 0, -1) as $ancestor)
                         <li class="breadcrumb-item">{{ $ancestor }}</li>
                     @endforeach
@@ -36,21 +36,29 @@
             </h1>
 
             <div class="d-flex flex-wrap gap-2">
+                @canroute('masterdata.categories.create')
                 <a href="{{ route('masterdata.categories.create', ['parent_id' => $c->id]) }}" class="btn btn-outline-primary">
                     <i class="bi bi-diagram-3"></i> Add sub-category
                 </a>
+                @endcanroute
+                @canroute('masterdata.categories.edit')
                 <a href="{{ route('masterdata.categories.edit', $c) }}" class="btn btn-warning">
                     <i class="bi bi-pencil-square"></i> Edit
                 </a>
+                @endcanroute
                 @if($canDelete)
+                    @canroute('masterdata.categories.destroy')
                     <form action="{{ route('masterdata.categories.destroy', $c) }}" method="POST"
                         onsubmit="return confirm('Delete this category?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
                     </form>
+                    @endcanroute
                 @endif
+                @canroute('masterdata.categories.index')
                 <a href="{{ route('masterdata.categories.index') }}" class="btn btn-outline-secondary">Back</a>
+                @endcanroute
             </div>
         </div>
 
@@ -91,7 +99,11 @@
                         <div class="col-sm-6">
                             <small class="text-muted d-block">Parent category</small>
                             @if($c->parent)
+                                @canroute('masterdata.categories.show')
                                 <a href="{{ route('masterdata.categories.show', $c->parent) }}">{{ $c->parent->full_name }}</a>
+                                @else
+                                {{ $c->parent->full_name }}
+                                @endcanroute
                             @else
                                 Top level
                             @endif
@@ -111,11 +123,13 @@
                     </div>
                     <div class="list-group list-group-flush">
                         @forelse($c->children as $child)
+                            @canroute('masterdata.categories.show')
                             <a href="{{ route('masterdata.categories.show', $child) }}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                                 <span class="cat-icon" style="background: {{ $child->color }};"><i class="bi {{ $child->icon }}"></i></span>
                                 <span class="flex-grow-1">{{ $child->name }}</span>
                                 <span class="badge bg-light text-dark">{{ $child->products_count }} products</span>
                             </a>
+                            @endcanroute
                         @empty
                             <div class="list-group-item text-muted small">No sub-categories.</div>
                         @endforelse
@@ -128,9 +142,11 @@
         <div class="card shadow-sm mb-5">
             <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
                 <span>Products in this category</span>
+                @canroute('masterdata.products.create')
                 <a href="{{ route('masterdata.products.create') }}" class="btn btn-sm btn-outline-primary">
                     <i class="bi bi-plus-lg"></i> New product
                 </a>
+                @endcanroute
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -143,7 +159,7 @@
                                 @php $state = $product->stockStatus((float) $product->stock); @endphp
                                 <tr>
                                     <td>{{ $product->code }}</td>
-                                    <td><a href="{{ route('masterdata.products.show', $product) }}">{{ $product->name }}</a></td>
+                                    <td>@canroute('masterdata.products.show')<a href="{{ route('masterdata.products.show', $product) }}">{{ $product->name }}</a>@else {{ $product->name }}@endcanroute</td>
                                     <td class="text-end">{{ $money($product->sale_price) }}</td>
                                     <td class="text-end {{ in_array($state, ['low', 'out']) ? 'text-danger fw-semibold' : '' }}">
                                         {{ $product->track_stock ? $qty($product->stock) . ' ' . ($product->unit_label ?? '') : '—' }}

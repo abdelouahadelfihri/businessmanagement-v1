@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
+    public const HOME = '/';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -29,7 +29,8 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')
+            // Every API route needs a Sanctum token and the same permissions as the web app.
+            Route::middleware(['api', 'auth:sanctum', 'active', 'permission'])
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 

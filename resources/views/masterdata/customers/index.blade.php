@@ -7,10 +7,12 @@
         <h1 class="mb-4">List of Customers</h1>
 
         <div class="mb-3">
+            @canroute('masterdata.customers.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('masterdata.customers.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Customer
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -88,14 +90,22 @@
                                     <tr>
                                         <td>{{ $customer->code }}</td>
                                         <td>
+                                            @canroute('masterdata.customers.show')
                                             <a href="{{ route('masterdata.customers.show', $customer) }}" class="fw-semibold text-decoration-none">
                                                 {{ $customer->name }}
                                             </a>
+                                            @else
+                                            {{ $customer->name }}
+                                            @endcanroute
                                             <small class="d-block text-muted">{{ \App\Models\MasterData\Customer::TYPES[$customer->type] ?? '' }}</small>
                                         </td>
                                         <td>
                                             @if($customer->primaryContact)
+                                                @canroute('crm.contacts.show')
                                                 <a href="{{ route('crm.contacts.show', $customer->primaryContact) }}">{{ $customer->primaryContact->full_name }}</a>
+                                                @else
+                                                {{ $customer->primaryContact->full_name }}
+                                                @endcanroute
                                                 <small class="d-block text-muted">{{ $customer->primaryContact->job_title }}</small>
                                             @else
                                                 <span class="text-muted">—</span>
@@ -114,15 +124,20 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('masterdata.customers.show')
                                                 <a href="{{ route('masterdata.customers.show', $customer) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
+                                                @canroute('masterdata.customers.edit')
                                                 <a href="{{ route('masterdata.customers.edit', $customer) }}"
                                                     class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                @endcanroute
                                                 @if($customer->invoices_count === 0)
+                                                    @canroute('masterdata.customers.destroy')
                                                     <form action="{{ route('masterdata.customers.destroy', $customer) }}" method="POST"
                                                         onsubmit="return confirm('Delete this customer?');">
                                                         @csrf
@@ -131,6 +146,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

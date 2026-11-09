@@ -222,7 +222,9 @@
             <i class="bi bi-check-lg"></i> Save &amp; validate
         </button>
     @endif
+    @canroute('purchases.purchasesreceipts.index')
     <a href="{{ route('purchases.purchasesreceipts.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    @endcanroute
 </div>
 
 {{-- Row template --}}

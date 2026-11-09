@@ -250,6 +250,7 @@
                 </li>
 
                 <!-- Purchases -->
+                @cananyroute('purchases.purchasesrequests.index', 'purchases.purchasesrequests.create', 'purchases.purchasesorders.index', 'purchases.purchasesorders.create', 'purchases.purchasesreceipts.index', 'purchases.purchasesreceipts.create', 'purchases.purchasesinvoices.index', 'purchases.purchasesinvoices.create')
                 <li>
                     <a class="nav-link" data-bs-toggle="collapse" href="#purchasesMenu">
                         <i class="bi bi-cart"></i>
@@ -258,6 +259,7 @@
 
                     <div class="collapse" id="purchasesMenu">
                         <ul class="nav flex-column submenu">
+                            @cananyroute('purchases.purchasesrequests.index', 'purchases.purchasesrequests.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#purchasesRequestsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -265,21 +267,31 @@
                                 </a>
                                 <div class="collapse" id="purchasesRequestsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('purchases.purchasesrequests.index')
                                         <li>
+                                            @canroute('purchases.purchasesrequests.index')
                                             <a class="nav-link" href="{{ route('purchases.purchasesrequests.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('purchases.purchasesrequests.create')
                                         <li>
+                                            @canroute('purchases.purchasesrequests.create')
                                             <a class="nav-link" href="{{ route('purchases.purchasesrequests.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('purchases.purchasesorders.index', 'purchases.purchasesorders.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#purchasesOrdersMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -287,21 +299,31 @@
                                 </a>
                                 <div class="collapse" id="purchasesOrdersMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('purchases.purchasesorders.index')
                                         <li>
+                                            @canroute('purchases.purchasesorders.index')
                                             <a class="nav-link" href="{{ route('purchases.purchasesorders.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('purchases.purchasesorders.create')
                                         <li>
+                                            @canroute('purchases.purchasesorders.create')
                                             <a class="nav-link" href="{{ route('purchases.purchasesorders.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('purchases.purchasesreceipts.index', 'purchases.purchasesreceipts.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#purchasesReceiptsMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -309,21 +331,31 @@
                                 </a>
                                 <div class="collapse" id="purchasesReceiptsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('purchases.purchasesreceipts.index')
                                         <li>
+                                            @canroute('purchases.purchasesreceipts.index')
                                             <a class="nav-link" href="{{ route('purchases.purchasesreceipts.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('purchases.purchasesreceipts.create')
                                         <li>
+                                            @canroute('purchases.purchasesreceipts.create')
                                             <a class="nav-link" href="{{ route('purchases.purchasesreceipts.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('purchases.purchasesinvoices.index', 'purchases.purchasesinvoices.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#purchasesInvoicesMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -331,26 +363,37 @@
                                 </a>
                                 <div class="collapse" id="purchasesInvoicesMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('purchases.purchasesinvoices.index')
                                         <li>
+                                            @canroute('purchases.purchasesinvoices.index')
                                             <a class="nav-link" href="{{ route('purchases.purchasesinvoices.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('purchases.purchasesinvoices.create')
                                         <li>
+                                            @canroute('purchases.purchasesinvoices.create')
                                             <a class="nav-link" href="{{ route('purchases.purchasesinvoices.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
                         </ul>
                     </div>
                 </li>
+                @endcananyroute
 
                 <!-- Sales -->
+                @cananyroute('sales.salesquotations.index', 'sales.salesquotations.create', 'sales.salesorders.index', 'sales.salesorders.create', 'sales.salesdeliveries.index', 'sales.salesdeliveries.create', 'sales.salesinvoices.index', 'sales.salesinvoices.create', 'sales.salesreturns.index', 'sales.salesreturns.create')
                 <li>
                     <a class="nav-link" data-bs-toggle="collapse" href="#salesMenu">
                         <i class="bi bi-cash-stack"></i>
@@ -359,6 +402,7 @@
 
                     <div class="collapse" id="salesMenu">
                         <ul class="nav flex-column submenu">
+                            @cananyroute('sales.salesquotations.index', 'sales.salesquotations.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#salesQuotationsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -366,21 +410,31 @@
                                 </a>
                                 <div class="collapse" id="salesQuotationsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('sales.salesquotations.index')
                                         <li>
+                                            @canroute('sales.salesquotations.index')
                                             <a class="nav-link" href="{{ route('sales.salesquotations.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('sales.salesquotations.create')
                                         <li>
+                                            @canroute('sales.salesquotations.create')
                                             <a class="nav-link" href="{{ route('sales.salesquotations.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('sales.salesorders.index', 'sales.salesorders.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#salesOrdersMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -388,21 +442,31 @@
                                 </a>
                                 <div class="collapse" id="salesOrdersMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('sales.salesorders.index')
                                         <li>
+                                            @canroute('sales.salesorders.index')
                                             <a class="nav-link" href="{{ route('sales.salesorders.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('sales.salesorders.create')
                                         <li>
+                                            @canroute('sales.salesorders.create')
                                             <a class="nav-link" href="{{ route('sales.salesorders.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('sales.salesdeliveries.index', 'sales.salesdeliveries.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#salesDeliveriesMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -410,21 +474,31 @@
                                 </a>
                                 <div class="collapse" id="salesDeliveriesMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('sales.salesdeliveries.index')
                                         <li>
+                                            @canroute('sales.salesdeliveries.index')
                                             <a class="nav-link" href="{{ route('sales.salesdeliveries.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('sales.salesdeliveries.create')
                                         <li>
+                                            @canroute('sales.salesdeliveries.create')
                                             <a class="nav-link" href="{{ route('sales.salesdeliveries.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('sales.salesinvoices.index', 'sales.salesinvoices.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#salesInvoicesMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -432,21 +506,31 @@
                                 </a>
                                 <div class="collapse" id="salesInvoicesMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('sales.salesinvoices.index')
                                         <li>
+                                            @canroute('sales.salesinvoices.index')
                                             <a class="nav-link" href="{{ route('sales.salesinvoices.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('sales.salesinvoices.create')
                                         <li>
+                                            @canroute('sales.salesinvoices.create')
                                             <a class="nav-link" href="{{ route('sales.salesinvoices.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('sales.salesreturns.index', 'sales.salesreturns.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#salesReturnsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -454,26 +538,37 @@
                                 </a>
                                 <div class="collapse" id="salesReturnsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('sales.salesreturns.index')
                                         <li>
+                                            @canroute('sales.salesreturns.index')
                                             <a class="nav-link" href="{{ route('sales.salesreturns.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('sales.salesreturns.create')
                                         <li>
+                                            @canroute('sales.salesreturns.create')
                                             <a class="nav-link" href="{{ route('sales.salesreturns.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
                         </ul>
                     </div>
                 </li>
+                @endcananyroute
 
                 <!-- CRM -->
+                @cananyroute('crm.prospects.index', 'crm.prospects.create', 'crm.contacts.index', 'crm.contacts.create')
                 <li>
                     <a class="nav-link" data-bs-toggle="collapse" href="#crmMenu">
                         <i class="bi bi-people"></i>
@@ -482,6 +577,7 @@
 
                     <div class="collapse {{ request()->routeIs('crm.*') ? 'show' : '' }}" id="crmMenu">
                         <ul class="nav flex-column submenu">
+                            @cananyroute('crm.prospects.index', 'crm.prospects.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#prospectsMenu">
                                     <i class="bi bi-bullseye"></i>
@@ -489,21 +585,31 @@
                                 </a>
                                 <div class="collapse {{ request()->routeIs('crm.prospects.*') ? 'show' : '' }}" id="prospectsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('crm.prospects.index')
                                         <li>
+                                            @canroute('crm.prospects.index')
                                             <a class="nav-link {{ request()->routeIs('crm.prospects.index') ? 'active-link' : '' }}" href="{{ route('crm.prospects.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('crm.prospects.create')
                                         <li>
+                                            @canroute('crm.prospects.create')
                                             <a class="nav-link {{ request()->routeIs('crm.prospects.create') ? 'active-link' : '' }}" href="{{ route('crm.prospects.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('crm.contacts.index', 'crm.contacts.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#contactsMenu">
                                     <i class="bi bi-person-lines-fill"></i>
@@ -511,26 +617,37 @@
                                 </a>
                                 <div class="collapse {{ request()->routeIs('crm.contacts.*') ? 'show' : '' }}" id="contactsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('crm.contacts.index')
                                         <li>
+                                            @canroute('crm.contacts.index')
                                             <a class="nav-link {{ request()->routeIs('crm.contacts.index') ? 'active-link' : '' }}" href="{{ route('crm.contacts.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('crm.contacts.create')
                                         <li>
+                                            @canroute('crm.contacts.create')
                                             <a class="nav-link {{ request()->routeIs('crm.contacts.create') ? 'active-link' : '' }}" href="{{ route('crm.contacts.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
                         </ul>
                     </div>
                 </li>
+                @endcananyroute
 
                 <!-- Inventories -->
+                @cananyroute('masterdata.customers.index', 'masterdata.customers.create', 'masterdata.suppliers.index', 'masterdata.suppliers.create', 'masterdata.products.index', 'masterdata.products.create', 'masterdata.categories.index', 'masterdata.categories.create', 'masterdata.units.index', 'masterdata.units.create', 'masterdata.warehouses.index', 'masterdata.warehouses.create', 'masterdata.locations.index', 'masterdata.locations.create', 'masterdata.stocksmovements.index')
                 <li>
                     <a class="nav-link" data-bs-toggle="collapse" href="#masterDataMenu">
                         <i class="bi bi-box-seam"></i>
@@ -539,6 +656,7 @@
 
                     <div class="collapse" id="masterDataMenu">
                         <ul class="nav flex-column submenu">
+                            @cananyroute('masterdata.customers.index', 'masterdata.customers.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#customersMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -546,21 +664,31 @@
                                 </a>
                                 <div class="collapse" id="customersMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.customers.index')
                                         <li>
+                                            @canroute('masterdata.customers.index')
                                             <a class="nav-link" href="{{ route('masterdata.customers.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.customers.create')
                                         <li>
+                                            @canroute('masterdata.customers.create')
                                             <a class="nav-link" href="{{ route('masterdata.customers.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.suppliers.index', 'masterdata.suppliers.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#suppliersMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -568,21 +696,31 @@
                                 </a>
                                 <div class="collapse" id="suppliersMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.suppliers.index')
                                         <li>
+                                            @canroute('masterdata.suppliers.index')
                                             <a class="nav-link" href="{{ route('masterdata.suppliers.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.suppliers.create')
                                         <li>
+                                            @canroute('masterdata.suppliers.create')
                                             <a class="nav-link" href="{{ route('masterdata.suppliers.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.products.index', 'masterdata.products.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#productsMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -590,21 +728,31 @@
                                 </a>
                                 <div class="collapse" id="productsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.products.index')
                                         <li>
+                                            @canroute('masterdata.products.index')
                                             <a class="nav-link" href="{{ route('masterdata.products.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.products.create')
                                         <li>
+                                            @canroute('masterdata.products.create')
                                             <a class="nav-link" href="{{ route('masterdata.products.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.categories.index', 'masterdata.categories.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#categoriesMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -612,21 +760,31 @@
                                 </a>
                                 <div class="collapse" id="categoriesMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.categories.index')
                                         <li>
+                                            @canroute('masterdata.categories.index')
                                             <a class="nav-link" href="{{ route('masterdata.categories.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.categories.create')
                                         <li>
+                                            @canroute('masterdata.categories.create')
                                             <a class="nav-link" href="{{ route('masterdata.categories.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.units.index', 'masterdata.units.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#unitsMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -634,21 +792,31 @@
                                 </a>
                                 <div class="collapse" id="unitsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.units.index')
                                         <li>
+                                            @canroute('masterdata.units.index')
                                             <a class="nav-link" href="{{ route('masterdata.units.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.units.create')
                                         <li>
+                                            @canroute('masterdata.units.create')
                                             <a class="nav-link" href="{{ route('masterdata.units.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.warehouses.index', 'masterdata.warehouses.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#warehousesMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -656,21 +824,31 @@
                                 </a>
                                 <div class="collapse" id="warehousesMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.warehouses.index')
                                         <li>
+                                            @canroute('masterdata.warehouses.index')
                                             <a class="nav-link" href="{{ route('masterdata.warehouses.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.warehouses.create')
                                         <li>
+                                            @canroute('masterdata.warehouses.create')
                                             <a class="nav-link" href="{{ route('masterdata.warehouses.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.locations.index', 'masterdata.locations.create')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#locationsMenu">
                                     <i class="bi bi-bag-check"></i>
@@ -678,21 +856,31 @@
                                 </a>
                                 <div class="collapse" id="locationsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.locations.index')
                                         <li>
+                                            @canroute('masterdata.locations.index')
                                             <a class="nav-link" href="{{ route('masterdata.locations.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
+                                        @cananyroute('masterdata.locations.create')
                                         <li>
+                                            @canroute('masterdata.locations.create')
                                             <a class="nav-link" href="{{ route('masterdata.locations.create') }}">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span>Add</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
+                            @cananyroute('masterdata.stocksmovements.index')
                             <li>
                                 <a class="nav-link" data-bs-toggle="collapse" href="#stocksMovementsMenu">
                                     <i class="bi bi-file-earmark-text"></i>
@@ -700,18 +888,62 @@
                                 </a>
                                 <div class="collapse" id="stocksMovementsMenu">
                                     <ul class="nav flex-column submenu">
+                                        @cananyroute('masterdata.stocksmovements.index')
                                         <li>
+                                            @canroute('masterdata.stocksmovements.index')
                                             <a class="nav-link" href="{{ route('masterdata.stocksmovements.index') }}">
                                                 <i class="bi bi-list-ul"></i>
                                                 <span>List</span>
                                             </a>
+                                            @endcanroute
                                         </li>
+                                        @endcananyroute
                                     </ul>
                                 </div>
                             </li>
+                            @endcananyroute
                         </ul>
                     </div>
                 </li>
+                @endcananyroute
+
+                <!-- Administration -->
+                @cananyroute('admin.dashboard', 'admin.users.index', 'admin.roles.index')
+                <li>
+                    <a class="nav-link {{ request()->routeIs('admin.*') ? 'active-link' : '' }}" data-bs-toggle="collapse" href="#adminMenu">
+                        <i class="bi bi-shield-lock"></i>
+                        <span>Administration</span>
+                    </a>
+                    <div class="collapse {{ request()->routeIs('admin.*') ? 'show' : '' }}" id="adminMenu">
+                        <ul class="nav flex-column submenu">
+                            @canroute('admin.dashboard')
+                            <li>
+                                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active-link' : '' }}" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-grid-1x2"></i>
+                                    <span>Admin panel</span>
+                                </a>
+                            </li>
+                            @endcanroute
+                            @canroute('admin.users.index')
+                            <li>
+                                <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active-link' : '' }}" href="{{ route('admin.users.index') }}">
+                                    <i class="bi bi-people"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                            @endcanroute
+                            @canroute('admin.roles.index')
+                            <li>
+                                <a class="nav-link {{ request()->routeIs('admin.roles.*') ? 'active-link' : '' }}" href="{{ route('admin.roles.index') }}">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>Roles &amp; permissions</span>
+                                </a>
+                            </li>
+                            @endcanroute
+                        </ul>
+                    </div>
+                </li>
+                @endcananyroute
 
             </ul>
           </div>
@@ -732,6 +964,34 @@
                     <i class="bi bi-building"></i>
                     <span>Business MS</span>
                 </a>
+
+                @auth
+                    <div class="dropdown ms-auto">
+                        <button class="btn btn-light border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="contact-avatar contact-avatar-sm">{{ auth()->user()->initials() }}</span>
+                            <span class="d-none d-sm-flex flex-column text-start lh-sm">
+                                <span class="fw-semibold small">{{ auth()->user()->name }}</span>
+                                <span class="text-muted" style="font-size: .75rem;">{{ auth()->user()->role?->name ?? 'No role' }}</span>
+                            </span>
+                            <i class="bi bi-chevron-down small"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                            <li class="px-3 py-2 small text-muted text-truncate" style="max-width: 260px;">{{ auth()->user()->email }}</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person me-2"></i>My profile</a></li>
+                            @cananyroute('admin.dashboard')
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-shield-lock me-2"></i>Admin panel</a></li>
+                            @endcananyroute
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Sign out</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @endauth
             </header>
 
             <!-- CONTENT -->

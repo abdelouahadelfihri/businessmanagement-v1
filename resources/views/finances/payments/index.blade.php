@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Payments</h1>
 
         <div class="mb-3">
+            @canroute('payments.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('payments.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a Payment
             </a>
+            @endcanroute
         </div>
 
         @if($payments->isEmpty())
@@ -66,12 +68,15 @@
                                             <div class="d-flex justify-content-center gap-1">
 
                                                 <!-- Edit -->
+                                                @canroute('payments.edit')
                                                 <a href="{{ route('payments.edit', $payment) }}" class="btn btn-sm btn-warning"
                                                     title="Edit">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
+                                                @endcanroute
 
                                                 <!-- Delete -->
+                                                @canroute('payments.destroy')
                                                 <form action="{{ route('payments.destroy', $payment) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this payment?');">
                                                     @csrf
@@ -80,6 +85,7 @@
                                                         <i class="bi bi-trash"></i> Delete
                                                     </button>
                                                 </form>
+                                                @endcanroute
 
                                             </div>
                                         </td>

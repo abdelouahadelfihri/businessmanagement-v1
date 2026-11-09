@@ -5,9 +5,11 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>Edit a Purchase Request</h1>
+            @canroute('purchases.purchasesrequests.index')
             <a href="{{ route('purchases.purchasesrequests.index') }}" class="btn btn-secondary">
                 Back
             </a>
+            @endcanroute
         </div>
 
         <div class="card shadow-sm">

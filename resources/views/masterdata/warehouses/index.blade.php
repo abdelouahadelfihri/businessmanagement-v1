@@ -5,9 +5,11 @@
 
         <h1 class="mb-4">Purchase Orders</h1>
 
+        @canroute('purchase-orders.create')
         <a class="btn btn-primary mb-3" href="{{ route('purchase-orders.create') }}">
             Create Purchase Order
         </a>
+        @endcanroute
 
         <div class="card shadow-sm">
             <div class="card-body p-0">
@@ -31,9 +33,11 @@
                                 <td>{{ $o->purchaseRequest->title }}</td>
                                 <td>{{ $o->order_date }}</td>
                                 <td>
+                                    @canroute('purchase-orders.edit')
                                     <a class="btn btn-warning btn-sm" href="{{ route('purchase-orders.edit', $o) }}">
                                         Edit
                                     </a>
+                                    @endcanroute
                                 </td>
                             </tr>
                         @endforeach

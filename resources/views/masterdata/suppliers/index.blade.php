@@ -7,10 +7,12 @@
         <h1 class="mb-4">List of Suppliers</h1>
 
         <div class="mb-3">
+            @canroute('masterdata.suppliers.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('masterdata.suppliers.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Supplier
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -99,14 +101,22 @@
                                     <tr>
                                         <td>{{ $supplier->code }}</td>
                                         <td>
+                                            @canroute('masterdata.suppliers.show')
                                             <a href="{{ route('masterdata.suppliers.show', $supplier) }}" class="fw-semibold text-decoration-none">
                                                 {{ $supplier->name }}
                                             </a>
+                                            @else
+                                            {{ $supplier->name }}
+                                            @endcanroute
                                             <small class="d-block text-muted">{{ $supplier->email ?? (\App\Models\MasterData\Supplier::TYPES[$supplier->type] ?? '') }}</small>
                                         </td>
                                         <td>
                                             @if($supplier->primaryContact)
+                                                @canroute('crm.contacts.show')
                                                 <a href="{{ route('crm.contacts.show', $supplier->primaryContact) }}">{{ $supplier->primaryContact->full_name }}</a>
+                                                @else
+                                                {{ $supplier->primaryContact->full_name }}
+                                                @endcanroute
                                                 <small class="d-block text-muted">{{ $supplier->primaryContact->job_title }}</small>
                                             @else
                                                 <span class="text-muted">—</span>
@@ -133,15 +143,20 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('masterdata.suppliers.show')
                                                 <a href="{{ route('masterdata.suppliers.show', $supplier) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
+                                                @canroute('masterdata.suppliers.edit')
                                                 <a href="{{ route('masterdata.suppliers.edit', $supplier) }}"
                                                     class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                @endcanroute
                                                 @if(!($supplier->requests_count || $supplier->orders_count || $supplier->receipts_count || $supplier->invoices_count || $supplier->returns_count))
+                                                    @canroute('masterdata.suppliers.destroy')
                                                     <form action="{{ route('masterdata.suppliers.destroy', $supplier) }}" method="POST"
                                                         onsubmit="return confirm('Delete this supplier?');">
                                                         @csrf
@@ -150,6 +165,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

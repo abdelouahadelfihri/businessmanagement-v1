@@ -5,10 +5,12 @@
         <h1 class="mb-4">List of Purchase Invoices</h1>
 
         <div class="mb-3">
+            @canroute('purchases.purchasesinvoices.create')
             <a class="btn btn-primary rounded-pill shadow-sm d-inline-flex align-items-center gap-2"
                 href="{{ route('purchases.purchasesinvoices.create') }}">
                 <i class="bi bi-plus-lg"></i> Add a New Purchase Invoice
             </a>
+            @endcanroute
         </div>
 
         @if(session('success'))
@@ -118,17 +120,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
+                                                @canroute('purchases.purchasesinvoices.show')
                                                 <a href="{{ route('purchases.purchasesinvoices.show', $invoice) }}"
                                                     class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                @endcanroute
 
                                                 @if($invoice->status === 'draft')
+                                                    @canroute('purchases.purchasesinvoices.edit')
                                                     <a href="{{ route('purchases.purchasesinvoices.edit', $invoice) }}"
                                                         class="btn btn-sm btn-warning" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
+                                                    @endcanroute
 
+                                                    @canroute('purchases.purchasesinvoices.validate')
                                                     <form action="{{ route('purchases.purchasesinvoices.validate', $invoice) }}"
                                                         method="POST" onsubmit="return confirm('Validate this invoice?');">
                                                         @csrf
@@ -136,9 +143,11 @@
                                                             <i class="bi bi-check-lg"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
 
                                                 @if(in_array($invoice->status, ['draft', 'cancelled']))
+                                                    @canroute('purchases.purchasesinvoices.destroy')
                                                     <form action="{{ route('purchases.purchasesinvoices.destroy', $invoice) }}"
                                                         method="POST" onsubmit="return confirm('Delete this purchase invoice?');">
                                                         @csrf
@@ -147,6 +156,7 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endcanroute
                                                 @endif
                                             </div>
                                         </td>

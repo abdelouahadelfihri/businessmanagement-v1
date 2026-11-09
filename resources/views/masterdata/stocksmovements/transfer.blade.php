@@ -2,6 +2,7 @@
 @section('content')
     <div class="container">
         <h3>Transfer Stock</h3>
+        @canroute('stock_movements.transfer')
         <form action="{{ route('stock_movements.transfer') }}" method="POST">
             @csrf
 
@@ -39,5 +40,6 @@
 
             <button class="btn btn-success">Transfer</button>
         </form>
+        @endcanroute
     </div>
 @endsection
