@@ -23,6 +23,7 @@ class ProductController extends Controller
             ->selectRaw("$stockSub as stock")
             ->search($request->input('search'))
             ->when($request->filled('category_id'), fn($q) => $q->where('category_id', $request->input('category_id')))
+            ->when($request->filled('unit_id'), fn($q) => $q->where('unit_id', $request->input('unit_id')))
             ->when($request->filled('type'), fn($q) => $q->where('type', $request->input('type')))
             ->when($request->input('status') === 'active', fn($q) => $q->where('is_active', true))
             ->when($request->input('status') === 'inactive', fn($q) => $q->where('is_active', false))

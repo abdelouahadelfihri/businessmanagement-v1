@@ -36,6 +36,7 @@ return [
         'from_quotation' => 'create',
         'transfer_form'  => 'create',
         'transfer'       => 'create',
+        'defaults'       => 'create',
         'edit'           => 'edit',
         'update'         => 'edit',
         'status'         => 'edit',

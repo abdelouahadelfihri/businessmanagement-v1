@@ -105,6 +105,7 @@ Route::middleware(['web', 'auth', 'active', 'permission'])->group(function () {
         Route::resource('customers', CustomerController::class);
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
+        Route::post('units/defaults', [UnitController::class, 'defaults'])->name('units.defaults');
         Route::resource('units', UnitController::class);
         Route::resource('warehouses', WarehouseController::class);
         Route::resource('locations', LocationController::class);
