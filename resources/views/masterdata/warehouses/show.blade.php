@@ -83,7 +83,16 @@
                     <div class="card-body row g-3">
                         <div class="col-sm-6">
                             <small class="text-muted d-block">Location</small>
-                            {{ $w->location->name ?? '—' }}
+                            @if($w->location)
+                                @canroute('masterdata.locations.show')
+                                <a href="{{ route('masterdata.locations.show', $w->location) }}">{{ $w->location->name }}</a>
+                                @else
+                                {{ $w->location->name }}
+                                @endcanroute
+                                @if($w->location->map_url)
+                                    <a href="{{ $w->location->map_url }}" target="_blank" rel="noopener" class="ms-1" title="Open in Google Maps"><i class="bi bi-map"></i></a>
+                                @endif
+                            @else — @endif
                         </div>
                         <div class="col-sm-6"><small class="text-muted d-block">Type</small>{{ $meta['label'] }}</div>
                         <div class="col-12"><small class="text-muted d-block">Address</small>{!! nl2br(e($w->full_address ?: '—')) !!}</div>

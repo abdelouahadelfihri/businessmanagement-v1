@@ -297,7 +297,7 @@ Route::middleware(['web', 'auth', 'active', 'permission'])->group(function () {
     Route::post('customers/ajax-store', [CustomerController::class, 'ajaxStore'])->name('customers.ajaxStore');
     Route::post('categories/ajax-store', [CategoryController::class, 'ajaxStore'])->name('categories.ajaxStore');
     Route::post('units/ajax-store', [UnitController::class, 'ajaxStore'])->name('units.ajaxStore');
-    Route::post('locations/ajax-store', [UnitController::class, 'ajaxStore'])->name('locations.ajaxStore');
+    Route::post('locations/ajax-store', [LocationController::class, 'ajaxStore'])->name('locations.ajaxStore');
 
     Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
 });
