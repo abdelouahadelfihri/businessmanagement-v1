@@ -107,6 +107,7 @@ Route::middleware(['web', 'auth', 'active', 'permission'])->group(function () {
         Route::resource('products', ProductController::class);
         Route::post('units/defaults', [UnitController::class, 'defaults'])->name('units.defaults');
         Route::resource('units', UnitController::class);
+        Route::post('warehouses/{warehouse}/default', [WarehouseController::class, 'makeDefault'])->name('warehouses.default');
         Route::resource('warehouses', WarehouseController::class);
         Route::resource('locations', LocationController::class);
         Route::resource('stocksmovements', StockMovementController::class);

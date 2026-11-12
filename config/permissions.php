@@ -37,6 +37,7 @@ return [
         'transfer_form'  => 'create',
         'transfer'       => 'create',
         'defaults'       => 'create',
+        'default'        => 'edit',
         'edit'           => 'edit',
         'update'         => 'edit',
         'status'         => 'edit',
